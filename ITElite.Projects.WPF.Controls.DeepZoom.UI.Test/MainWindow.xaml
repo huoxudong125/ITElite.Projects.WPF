@@ -1,0 +1,22 @@
+﻿<Window x:Class="ITElite.Projects.WPF.Controls.DeepZoom.UI.Test.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:ITElite.Projects.WPF.Controls.DeepZoom.Controls;assembly=ITElite.Projects.WPF.Controls.DeepZoom"
+        Title="Deep Zoom for WPF" Height="350" Width="525">
+    <Border Margin="3">
+        <!-- 
+        Some sample images:
+        
+        http://cache.zoom.it/content/fmOv.dzi
+        http://cache.zoom.it/content/12dd.dzi
+        http://cache.zoom.it/content/IGDL.dzi
+        http://cache.zoom.it/content/aFsK.dzi
+        http://static.seadragon.com/content/misc/contoso-fixster.dzi
+        http://static.seadragon.com/content/misc/blue-marble.dzi
+        http://static.seadragon.com/content/misc/color-flower.dzi
+        http://gasi.ch/examples/2008/10/13/inside-deep-zoom/mont-saint-michel/silverlight/GeneratedImages/dzc_output.xml
+        -->
+
+        <controls:MultiScaleImage Source="D:\workspace\Matrix\Matrix\Sources\TestData\SmallImages\Map.dzi" />
+    </Border>
+</Window>
