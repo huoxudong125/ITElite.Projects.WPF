@@ -14,10 +14,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
     {
         private Control _child;
 
-        public MultiValueScalebarAdorner(UIElement adornerElement)
+
+        public MultiValueScalebarAdorner(UIElement adornerElement,Control childControl)
             : base(adornerElement)
         {
-            
+            Child = childControl;
+            this.HorizontalAlignment = HorizontalAlignment.Right;
+            this.VerticalAlignment = VerticalAlignment.Bottom;
         }
 
         protected override int VisualChildrenCount
@@ -59,8 +62,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _child.Arrange(new Rect(new Point(0, 0), finalSize));
+
+            _child.Arrange(new Rect(new Point(((FrameworkElement)AdornedElement).ActualWidth - finalSize.Width,
+                ((FrameworkElement)AdornedElement).ActualHeight - finalSize.Height), finalSize));
+
             return new Size(_child.ActualWidth, _child.ActualHeight);
         }
+
+      
     }
 }

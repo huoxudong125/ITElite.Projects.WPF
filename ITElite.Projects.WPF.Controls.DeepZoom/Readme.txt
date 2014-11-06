@@ -30,4 +30,37 @@ D. Ensure the following is in your assemblyinfo.cs
  )]
 
 
- ///
+Question 2.AdornerLayer  add Custom Grid Can't be found
+
+Solve the problem using a visual Collection and a ContentPresenter. More Detail Please reference to:
+WPF Tutorial - Using A Visual Collection  http://tech.pro/tutorial/856/wpf-tutorial-using-a-visual-collection
+
+
+
+
+Question 3.The Adorner is Shown at right and bottom
+
+Answer:ReArrange the control size as follow:
+
+ protected override Size ArrangeOverride(Size finalSize)
+        {
+
+            _child.Arrange(new Rect(new Point(((FrameworkElement)AdornedElement).ActualWidth - finalSize.Width,
+                ((FrameworkElement)AdornedElement).ActualHeight - finalSize.Height), finalSize));
+
+            return new Size(_child.ActualWidth, _child.ActualHeight);
+        }
+
+
+Question 4.The default value type does not match the type of the property
+Reference:https://stackoverflow.com/questions/20398751/the-default-value-type-does-not-match-the-type-of-the-property
+
+Give dependencyProperty default value as follow:
+
+public static readonly DependencyProperty ToothProperty =
+        DependencyProperty.Register("Tooth", typeof(Tooth), typeof(ToothUI),
+                                      new PropertyMetadata(default(Tooth)));
+Or simply omit setting default value for your DP:
+
+public static readonly DependencyProperty ToothProperty =
+        DependencyProperty.Register("Tooth", typeof(Tooth), typeof(ToothUI));

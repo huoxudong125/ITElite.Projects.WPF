@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using ITElite.Projects.WPF.Controls.DeepZoom.Controls;
 using ITElite.Projects.WPF.Controls.DeepZoom.Core;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
@@ -16,19 +17,18 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
     {
         #region Private Properties
 
-        private VisualCollection _Visuals;
-        private ContentPresenter _ContentPresenter;
+        private readonly VisualCollection _Visuals;
+        private readonly ContentPresenter _ContentPresenter;
 
+        private readonly Rectangle _metricScaleBar;
 
-        private Rectangle _metricScaleBar;
-
-        private TextBlock _metricScaleValue;
+        private readonly TextBlock _metricScaleValue;
 
         private double _resolution;
         private Units _unit;
 
         //A set of values in which to round the scale bars values off to.
-        private double[] scaleMultipliers = new double[] {1000, 500, 250, 200, 100, 50, 25, 10, 5, 2, 1, 0.5};
+        private readonly double[] _scaleMultipliers = new double[] { 1000, 500, 250, 200, 100, 50, 25, 10, 5, 2, 1, 0.5 };
 
         #endregion Private Properties
 
@@ -40,7 +40,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             set
             {
                 _resolution = value;
-                UpdateScalebar();
             }
         }
 
@@ -50,7 +49,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             set
             {
                 _unit = value;
-                UpdateScalebar();
             }
         }
 
@@ -58,12 +56,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         #region Constructor
 
-        public MultiValueScaleBar(UIElement map)
+        public MultiValueScaleBar(UIElement multiScaleImage)
         {
             _Visuals = new VisualCollection(this);
             _ContentPresenter = new ContentPresenter();
-            _ContentPresenter.HorizontalAlignment = HorizontalAlignment.Right;
-            _ContentPresenter.VerticalAlignment = VerticalAlignment.Bottom;
             _Visuals.Add(_ContentPresenter);
 
             var grid = new Grid();
@@ -83,7 +79,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
             grid.Children.Add(_metricScaleValue);
 
-
             _metricScaleBar = new Rectangle()
             {
                 Fill = new SolidColorBrush(Colors.DodgerBlue),
@@ -97,17 +92,14 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
             grid.Children.Add(_metricScaleBar);
 
+            var deepZoom = multiScaleImage as MultiScaleImage;
+            deepZoom.ViewChangeOnFrame += (s, e) => UpdateScalebar(((MultiScaleImage)s).Resolution / ((MultiScaleImage)s).Scale);
 
-            //map.ViewChangeOnFrame += (s, e) =>
-            //{
-            //    UpdateScalebar();
-            //};
-
-            ////Add this scalebar to the map.
-            //map.Children.Add(this);
+            //////Add this scalebar to the map.
+            ////map.Children.Add(this);
 
             //Update the scale bar for the current map view.
-            UpdateScalebar();
+            UpdateScalebar(deepZoom.Resolution/deepZoom.Scale);
 
             Content = grid;
         }
@@ -116,17 +108,17 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         #region Private Methods
 
-        private void UpdateScalebar()
+        private void UpdateScalebar(double resolution)
         {
             //Calculate the ground resolution in km/pixel based on the center of the map and current zoom level.
-            var metricResolution = Resolution;
+            var metricResolution = resolution;
             // GroundResolution(_map.Center.Latitude, (int)Math.Round(_map.ZoomLevel));
-            var imperialResolution = metricResolution*0.62137119; //KM to miles
+            //var imperialResolution = metricResolution * 0.62137119; //KM to miles
 
             double maxScaleBarWidth = 100;
 
             string metricUnitName = "km";
-            double metricDistance = maxScaleBarWidth*metricResolution;
+            double metricDistance = maxScaleBarWidth * metricResolution;
 
             if (metricDistance < 1)
             {
@@ -135,13 +127,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
                 metricResolution *= 1000;
             }
 
-            for (var i = 0; i < scaleMultipliers.Length; i++)
+            for (var i = 0; i < _scaleMultipliers.Length; i++)
             {
-                if (metricDistance/scaleMultipliers[i] > 1)
+                if (metricDistance / _scaleMultipliers[i] > 1)
                 {
-                    var scaleValue = metricDistance - metricDistance%scaleMultipliers[i];
+                    var scaleValue = metricDistance - metricDistance % _scaleMultipliers[i];
                     _metricScaleValue.Text = string.Format("{0:F0} {1}", scaleValue, metricUnitName);
-                    _metricScaleBar.Width = scaleValue/metricResolution;
+                    _metricScaleBar.Width = scaleValue / metricResolution;
                     break;
                 }
             }

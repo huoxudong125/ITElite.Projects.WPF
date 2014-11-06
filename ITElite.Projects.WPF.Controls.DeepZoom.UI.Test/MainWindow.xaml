@@ -17,6 +17,8 @@
         http://gasi.ch/examples/2008/10/13/inside-deep-zoom/mont-saint-michel/silverlight/GeneratedImages/dzc_output.xml
         -->
 
-        <controls:MultiScaleImage Source="D:\workspace\Matrix\Matrix\Sources\TestData\SmallImages\Map.dzi" />
+        <controls:MultiScaleImage 
+            Source="D:\workspace\Matrix\Matrix\Sources\TestData\SmallImages\Map.dzi"
+          Resolution="8.683e-6"/>
     </Border>
 </Window>
