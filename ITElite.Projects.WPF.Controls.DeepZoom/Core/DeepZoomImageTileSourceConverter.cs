@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
@@ -60,7 +56,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                     var uri = tileSource.UriSource;
                     return uri.IsAbsoluteUri ? uri.AbsoluteUri : uri.OriginalString;
                 }
-
 
             return base.ConvertTo(context, culture, value, destinationType);
         }

@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ITElite.Projects.WPF.Controls.TextControl
 {
@@ -31,7 +19,7 @@ namespace ITElite.Projects.WPF.Controls.TextControl
         private Geometry _textGeometry;
         private Geometry _textHighLightGeometry;
 
-        #endregion
+        #endregion Private Fields
 
         #region Private Methods
 
@@ -45,7 +33,7 @@ namespace ITElite.Projects.WPF.Controls.TextControl
             ((OutlineTextControl)d).CreateText();
         }
 
-        #endregion
+        #endregion Private Methods
 
         #region FrameworkElement Overrides
 
@@ -87,7 +75,7 @@ namespace ITElite.Projects.WPF.Controls.TextControl
                     fontWeight,
                     FontStretches.Normal),
                 FontSize,
-                Brushes.Black // This brush does not matter since we use the geometry of the text. 
+                Brushes.Black // This brush does not matter since we use the geometry of the text.
                 );
 
             // Build the geometry object that represents the text.
@@ -100,13 +88,12 @@ namespace ITElite.Projects.WPF.Controls.TextControl
             }
         }
 
-
         protected override Size MeasureOverride(Size availableSize)
         {
             return _textHighLightGeometry == null ? _textGeometry.Bounds.Size : _textHighLightGeometry.Bounds.Size;
         }
 
-        #endregion
+        #endregion FrameworkElement Overrides
 
         #region DependencyProperties
 
@@ -389,6 +376,6 @@ namespace ITElite.Projects.WPF.Controls.TextControl
                  )
             );
 
-        #endregion
+        #endregion DependencyProperties
     }
 }

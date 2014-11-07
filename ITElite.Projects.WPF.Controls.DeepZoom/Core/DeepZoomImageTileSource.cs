@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
     /// <summary>
-    /// Used to specify the source of a MultiScaleImage. 
+    /// Used to specify the source of a MultiScaleImage.
     /// </summary>
     public class DeepZoomImageTileSource : MultiScaleTileSource
     {
@@ -69,9 +67,9 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         public event EventHandler UriSourceChanged;
 
-        #endregion
+        #endregion UriSource
 
-        #endregion
+        #endregion Dependency Properties
 
         #region Overriden methods
 
@@ -87,7 +85,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             return new Uri(url, UriSource.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
         }
 
-        #endregion
+        #endregion Overriden methods
 
         #region Helper methods
 
@@ -159,6 +157,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             return false;
         }
 
-        #endregion
+        #endregion Helper methods
     }
 }

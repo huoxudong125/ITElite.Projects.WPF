@@ -1,5 +1,4 @@
 //http://blogs.msdn.com/b/kaelr/archive/2006/01/09/priorityqueue.aspx
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Collections.Generic
@@ -174,7 +173,7 @@ namespace System.Collections.Generic
 
         private bool IsPrior(KeyValuePair<T, TPriority> element1, KeyValuePair<T, TPriority> element2)
         {
-            int order =  comparer.Compare(element1.Value, element2.Value); 
+            int order = comparer.Compare(element1.Value, element2.Value);
             if (invert)
                 order = ~order;
             return order < 0;

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,7 +12,7 @@ using System.Windows.Media.Imaging;
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
     /// <summary>
-    /// A spatial items source that is able to find and cache visible image 
+    /// A spatial items source that is able to find and cache visible image
     /// tiles in a the screen. Used in conjuction with ZoomableCanvas.
     /// </summary>
     internal class MultiScaleImageSpatialItemsSource :
@@ -54,9 +53,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         }
 
         public event EventHandler ExtentChanged;
+
         public event EventHandler QueryInvalidated;
 
-        #endregion
+        #endregion ISpatialItemsSource members
 
         private int _currentLevel;
 
@@ -216,6 +216,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             yield break;
         }
 
-        #endregion
+        #endregion Irrelevant IList Members
     }
 }

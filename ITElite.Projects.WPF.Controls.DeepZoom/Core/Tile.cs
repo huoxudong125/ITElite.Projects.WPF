@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
+﻿namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
     /// <summary>
     /// Represents a Tile in a Deep Zoom image.
@@ -18,8 +12,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             Row = row;
             Column = column;
         }
+
         public int Level { get; set; }
+
         public int Row { get; set; }
+
         public int Column { get; set; }
 
         public override string ToString()

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
     /// <summary>
-    /// Used to specify the source of Deep Zoom images. 
+    /// Used to specify the source of Deep Zoom images.
     /// </summary>
     [TypeConverter(typeof(DeepZoomImageTileSourceConverter))]
     public abstract class MultiScaleTileSource : DependencyObject
@@ -19,7 +17,9 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         /// <summary>
         /// Exclusive for DeepZoomImageTileSource
         /// </summary>
-        internal MultiScaleTileSource() { }
+        internal MultiScaleTileSource()
+        {
+        }
 
         public MultiScaleTileSource(long imageWidth, long imageHeight, int tileSize, int tileOverlap)
         {
@@ -40,7 +40,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         public MultiScaleTileSource(int imageWidth, int imageHeight, int tileSize, int tileOverlap) :
             this((long)imageWidth, (long)imageHeight, tileSize, tileOverlap) { }
 
-        #endregion
+        #endregion Constructors
 
         #region Abstract methods
 
@@ -54,16 +54,16 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         /// <remarks>If this method returns a Uri, it will be used as UriSo</remarks>
         protected internal abstract object GetTileLayers(int tileLevel, int tilePositionX, int tilePositionY);
 
-        #endregion
+        #endregion Abstract methods
 
         #region Internal methods
 
         /// <summary>
-        /// Returns the visible tiles inside a rectangle starting from a chosen 
+        /// Returns the visible tiles inside a rectangle starting from a chosen
         /// level and moving upwards until there are no missing tiles.
         /// </summary>
         /// <param name="rectangle">The rectangle in which tiles will be searched.</param>
-        /// <param name="startingLevel">The level where the search will start. If there are missing tiles in this level, 
+        /// <param name="startingLevel">The level where the search will start. If there are missing tiles in this level,
         /// the next level will be rendered, until a level with no missing tiles is found.</param>
         /// <returns>The visible tiles inside the rectangle at the requested level.</returns>
         internal IEnumerable<Tile> VisibleTilesUntilFill(Rect rectangle, int startingLevel)
@@ -71,7 +71,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             var visibleTiles = Enumerable.Empty<Tile>();
 
             /*
-            // Algorithm : start on "closest" layer, go down until there are no more layers to paint 
+            // Algorithm : start on "closest" layer, go down until there are no more layers to paint
             // Advantage - optimizes loading, loads less images
             // Disadvantage - user will see holes while tiles are being downloaded, no transitions
 
@@ -185,7 +185,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         // Note: This uses an int because ZoomableCanvas uses ints to determine visible tiles.
         // Even though, you can store an image with more than 45000*45000 tiles on the last level.
-        // It's possible to overflow this limit with huge sparse images that are close to the 
+        // It's possible to overflow this limit with huge sparse images that are close to the
         // 4 billion pixel limit from DeepZoom Composer.
         internal int GetTileIndex(Tile tile)
         {
@@ -227,7 +227,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             return new Tile(level, column, row);
         }
 
-        #endregion
+        #endregion Internal methods
 
         #region Protected helpers
 
@@ -269,7 +269,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             }
         }
 
-        #endregion
+        #endregion Protected helpers
 
         #region Private helpers
 
@@ -331,7 +331,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             }
         }
 
-        #endregion
+        #endregion Private helpers
 
         #region Private Fields
 
@@ -343,14 +343,16 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         private readonly IList<int> _columnCounts = new List<int>();
         private readonly IList<double> _levelScales = new List<double>();
 
-        #endregion
+        #endregion Private Fields
 
         #region Protected Properties
 
         protected internal Size ImageSize { get; set; }
+
         protected internal int TileSize { get; set; }
+
         protected internal int TileOverlap { get; set; }
 
-        #endregion
+        #endregion Protected Properties
     }
 }

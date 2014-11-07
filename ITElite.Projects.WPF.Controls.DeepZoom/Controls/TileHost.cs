@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -16,6 +12,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
     {
         // Create a collection of child visual objects.
         private DrawingVisual _visual;
+
         private static readonly AnimationTimeline _opacityAnimation =
             new DoubleAnimation(1, TimeSpan.FromMilliseconds(500)) { EasingFunction = new ExponentialEase() };
 
@@ -44,7 +41,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                     new PropertyChangedCallback(RefreshTile)));
 
         /// <summary>
-        /// Gets or sets the Source property. This dependency property 
+        /// Gets or sets the Source property. This dependency property
         /// indicates the source of the image to be displayed.
         /// </summary>
         public ImageSource Source
@@ -53,7 +50,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             set { SetValue(SourceProperty, value); }
         }
 
-        #endregion
+        #endregion Source
 
         #region Scale
 
@@ -66,7 +63,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                     new PropertyChangedCallback(RefreshTile)));
 
         /// <summary>
-        /// Gets or sets the Scale property. This dependency property 
+        /// Gets or sets the Scale property. This dependency property
         /// indicates the scaling to be applied to this tile.
         /// </summary>
         public double Scale
@@ -75,9 +72,9 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             set { SetValue(ScaleProperty, value); }
         }
 
-        #endregion
+        #endregion Scale
 
-        #endregion
+        #endregion Dependency Properties
 
         #region Private methods
 
@@ -107,7 +104,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             BeginAnimation(OpacityProperty, _opacityAnimation);
         }
 
-        #endregion
+        #endregion Private methods
 
         #region FrameworkElement overrides
 
@@ -123,6 +120,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             return _visual;
         }
 
-        #endregion
+        #endregion FrameworkElement overrides
     }
 }

@@ -6,7 +6,6 @@
 //#error LinkedListExtensions: http://blogs.msdn.com/b/kaelr/archive/2010/04/09/linkedlist-findnext-and-findprevious.aspx
 //#error Once you've downloaded those files, feel free to delete these messages.  Thanks!
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -92,7 +91,7 @@ namespace System.Windows.Controls
             set { SetValue(ApplyTransformProperty, value); }
         }
 
-        #endregion
+        #endregion ApplyTransformProperty
 
         #region ActualViewboxProperty
 
@@ -154,7 +153,7 @@ namespace System.Windows.Controls
             get { return (Rect)GetValue(ActualViewboxProperty); }
         }
 
-        #endregion
+        #endregion ActualViewboxProperty
 
         #region ViewboxProperty
 
@@ -171,7 +170,7 @@ namespace System.Windows.Controls
         private static bool IsViewboxValid(object value)
         {
             var viewbox = (Rect)value;
-            return viewbox.IsEmpty 
+            return viewbox.IsEmpty
                 || (viewbox.X.IsBetween(Double.MinValue, Double.MaxValue)
                 && viewbox.Y.IsBetween(Double.MinValue, Double.MaxValue)
                 && viewbox.Width.IsBetween(Double.Epsilon, Double.MaxValue)
@@ -208,7 +207,7 @@ namespace System.Windows.Controls
             set { SetValue(ViewboxProperty, value); }
         }
 
-        #endregion
+        #endregion ViewboxProperty
 
         #region StretchProperty
 
@@ -257,7 +256,7 @@ namespace System.Windows.Controls
             set { SetValue(StretchProperty, value); }
         }
 
-        #endregion
+        #endregion StretchProperty
 
         #region StretchDirectionProperty
 
@@ -305,7 +304,7 @@ namespace System.Windows.Controls
             set { SetValue(StretchDirectionProperty, value); }
         }
 
-        #endregion
+        #endregion StretchDirectionProperty
 
         #region OffsetProperty
 
@@ -403,7 +402,7 @@ namespace System.Windows.Controls
             set { SetValue(OffsetProperty, value); }
         }
 
-        #endregion
+        #endregion OffsetProperty
 
         #region ScaleProperty
 
@@ -517,7 +516,7 @@ namespace System.Windows.Controls
             set { SetValue(ScaleProperty, value); }
         }
 
-        #endregion
+        #endregion ScaleProperty
 
         #region RealizationLimitProperty
 
@@ -547,7 +546,7 @@ namespace System.Windows.Controls
             if (canvas != null)
             {
                 canvas.InvalidateReality();
-            }            
+            }
         }
 
         /// <summary>
@@ -563,7 +562,7 @@ namespace System.Windows.Controls
             set { SetValue(RealizationLimitProperty, value); }
         }
 
-        #endregion
+        #endregion RealizationLimitProperty
 
         #region RealizationRateProperty
 
@@ -611,7 +610,7 @@ namespace System.Windows.Controls
             set { SetValue(RealizationRateProperty, value); }
         }
 
-        #endregion
+        #endregion RealizationRateProperty
 
         #region Initialization
 
@@ -647,7 +646,7 @@ namespace System.Windows.Controls
             CoerceValue(RenderTransformProperty);
         }
 
-        #endregion
+        #endregion Initialization
 
         #region Spatial Item Management
 
@@ -931,7 +930,7 @@ namespace System.Windows.Controls
             }
         }
 
-        #endregion
+        #endregion Private SpatialIndex Implementation
 
         /// <summary>
         /// Two-dimentional spatial index of our data items.
@@ -1067,7 +1066,7 @@ namespace System.Windows.Controls
             RealizedItems = null;
             SpatialIndex = null;
             PrivateIndex = null;
-            
+
             if (IsVirtualizing && IsItemsHost && ItemsOwner != null)
             {
                 RealizedItems = new LinkedList<int>();
@@ -1107,12 +1106,12 @@ namespace System.Windows.Controls
             InvalidateExtent();
         }
 
-        #endregion
+        #endregion Spatial Item Management
 
         #region Virtualization
 
         /// <summary>
-        /// Performs realization and virtualization in batches based on the <see cref="RealizationRate"/>. 
+        /// Performs realization and virtualization in batches based on the <see cref="RealizationRate"/>.
         /// </summary>
         /// <param name="items">The current items being hosted by this panel.</param>
         /// <param name="state">The previous return value of this method.</param>
@@ -1228,7 +1227,7 @@ namespace System.Windows.Controls
             }
         }
 
-        #endregion
+        #endregion Virtualization
 
         #region Arrange Logic
 
@@ -1416,7 +1415,7 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Returns a clipping geometry that indicates the area that will be clipped if the <see cref="UIElement.ClipToBounds"/> property is set to <c>true</c>. 
+        /// Returns a clipping geometry that indicates the area that will be clipped if the <see cref="UIElement.ClipToBounds"/> property is set to <c>true</c>.
         /// </summary>
         /// <param name="layoutSlotSize">The available size of the element.</param>
         /// <returns>A <see cref="Geometry"/> that represents the area that is clipped if <see cref="UIElement.ClipToBounds"/> is <c>true</c>.</returns>
@@ -1426,7 +1425,7 @@ namespace System.Windows.Controls
             return ClipToBounds ? new RectangleGeometry(new Rect(RenderSize)) : null;
         }
 
-        #endregion
+        #endregion Arrange Logic
 
         #region Utility Methods
 
@@ -1510,7 +1509,7 @@ namespace System.Windows.Controls
             }
         }
 
-        #endregion
+        #endregion Utility Methods
 
         #region IScrollInfo Implementation
 
@@ -1727,6 +1726,6 @@ namespace System.Windows.Controls
             return rectangle;
         }
 
-        #endregion
+        #endregion IScrollInfo Implementation
     }
 }

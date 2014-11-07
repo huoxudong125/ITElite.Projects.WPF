@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 { /// <summary>
@@ -20,7 +15,9 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         }
 
         public Rect Rect { get; set; }
+
         public int MinLevel { get; set; }
+
         public int MaxLevel { get; set; }
     }
 }

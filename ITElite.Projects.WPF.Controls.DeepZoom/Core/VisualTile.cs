@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Media;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
@@ -51,12 +46,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void RaisePropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(name));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

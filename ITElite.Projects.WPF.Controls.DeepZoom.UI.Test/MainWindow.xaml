@@ -4,9 +4,9 @@
         xmlns:controls="clr-namespace:ITElite.Projects.WPF.Controls.DeepZoom.Controls;assembly=ITElite.Projects.WPF.Controls.DeepZoom"
         Title="Deep Zoom for WPF" Height="350" Width="525">
     <Border Margin="3">
-        <!-- 
+        <!--
         Some sample images:
-        
+
         http://cache.zoom.it/content/fmOv.dzi
         http://cache.zoom.it/content/12dd.dzi
         http://cache.zoom.it/content/IGDL.dzi
@@ -17,8 +17,8 @@
         http://gasi.ch/examples/2008/10/13/inside-deep-zoom/mont-saint-michel/silverlight/GeneratedImages/dzc_output.xml
         -->
 
-        <controls:MultiScaleImage 
+        <controls:MultiScaleImage
             Source="D:\workspace\Matrix\Matrix\Sources\TestData\SmallImages\Map.dzi"
-          Resolution="8.683e-5"/>
+          Resolution="8.683e-5" />
     </Border>
 </Window>

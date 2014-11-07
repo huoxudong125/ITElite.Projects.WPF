@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
 {
     /// <summary>
-    /// Used to translate mouse events into touch events, enabling a unified 
+    /// Used to translate mouse events into touch events, enabling a unified
     /// input processing pipeline.
     /// </summary>
     /// <remarks>This class originally comes from Blake.NUI - http://blakenui.codeplex.com</remarks>
@@ -22,7 +17,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
 
         public Point Position { get; set; }
 
-        #endregion
+        #endregion Class Members
 
         #region Public Static Methods
 
@@ -35,7 +30,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
             root.MouseLeave += MouseLeave;
         }
 
-        #endregion
+        #endregion Public Static Methods
 
         #region Private Static Methods
 
@@ -70,7 +65,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
             LostMouseCapture(sender, e);
         }
 
-        static void LostMouseCapture(object sender, MouseEventArgs e)
+        private static void LostMouseCapture(object sender, MouseEventArgs e)
         {
             if (device != null &&
                 device.IsActive)
@@ -82,12 +77,12 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
             }
         }
 
-        static void MouseLeave(object sender, MouseEventArgs e)
+        private static void MouseLeave(object sender, MouseEventArgs e)
         {
             LostMouseCapture(sender, e);
         }
 
-        #endregion
+        #endregion Private Static Methods
 
         #region Constructors
 
@@ -97,7 +92,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
             Position = new Point();
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Overridden methods
 
@@ -119,6 +114,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
             return new TouchPoint(this, point, rect, TouchAction.Move);
         }
 
-        #endregion
+        #endregion Overridden methods
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -14,8 +10,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
     {
         private Control _child;
 
-
-        public MultiValueScalebarAdorner(UIElement adornerElement,Control childControl)
+        public MultiValueScalebarAdorner(UIElement adornerElement, Control childControl)
             : base(adornerElement)
         {
             Child = childControl;
@@ -62,13 +57,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-
             _child.Arrange(new Rect(new Point(((FrameworkElement)AdornedElement).ActualWidth - finalSize.Width,
                 ((FrameworkElement)AdornedElement).ActualHeight - finalSize.Height), finalSize));
 
             return new Size(_child.ActualWidth, _child.ActualHeight);
         }
-
-      
     }
 }
