@@ -13,7 +13,7 @@ using ITElite.Projects.WPF.Controls.DeepZoom.Core;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 {
-    public class MultiValueScaleBar : Control, INotifyPropertyChanged
+    public class MultiValueScaleBar : Control
     {
         #region Private Properties
 
@@ -73,7 +73,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             //Create the metric scalebar and label.
             _metricScaleValue = new TextBlock()
             {
-                Text = "1000 km",
+                Text = "1 μm",
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Right
             };
 
@@ -117,12 +117,12 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
             double maxScaleBarWidth = 100;
 
-            string metricUnitName = "km";
+            string metricUnitName = "μm";
             double metricDistance = maxScaleBarWidth * metricResolution;
 
             if (metricDistance < 1)
             {
-                metricUnitName = "m";
+                metricUnitName = "nm";
                 metricDistance *= 1000;
                 metricResolution *= 1000;
             }
@@ -169,12 +169,5 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             set { _ContentPresenter.Content = value; }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void RaisePropertyChanged(string name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(name));
-        }
-    }
+       }
 }

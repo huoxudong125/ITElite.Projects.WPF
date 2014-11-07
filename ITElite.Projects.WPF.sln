@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Zoomab
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Controls.DeepZoom.UI.Test", "ITElite.Projects.WPF.Controls.DeepZoom.UI.Test\ITElite.Projects.WPF.Controls.DeepZoom.UI.Test.csproj", "{74375BDA-0AE8-4704-80CC-A3840B6BFB02}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{60BB7319-04A9-4C1A-AD37-74C3D3178BDF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C8E333A7-CC33-4389-938C-0DFACB91E6AE} = {63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}
+		{8C3CFBF2-1606-4D1F-A4A8-2BFD0CD51CE7} = {63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}
+		{74375BDA-0AE8-4704-80CC-A3840B6BFB02} = {60BB7319-04A9-4C1A-AD37-74C3D3178BDF}
 	EndGlobalSection
 EndGlobal

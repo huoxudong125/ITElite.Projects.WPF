@@ -19,6 +19,6 @@
 
         <controls:MultiScaleImage 
             Source="D:\workspace\Matrix\Matrix\Sources\TestData\SmallImages\Map.dzi"
-          Resolution="8.683e-6"/>
+          Resolution="8.683e-5"/>
     </Border>
 </Window>

@@ -44,9 +44,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="ZoomableCanvas">
-      <HintPath>..\Libraries\ZoomableCanvas.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\MultiScaleImage.cs" />
@@ -73,6 +70,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ITElite.Projects.WPF.ZoomableCanvas\ITElite.Projects.WPF.ZoomableCanvas.csproj">
+      <Project>{8c3cfbf2-1606-4d1f-a4a8-2bfd0cd51ce7}</Project>
+      <Name>ITElite.Projects.WPF.ZoomableCanvas</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
