@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using ITElite.Projects.WPF.Controls.DeepZoom.Controls;
 using ITElite.Projects.WPF.Controls.DeepZoom.Core;
+using ITElite.Projects.WPF.Controls.TextControl;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 {
@@ -22,7 +17,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         private readonly Rectangle _metricScaleBar;
 
-        private readonly TextBlock _metricScaleValue;
+        private readonly OutlineTextControl _metricScaleValue;
 
         private double _resolution;
         private Units _unit;
@@ -71,10 +66,16 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             grid.Margin = new System.Windows.Thickness(0, 0, 10, 30);
 
             //Create the metric scalebar and label.
-            _metricScaleValue = new TextBlock()
+            _metricScaleValue = new OutlineTextControl()
             {
                 Text = "1 μm",
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                Fill = Brushes.Black,
+                Stroke = Brushes.White,
+                StrokeThickness = 1,
+                FontSize = 18,
+                Font = new FontFamily("Bold"),
+                Bold = true
             };
 
             grid.Children.Add(_metricScaleValue);
@@ -86,7 +87,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
                 StrokeThickness = 1,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
                 Width = 200,
-                Height = 60,
+                Height = 10,
                 Margin = new System.Windows.Thickness(0, 20, 0, 0)
             };
 
@@ -99,7 +100,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             ////map.Children.Add(this);
 
             //Update the scale bar for the current map view.
-            UpdateScalebar(deepZoom.Resolution/deepZoom.Scale);
+            UpdateScalebar(deepZoom.Resolution / deepZoom.Scale);
 
             Content = grid;
         }
@@ -168,6 +169,5 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             get { return _ContentPresenter.Content; }
             set { _ContentPresenter.Content = value; }
         }
-
-       }
+    }
 }

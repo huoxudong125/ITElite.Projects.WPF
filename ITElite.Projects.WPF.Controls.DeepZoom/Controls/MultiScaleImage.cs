@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -43,10 +39,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         public MultiScaleImage()
         {
-            ScaleVisibility = Visibility.Visible;
-            Resolution = 0;
-            Unit=Units.Km;
-
             MouseTouchDevice.RegisterEvents(this);
             _levelChangeThrottle = new DispatcherTimer
             {
@@ -58,7 +50,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 _spatialSource.CurrentLevel = _desiredLevel;
                 _levelChangeThrottle.IsEnabled = false;
             };
-
         }
 
         public override void OnApplyTemplate()
@@ -99,15 +90,12 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 //    Content = "X",
                 //};
                 var scaleBar = new MultiValueScaleBar(this);
-                _multiValueScalebarAdorner = new MultiValueScalebarAdorner(this,scaleBar) ;
+                _multiValueScalebarAdorner = new MultiValueScalebarAdorner(this, scaleBar);
                 adornerLayer.Add(_multiValueScalebarAdorner);
             }
-
-            
         }
 
-
-        static AdornerLayer GetAdornerLayer(FrameworkElement subject)
+        private static AdornerLayer GetAdornerLayer(FrameworkElement subject)
         {
             AdornerLayer layer = null;
             do
@@ -174,18 +162,17 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                     new PropertyChangedCallback(OnSourceChanged)));
 
         public static readonly DependencyProperty ResolutionProperty = DependencyProperty.Register("Resolution"
-            , typeof (double), typeof (MultiScaleImage),
+            , typeof(double), typeof(MultiScaleImage),
             new PropertyMetadata(default(double), new PropertyChangedCallback(OnResolutionChanged)));
 
         public static readonly DependencyProperty UnitProperty = DependencyProperty.Register("Unit",
-            typeof (Units), typeof (MultiScaleImage),
+            typeof(Units), typeof(MultiScaleImage),
             new PropertyMetadata(default(Units), new PropertyChangedCallback(OnUnitChanged)));
 
         private static void OnUnitChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-           //TODO:
+            //TODO:
         }
-
 
         private static void OnResolutionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -194,13 +181,14 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         public double Resolution
         {
-            get { return (double) GetValue(ResolutionProperty); }
-            set { SetValue(ResolutionProperty,value);}
+            get { return (double)GetValue(ResolutionProperty); }
+            set { SetValue(ResolutionProperty, value); }
         }
 
-        public Units Unit {
-            get { return (Units) GetValue(UnitProperty); }
-            set { SetValue(UnitProperty,value);}
+        public Units Unit
+        {
+            get { return (Units)GetValue(UnitProperty); }
+            set { SetValue(UnitProperty, value); }
         }
 
         public double Scale
@@ -425,7 +413,5 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         public System.Windows.Visibility ScaleVisibility { get; set; }
 
         public event EventHandler<double> ViewChangeOnFrame;
-
-        public UIElementCollection Children { get; set; }
     }
 }
