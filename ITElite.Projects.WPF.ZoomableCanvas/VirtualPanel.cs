@@ -15,7 +15,7 @@ namespace System.Windows.Controls
         /// <summary>
         /// Identifies the <see cref="IsVirtualizing"/> property.
         /// </summary>
-        public static readonly DependencyProperty IsVirtualizingProperty = VirtualizingStackPanel.IsVirtualizingProperty.AddOwner(typeof(VirtualPanel), new FrameworkPropertyMetadata(VirtualizingStackPanel.IsVirtualizingProperty.DefaultMetadata.DefaultValue, OnIsVirtualizingChanged));
+        public static new readonly DependencyProperty IsVirtualizingProperty = VirtualizingStackPanel.IsVirtualizingProperty.AddOwner(typeof(VirtualPanel), new FrameworkPropertyMetadata(VirtualizingStackPanel.IsVirtualizingProperty.DefaultMetadata.DefaultValue, OnIsVirtualizingChanged));
 
         /// <summary>
         /// Handles the event that occurs when the value of the <see cref="IsVirtualizing"/> dependency property has changed.

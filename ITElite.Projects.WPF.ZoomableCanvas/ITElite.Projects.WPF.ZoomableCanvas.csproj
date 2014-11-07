@@ -7,8 +7,8 @@
     <ProjectGuid>{8C3CFBF2-1606-4D1F-A4A8-2BFD0CD51CE7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ITElite.Projects.WPF.ZoomableCanvas</RootNamespace>
-    <AssemblyName>ITElite.Projects.WPF.ZoomableCanvas</AssemblyName>
+    <RootNamespace>ITElite.Projects.WPF.Controls.ZoomableCanvas</RootNamespace>
+    <AssemblyName>ITElite.Projects.WPF.Controls.ZoomableCanvas</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
