@@ -10,3 +10,7 @@ http://msdn.microsoft.com/en-us/library/ms748273(v=vs.110).aspx
 
 Typography in WPF
 http://msdn.microsoft.com/en-us/library/ms742190.aspx
+
+
+Using ViewportOrigin and ViewportWidth in Deep Zoom
+http://blogs.msdn.com/b/silverlight_sdk/archive/2008/11/18/using-viewportorigin-and-viewportwidth-in-deep-zoom.aspx
