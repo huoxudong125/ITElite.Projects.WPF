@@ -59,6 +59,8 @@
     <Compile Include="Core\VisualTile.cs" />
     <Compile Include="OverLays\MultiValueScalebar.cs" />
     <Compile Include="OverLays\MultiValueScalebarAdorner.cs" />
+    <Compile Include="OverLays\OverViewer.cs" />
+    <Compile Include="OverLays\OverViewerAdorner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Touch\MouseTouchDevice.cs" />
   </ItemGroup>

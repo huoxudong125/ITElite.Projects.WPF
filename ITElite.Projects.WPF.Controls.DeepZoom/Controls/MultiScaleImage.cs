@@ -26,6 +26,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         private ZoomableCanvas _zoomableCanvas;
         private MultiScaleImageSpatialItemsSource _spatialSource;
         private MultiValueScalebarAdorner _multiValueScalebarAdorner;
+        private OverViewerAdorner _overViewAdorner;
         private double _originalScale;
         private int _desiredLevel;
         private readonly DispatcherTimer _levelChangeThrottle;
@@ -84,6 +85,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 {
                     adornerLayer.Remove(_multiValueScalebarAdorner);
                 }
+                if (_overViewAdorner != null)
+                {
+                    adornerLayer.Remove(_overViewAdorner);
+                }
                 //var scaleBar = new Button()
                 //{
                 //    HorizontalAlignment = HorizontalAlignment.Right,
@@ -92,18 +97,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 var scaleBar = new MultiValueScaleBar(this);
                 _multiValueScalebarAdorner = new MultiValueScalebarAdorner(this, scaleBar);
                 adornerLayer.Add(_multiValueScalebarAdorner);
-            }
-        }
 
-        private static AdornerLayer GetAdornerLayer(FrameworkElement subject)
-        {
-            AdornerLayer layer = null;
-            do
-            {
-                if ((layer = AdornerLayer.GetAdornerLayer(subject)) != null)
-                    break;
-            } while ((subject = subject.Parent as FrameworkElement) != null);
-            return layer;
+                var overViewer = new OverViewer(this);
+                _overViewAdorner = new OverViewerAdorner(this, overViewer);
+                adornerLayer.Add(_overViewAdorner);
+            }
         }
 
         #region Public methods
@@ -411,6 +409,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         #endregion Private helpers
 
         public System.Windows.Visibility ScaleVisibility { get; set; }
+
+        public ZoomableCanvas ZoomableCanvas { get { return _zoomableCanvas; } }
 
         public event EventHandler<double> ViewChangeOnFrame;
     }
