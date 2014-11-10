@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.IO.Dee
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.IO.DeepZoom.UnitTest", "ITElite.Projects.WPF.IO.DeepZoom.UnitTest\ITElite.Projects.WPF.IO.DeepZoom.UnitTest.csproj", "{33755530-9390-4C94-94A5-23CD859829A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Controls.ScrollViewThumbnail", "ITElite.Projects.WPF.Controls.ScrollViewThumbnail\ITElite.Projects.WPF.Controls.ScrollViewThumbnail.csproj", "{65F0F303-E2A0-4A4D-85E0-9CD363173640}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{33755530-9390-4C94-94A5-23CD859829A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33755530-9390-4C94-94A5-23CD859829A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33755530-9390-4C94-94A5-23CD859829A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65F0F303-E2A0-4A4D-85E0-9CD363173640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F0F303-E2A0-4A4D-85E0-9CD363173640}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F0F303-E2A0-4A4D-85E0-9CD363173640}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F0F303-E2A0-4A4D-85E0-9CD363173640}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +80,6 @@ Global
 		{11613EA3-9DAB-4343-88BE-B62501ECA815} = {60BB7319-04A9-4C1A-AD37-74C3D3178BDF}
 		{C0B5870C-1FCB-4D31-B3FB-BAEC88BC5DB0} = {7CD1EC20-14F7-46A7-9320-DA917098C7D0}
 		{33755530-9390-4C94-94A5-23CD859829A1} = {7CD1EC20-14F7-46A7-9320-DA917098C7D0}
+		{65F0F303-E2A0-4A4D-85E0-9CD363173640} = {63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}
 	EndGlobalSection
 EndGlobal

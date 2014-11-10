@@ -4,18 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{11613EA3-9DAB-4343-88BE-B62501ECA815}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <ProjectGuid>{65F0F303-E2A0-4A4D-85E0-9CD363173640}</ProjectGuid>
+    <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ITElite.Projects.WPF.Controls.Test</RootNamespace>
-    <AssemblyName>ITElite.Projects.WPF.Controls.Test</AssemblyName>
+    <RootNamespace>ITElite.Projects.WPF.Controls.ScrollViewThumbnail</RootNamespace>
+    <AssemblyName>ITElite.Projects.WPF.Controls.ScrollViewThumbnail</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,7 +24,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -49,20 +47,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="ScrollViewerThumbnail.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -91,21 +80,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ITElite.Projects.WPF.Controls.OutLineTextControl\ITElite.Projects.WPF.Controls.TextControl.csproj">
-      <Project>{b2f1849c-324d-4ad8-ab6f-cdc14e199228}</Project>
-      <Name>ITElite.Projects.WPF.Controls.TextControl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ITElite.Projects.WPF.Controls.ScrollViewThumbnail\ITElite.Projects.WPF.Controls.ScrollViewThumbnail.csproj">
-      <Project>{65f0f303-e2a0-4a4d-85e0-9cd363173640}</Project>
-      <Name>ITElite.Projects.WPF.Controls.ScrollViewThumbnail</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ITElite.Projects.WPF.ZoomableCanvas\ITElite.Projects.WPF.Controls.ZoomableCanvas.csproj">
-      <Project>{8c3cfbf2-1606-4d1f-a4a8-2bfd0cd51ce7}</Project>
-      <Name>ITElite.Projects.WPF.Controls.ZoomableCanvas</Name>
-    </ProjectReference>
+    <Resource Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
