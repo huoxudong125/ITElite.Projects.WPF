@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -55,7 +57,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             DependencyProperty.Register("HighlightFill",
                 typeof (Brush),
                 typeof (OverViewer),
-                new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(128, 255, 255, 0))));
+                new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(128, 255, 0, 0))));
 
         #endregion public Property
 
@@ -73,10 +75,17 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         private void partHighlight_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            Console.WriteLine("Begin MultiScaleImage.ZoomableCanvas:{0},{1}", MultiScaleImage.ZoomableCanvas.ActualViewbox.X
+                , MultiScaleImage.ZoomableCanvas.ActualViewbox.Y);
+
             MultiScaleImage.ZoomableCanvas.Offset =
                 new Point(
-                    MultiScaleImage.ZoomableCanvas.Offset.X + MultiScaleImage.ZoomableCanvas.Scale*e.HorizontalChange
-                    , MultiScaleImage.ZoomableCanvas.Offset.Y + MultiScaleImage.ZoomableCanvas.Scale*e.VerticalChange);
+                    MultiScaleImage.ZoomableCanvas.ActualViewbox.X + e.HorizontalChange
+                    , MultiScaleImage.ZoomableCanvas.ActualViewbox.Y + e.VerticalChange);
+
+            Thread.Sleep(500);
+            Console.WriteLine("End MultiScaleImage.ZoomableCanvas:{0},{1}", MultiScaleImage.ZoomableCanvas.ActualViewbox.X
+                , MultiScaleImage.ZoomableCanvas.ActualViewbox.Y);
         }
 
         #endregion protected override

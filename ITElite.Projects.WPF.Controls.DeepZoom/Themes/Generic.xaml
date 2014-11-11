@@ -30,34 +30,36 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type overLays:OverViewer}">
-                    <Viewbox DataContext="{TemplateBinding MultiScaleImage}" Stretch="Uniform">
-                        <Grid>
-                            <Rectangle
-                                    Width="{Binding ZoomableCanvas.ActualViewBox.ActualWidth}"
-                                    Height="{Binding ZoomableCanvas.ActualViewBox.ActualHeight}">
-                                <Rectangle.Fill>
-                                    <VisualBrush Visual="{Binding ZoomableCanvas}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <Thumb Name="PART_Highlight"
+                    <Border BorderBrush="DarkBlue" BorderThickness="1">
+                        <Viewbox DataContext="{TemplateBinding MultiScaleImage}" Stretch="Uniform">
+                            <Grid>
+                                <Rectangle
+                                    Width="{Binding ZoomableCanvas.Extent.Width}"
+                                    Height="{Binding ZoomableCanvas.Extent.Height}">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{Binding ZoomableCanvas}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Thumb Name="PART_Highlight"
                                     Background="{TemplateBinding HighlightFill}"
-                                    Width="{Binding ActualWidth}"
-                                    Height="{Binding ActualHeight}"
+                                    Width="{Binding ZoomableCanvas.ActualViewbox.Width}"
+                                    Height="{Binding ZoomableCanvas.ActualViewbox.Height}"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top">
-                                <Thumb.RenderTransform>
-                                    <TranslateTransform
-                                        X="{Binding ZoomableCanvas.Offset.X}"
-                                        Y="{Binding ZoomableCanvas.Offset.Y}" />
-                                </Thumb.RenderTransform>
-                                <Thumb.Template>
-                                    <ControlTemplate TargetType="Thumb">
-                                        <Border Background="{TemplateBinding Background}" />
-                                    </ControlTemplate>
-                                </Thumb.Template>
-                            </Thumb>
-                        </Grid>
-                    </Viewbox>
+                                    <Thumb.RenderTransform>
+                                        <TranslateTransform
+                                        X="{Binding ZoomableCanvas.ActualViewbox.X}"
+                                        Y="{Binding ZoomableCanvas.ActualViewbox.Y}" />
+                                    </Thumb.RenderTransform>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border Background="{TemplateBinding Background}" />
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Grid>
+                        </Viewbox>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
