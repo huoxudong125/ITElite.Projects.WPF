@@ -36,6 +36,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -61,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AutoCompleteProviders\BingSuggestionProvider.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -94,6 +97,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ITElite.Projects.WPF.Controls.AutoComplete\ITElite.Projects.WPF.Controls.AutoComplete.csproj">
+      <Project>{682db6eb-0263-4d78-83e5-4373de524cde}</Project>
+      <Name>ITElite.Projects.WPF.Controls.AutoComplete</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ITElite.Projects.WPF.Controls.OutLineTextControl\ITElite.Projects.WPF.Controls.TextControl.csproj">
       <Project>{b2f1849c-324d-4ad8-ab6f-cdc14e199228}</Project>
       <Name>ITElite.Projects.WPF.Controls.TextControl</Name>

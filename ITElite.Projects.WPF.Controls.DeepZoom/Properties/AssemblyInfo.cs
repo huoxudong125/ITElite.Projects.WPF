@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 using System.Windows;
+using System.Windows.Markup;
 
 [assembly: AssemblyTitle("ITElite.Projects.WPF.Controls.DeepZoom")]
 [assembly: AssemblyDescription("")]
@@ -26,6 +27,11 @@ using System.Windows;
     ResourceDictionaryLocation.None,
     ResourceDictionaryLocation.SourceAssembly
 )]
+
+
+[assembly: XmlnsDefinition("http://www.itelite.cn/wpf/DeepZoom/", "ITElite.Projects.WPF.Controls.DeepZoom.Controls")]
+[assembly: XmlnsDefinition("http://www.itelite.cn/wpf/DeepZoom/", "ITElite.Projects.WPF.Controls.DeepZoom.OverLays")]
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version

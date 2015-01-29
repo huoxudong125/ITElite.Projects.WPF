@@ -30,6 +30,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.IO.Dee
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Controls.ScrollViewThumbnail", "ITElite.Projects.WPF.Controls.ScrollViewThumbnail\ITElite.Projects.WPF.Controls.ScrollViewThumbnail.csproj", "{65F0F303-E2A0-4A4D-85E0-9CD363173640}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Converters", "Converters", "{55C87FAF-4A29-48E5-B213-826C7220077A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Converters", "ITElite.Projects.WPF.Converters\ITElite.Projects.WPF.Converters.csproj", "{7EBD0053-F19D-4CF2-9444-875436A670A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Controls.AutoComplete", "ITElite.Projects.WPF.Controls.AutoComplete\ITElite.Projects.WPF.Controls.AutoComplete.csproj", "{682DB6EB-0263-4D78-83E5-4373DE524CDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +74,14 @@ Global
 		{65F0F303-E2A0-4A4D-85E0-9CD363173640}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65F0F303-E2A0-4A4D-85E0-9CD363173640}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65F0F303-E2A0-4A4D-85E0-9CD363173640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EBD0053-F19D-4CF2-9444-875436A670A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EBD0053-F19D-4CF2-9444-875436A670A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EBD0053-F19D-4CF2-9444-875436A670A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EBD0053-F19D-4CF2-9444-875436A670A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{682DB6EB-0263-4D78-83E5-4373DE524CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{682DB6EB-0263-4D78-83E5-4373DE524CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{682DB6EB-0263-4D78-83E5-4373DE524CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{682DB6EB-0263-4D78-83E5-4373DE524CDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,5 +95,7 @@ Global
 		{C0B5870C-1FCB-4D31-B3FB-BAEC88BC5DB0} = {7CD1EC20-14F7-46A7-9320-DA917098C7D0}
 		{33755530-9390-4C94-94A5-23CD859829A1} = {7CD1EC20-14F7-46A7-9320-DA917098C7D0}
 		{65F0F303-E2A0-4A4D-85E0-9CD363173640} = {63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}
+		{7EBD0053-F19D-4CF2-9444-875436A670A4} = {55C87FAF-4A29-48E5-B213-826C7220077A}
+		{682DB6EB-0263-4D78-83E5-4373DE524CDE} = {63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}
 	EndGlobalSection
 EndGlobal

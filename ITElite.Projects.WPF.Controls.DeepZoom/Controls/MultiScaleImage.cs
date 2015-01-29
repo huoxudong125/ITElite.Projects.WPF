@@ -159,41 +159,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnSourceChanged)));
 
-        public static readonly DependencyProperty ResolutionProperty = DependencyProperty.Register("Resolution"
-            , typeof(double), typeof(MultiScaleImage),
-            new PropertyMetadata(default(double), new PropertyChangedCallback(OnResolutionChanged)));
-
-        public static readonly DependencyProperty UnitProperty = DependencyProperty.Register("Unit",
-            typeof(Units), typeof(MultiScaleImage),
-            new PropertyMetadata(default(Units), new PropertyChangedCallback(OnUnitChanged)));
-
-        private static void OnUnitChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            //TODO:
-        }
-
-        private static void OnResolutionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            //TODO:
-        }
-
-        public double Resolution
-        {
-            get { return (double)GetValue(ResolutionProperty); }
-            set { SetValue(ResolutionProperty, value); }
-        }
-
-        public Units Unit
-        {
-            get { return (Units)GetValue(UnitProperty); }
-            set { SetValue(UnitProperty, value); }
-        }
-
-        public double Scale
-        {
-            get { return _zoomableCanvas.Scale; }
-        }
-
         /// <summary>
         /// Gets or sets the Source property. This dependency property
         /// indicates the tile source for this MultiScaleImage.
@@ -237,6 +202,44 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         #endregion Source
 
+        #region Resolution
+
+        public static readonly DependencyProperty ResolutionProperty = DependencyProperty.Register("Resolution"
+           , typeof(double), typeof(MultiScaleImage),
+           new PropertyMetadata(default(double), new PropertyChangedCallback(OnResolutionChanged)));
+
+        private static void OnResolutionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //TODO:
+        }
+
+        public double Resolution
+        {
+            get { return (double)GetValue(ResolutionProperty); }
+            set { SetValue(ResolutionProperty, value); }
+        }
+
+        #endregion Resolution
+
+        #region Unit
+
+        public static readonly DependencyProperty UnitProperty = DependencyProperty.Register("Unit",
+        typeof(Units), typeof(MultiScaleImage),
+        new PropertyMetadata(default(Units), new PropertyChangedCallback(OnUnitChanged)));
+
+        private static void OnUnitChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //TODO:
+        }
+
+        public Units Unit
+        {
+            get { return (Units)GetValue(UnitProperty); }
+            set { SetValue(UnitProperty, value); }
+        }
+
+        #endregion Unit
+
         #region AspectRatio
 
         /// <summary>
@@ -273,6 +276,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         #endregion AspectRatio
 
         #endregion Dependency Properties
+
+        public double Scale
+        {
+            get { return _zoomableCanvas.Scale; }
+        }
 
         #region Overriden Input Event Handlers
 
@@ -408,7 +416,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         #endregion Private helpers
 
-        public System.Windows.Visibility ScaleVisibility { get; set; }
+        public Visibility ScaleVisibility { get; set; }
 
         public ZoomableCanvas ZoomableCanvas { get { return _zoomableCanvas; } }
 

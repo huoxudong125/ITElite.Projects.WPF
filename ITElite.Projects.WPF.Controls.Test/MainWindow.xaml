@@ -66,7 +66,9 @@
                                                    ScrollViewer="{Binding ElementName=scrollViewer}"
       HorizontalAlignment="Center" VerticalAlignment="Stretch"
         Margin="10" />
-
+        <Border BorderThickness="1" BorderBrush="Black" Grid.Row="1" Grid.Column="1">
+       
+        </Border>
 
         <controls:ZoomableCanvas Grid.Row="2">
             <Rectangle Canvas.Top="10" Canvas.Left="20"

@@ -31,3 +31,5 @@ Localization - WPF Globalization and Localization Overview http://msdn.microsoft
 In This Section
 Application Samples (WPF) http://msdn.microsoft.com/en-us/library/ms771542.aspx
 Technology Samples (WPF) http://msdn.microsoft.com/en-us/library/ms771290.aspx
+
+How 

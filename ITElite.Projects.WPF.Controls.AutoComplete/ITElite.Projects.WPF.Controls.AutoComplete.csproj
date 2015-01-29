@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B2F1849C-324D-4AD8-AB6F-CDC14E199228}</ProjectGuid>
+    <ProjectGuid>{682DB6EB-0263-4D78-83E5-4373DE524CDE}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ITElite.Projects.WPF.Controls.TextControl</RootNamespace>
-    <AssemblyName>ITElite.Projects.WPF.Controls.TextControl</AssemblyName>
+    <RootNamespace>ITElite.Projects.WPF.Controls.AutoComplete</RootNamespace>
+    <AssemblyName>ITElite.Projects.WPF.Controls.AutoComplete</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -48,9 +48,29 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OutlineTextControl.cs">
+    <Compile Include="Providers\FileSysDataProvider.cs" />
+    <Compile Include="Providers\FileSysPathDataProvider.cs" />
+    <Compile Include="Providers\IAutoAppendDataProvider.cs" />
+    <Compile Include="Providers\IAutoCompleteDataProvider.cs" />
+    <Compile Include="Providers\RegistryDataProvider.cs" />
+    <Compile Include="Providers\SimpleStaticDataProvider.cs" />
+    <Compile Include="Providers\UrlHistoryDataProvider.cs" />
+    <Page Include="Resources\Resources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="AutoCompleteComboBox.cs" />
+    <Compile Include="AutoCompleteTextBox .cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\AutoCompleteManager.cs" />
+    <Compile Include="Core\IWndProcHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -73,27 +93,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Themes\Generic.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\tag.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ITElite.Projects.WPF.Controls.AutoComplete\ITElite.Projects.WPF.Controls.AutoComplete.csproj">
-      <Project>{682db6eb-0263-4d78-83e5-4373de524cde}</Project>
-      <Name>ITElite.Projects.WPF.Controls.AutoComplete</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Token\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

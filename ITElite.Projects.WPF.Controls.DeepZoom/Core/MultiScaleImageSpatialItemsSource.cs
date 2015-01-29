@@ -134,11 +134,12 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         private BitmapSource CacheTile(string tileId, BitmapSource source)
         {
-            if (_tileCache.ContainsKey(tileId))
-                return _tileCache[tileId];
-
             lock (CacheLock)
             {
+                if (_tileCache.ContainsKey(tileId))
+                return _tileCache[tileId];
+
+            
                 if (_cachedTiles.Count >= CacheCapacity)
                 {
                     _tileCache.Remove(_cachedTiles.Dequeue());

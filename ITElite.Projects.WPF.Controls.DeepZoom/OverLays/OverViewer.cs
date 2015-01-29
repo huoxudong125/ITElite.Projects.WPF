@@ -80,8 +80,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
             MultiScaleImage.ZoomableCanvas.Offset =
                 new Point(
-                    MultiScaleImage.ZoomableCanvas.ActualViewbox.X + e.HorizontalChange
-                    , MultiScaleImage.ZoomableCanvas.ActualViewbox.Y + e.VerticalChange);
+                    MultiScaleImage.ZoomableCanvas.Offset.X + e.HorizontalChange
+                    , MultiScaleImage.ZoomableCanvas.Offset.Y + e.VerticalChange);
 
             Thread.Sleep(500);
             Console.WriteLine("End MultiScaleImage.ZoomableCanvas:{0},{1}", MultiScaleImage.ZoomableCanvas.ActualViewbox.X

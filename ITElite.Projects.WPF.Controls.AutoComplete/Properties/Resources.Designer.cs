@@ -8,8 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ITElite.Projects.WPF.Controls.TextControl.Properties {
-    using System;
+namespace ITElite.Projects.WPF.Controls.AutoComplete.Properties {
     
     
     /// <summary>
@@ -38,8 +37,8 @@ namespace ITElite.Projects.WPF.Controls.TextControl.Properties {
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
-                if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ITElite.Projects.WPF.Controls.TextControl.Properties.Resources", typeof(Resources).Assembly);
+                if ((resourceMan == null)) {
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ITElite.Projects.WPF.Controls.AutoComplete.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,16 +56,6 @@ namespace ITElite.Projects.WPF.Controls.TextControl.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap tag {
-            get {
-                object obj = ResourceManager.GetObject("tag", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
