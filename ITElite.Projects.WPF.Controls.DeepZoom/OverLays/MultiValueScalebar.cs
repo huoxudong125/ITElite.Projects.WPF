@@ -118,12 +118,24 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
             double maxScaleBarWidth = 100;
 
-            string metricUnitName = "μm";
+            string metricUnitName = "m";
             double metricDistance = maxScaleBarWidth * metricResolution;
 
-            if (metricDistance < 1)
+            if (metricDistance < 1e-6)
             {
                 metricUnitName = "nm";
+                metricDistance *= 1e9;
+                metricResolution *= 1e9;
+            }
+            else if (metricDistance < 1e-3)
+            {
+                metricUnitName = "μm";
+                metricDistance *= 1e6;
+                metricResolution *= 1e6;
+            }
+            else if (metricDistance < 1)
+            {
+                metricUnitName = "mm";
                 metricDistance *= 1000;
                 metricResolution *= 1000;
             }
