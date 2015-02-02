@@ -18,8 +18,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
     [TemplatePart(Name = "PART_ItemsControl", Type = typeof(ItemsControl))]
     public class MultiScaleImage : Control
     {
-        private const int ScaleAnimationRelativeDuration = 400;
         private const double MinScaleRelativeToMinSize = 0.8;
+        private const double MaxScaleRelativeToMaxSize = 1.2;
+
+        private const int ScaleAnimationRelativeDuration = 400;
         private const int ThrottleIntervalMilliseconds = 200;
 
         private ItemsControl _itemsControl;
@@ -30,6 +32,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         private double _originalScale;
         private int _desiredLevel;
         private readonly DispatcherTimer _levelChangeThrottle;
+
+        #region .octor
 
         // for apply the template
         static MultiScaleImage()
@@ -52,6 +56,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 _levelChangeThrottle.IsEnabled = false;
             };
         }
+
+        #endregion .octor
 
         public override void OnApplyTemplate()
         {
@@ -89,11 +95,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 {
                     adornerLayer.Remove(_overViewAdorner);
                 }
-                //var scaleBar = new Button()
-                //{
-                //    HorizontalAlignment = HorizontalAlignment.Right,
-                //    Content = "X",
-                //};
+
                 var scaleBar = new MultiValueScaleBar(this);
                 _multiValueScalebarAdorner = new MultiValueScalebarAdorner(this, scaleBar);
                 adornerLayer.Add(_multiValueScalebarAdorner);
@@ -205,8 +207,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         #region Resolution
 
         public static readonly DependencyProperty ResolutionProperty = DependencyProperty.Register("Resolution"
-           , typeof(double), typeof(MultiScaleImage),
-           new PropertyMetadata(default(double), new PropertyChangedCallback(OnResolutionChanged)));
+            , typeof(double), typeof(MultiScaleImage),
+            new PropertyMetadata(default(double), new PropertyChangedCallback(OnResolutionChanged)));
 
         private static void OnResolutionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -224,8 +226,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         #region Unit
 
         public static readonly DependencyProperty UnitProperty = DependencyProperty.Register("Unit",
-        typeof(Units), typeof(MultiScaleImage),
-        new PropertyMetadata(default(Units), new PropertyChangedCallback(OnUnitChanged)));
+            typeof(Units), typeof(MultiScaleImage),
+            new PropertyMetadata(default(Units), new PropertyChangedCallback(OnUnitChanged)));
 
         private static void OnUnitChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -251,8 +253,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         public static readonly DependencyProperty AspectRatioProperty
             = AspectRatioPropertyKey.DependencyProperty;
-
-        private double MaxScaleRelativeToMaxSize;
 
         /// <summary>
         /// Gets the aspect ratio of the image used as the source of the MultiScaleImage.
@@ -299,7 +299,17 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             var scale = e.DeltaManipulation.Scale.X;
             ScaleCanvas(scale, e.ManipulationOrigin);
 
-            _zoomableCanvas.Offset -= e.DeltaManipulation.Translation;
+            var tempOffset = _zoomableCanvas.Offset - e.DeltaManipulation.Translation;
+            var tempImageWidth = Source.ImageSize.Width * oldScale;
+            var tempImageHeight = Source.ImageSize.Height * oldScale;
+
+            if (tempOffset.X < tempImageWidth - 10 &&
+                tempOffset.Y < tempImageHeight - 10 &&
+                tempOffset.X > -(_itemsControl.ActualWidth - 10) &&
+                tempOffset.Y > -(_itemsControl.ActualHeight - 10))
+            {
+                _zoomableCanvas.Offset -= e.DeltaManipulation.Translation;
+            }
             e.Handled = true;
         }
 
@@ -356,10 +366,20 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
             if (scale <= 0) return;
 
+            var tempOffset = _zoomableCanvas.Offset;
+            var tempImageWidth = Source.ImageSize.Width * scale;
+            var tempImageHeight = Source.ImageSize.Height * scale;
+
+            if (!(((tempOffset.X >= 0 && tempImageWidth - tempOffset.X > center.X)
+                 || (tempOffset.X < 0 && -tempOffset.X < center.X && center.X < tempImageWidth - tempOffset.X))
+                && ((tempOffset.Y >= 0 && tempImageHeight - tempOffset.Y > center.Y)
+                    || (tempOffset.Y < 0 && -tempOffset.Y < center.Y && center.Y < tempImageHeight - tempOffset.Y))
+                ))
+                return;
+
             // minimum size = 80% of size where the whole image is visible
             // maximum size = Max(120% of full resolution of the image, 120% of original scale)
 
-            MaxScaleRelativeToMaxSize = 1.2;
             relativeScale = relativeScale.Clamp(
                 MinScaleRelativeToMinSize * _originalScale / scale,
                 Math.Max(MaxScaleRelativeToMaxSize, MaxScaleRelativeToMaxSize * _originalScale) / scale);
@@ -418,7 +438,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         public Visibility ScaleVisibility { get; set; }
 
-        public ZoomableCanvas ZoomableCanvas { get { return _zoomableCanvas; } }
+        public ZoomableCanvas ZoomableCanvas
+        {
+            get { return _zoomableCanvas; }
+        }
 
         public event EventHandler<double> ViewChangeOnFrame;
     }
