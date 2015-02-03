@@ -86,25 +86,31 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 _zoomableCanvas.RealizationRate = 10;
                 InitializeCanvas();
 
-                var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-                if (_multiValueScalebarAdorner != null)
-                {
-                    adornerLayer.Remove(_multiValueScalebarAdorner);
-                }
-                if (_overViewAdorner != null)
-                {
-                    adornerLayer.Remove(_overViewAdorner);
-                }
-
-                var scaleBar = new MultiValueScaleBar(this);
-                _multiValueScalebarAdorner = new MultiValueScalebarAdorner(this, scaleBar);
-                adornerLayer.Add(_multiValueScalebarAdorner);
-
-                var overViewer = new OverViewer(this);
-                _overViewAdorner = new OverViewerAdorner(this, overViewer);
-                adornerLayer.Add(_overViewAdorner);
+                AddAdorners();
             }
         }
+
+        private void AddAdorners()
+        {
+            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+            if (_multiValueScalebarAdorner != null)
+            {
+                adornerLayer.Remove(_multiValueScalebarAdorner);
+            }
+            if (_overViewAdorner != null)
+            {
+                adornerLayer.Remove(_overViewAdorner);
+            }
+
+            var scaleBar = new MultiValueScaleBar(this);
+            _multiValueScalebarAdorner = new MultiValueScalebarAdorner(this, scaleBar);
+            adornerLayer.Add(_multiValueScalebarAdorner);
+
+            var overViewer = new OverViewer(this);
+            _overViewAdorner = new OverViewerAdorner(this, overViewer);
+            adornerLayer.Add(_overViewAdorner);
+        }
+
 
         #region Public methods
 
@@ -199,7 +205,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 _itemsControl.ItemsSource = _spatialSource;
 
             if (_zoomableCanvas != null)
+            {
                 InitializeCanvas();
+                AddAdorners();
+            }
         }
 
         #endregion Source
@@ -299,9 +308,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             var scale = e.DeltaManipulation.Scale.X;
             ScaleCanvas(scale, e.ManipulationOrigin);
 
+            //limit the move scale
             var tempOffset = _zoomableCanvas.Offset - e.DeltaManipulation.Translation;
             var tempImageWidth = Source.ImageSize.Width * oldScale;
             var tempImageHeight = Source.ImageSize.Height * oldScale;
+
 
             if (tempOffset.X < tempImageWidth - 10 &&
                 tempOffset.Y < tempImageHeight - 10 &&
@@ -366,10 +377,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
             if (scale <= 0) return;
 
+            //limit the zoom scale.
             var tempOffset = _zoomableCanvas.Offset;
             var tempImageWidth = Source.ImageSize.Width * scale;
             var tempImageHeight = Source.ImageSize.Height * scale;
-
+            
             if (!(((tempOffset.X >= 0 && tempImageWidth - tempOffset.X > center.X)
                  || (tempOffset.X < 0 && -tempOffset.X < center.X && center.X < tempImageWidth - tempOffset.X))
                 && ((tempOffset.Y >= 0 && tempImageHeight - tempOffset.Y > center.Y)
