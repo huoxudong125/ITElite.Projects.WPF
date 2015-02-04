@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ITElite.Projects.WPF.Controls.DeepZoom.Core;
+using ITElite.Projects.WPF.Controls.DeepZoom.OverLays;
+using ITElite.Projects.WPF.Controls.DeepZoom.Touch;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -6,9 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using ITElite.Projects.WPF.Controls.DeepZoom.Core;
-using ITElite.Projects.WPF.Controls.DeepZoom.OverLays;
-using ITElite.Projects.WPF.Controls.DeepZoom.Touch;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 {
@@ -110,7 +110,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             _overViewAdorner = new OverViewerAdorner(this, overViewer);
             adornerLayer.Add(_overViewAdorner);
         }
-
 
         #region Public methods
 
@@ -313,13 +312,32 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             var tempImageWidth = Source.ImageSize.Width * oldScale;
             var tempImageHeight = Source.ImageSize.Height * oldScale;
 
+            if ((tempImageWidth > _itemsControl.ActualWidth &&
+                ((tempOffset.X > 0 && (tempOffset.X < tempImageWidth - _itemsControl.ActualWidth * 0.9 || _zoomableCanvas.Offset.X > tempOffset.X))
+                || (tempOffset.X <= 0 && (tempOffset.X > -_itemsControl.ActualWidth * 0.1 || _zoomableCanvas.Offset.X < tempOffset.X))))
 
-            if (tempOffset.X < tempImageWidth - 10 &&
-                tempOffset.Y < tempImageHeight - 10 &&
-                tempOffset.X > -(_itemsControl.ActualWidth - 10) &&
-                tempOffset.Y > -(_itemsControl.ActualHeight - 10))
+                || (tempImageWidth <= _itemsControl.ActualWidth &&
+                (tempOffset.X < 0 && tempOffset.X > (tempImageWidth - _itemsControl.ActualWidth)
+                || (_zoomableCanvas.Offset.X > 0 && _zoomableCanvas.Offset.X > tempOffset.X)
+                || ((_zoomableCanvas.Offset.X < (tempImageWidth - _itemsControl.ActualWidth))//zoom out it at side.
+                && _zoomableCanvas.Offset.X < tempOffset.X)))
+                )
             {
-                _zoomableCanvas.Offset -= e.DeltaManipulation.Translation;
+                _zoomableCanvas.Offset -= new Vector(e.DeltaManipulation.Translation.X, 0);
+            }
+
+            if ((tempImageHeight > _itemsControl.ActualHeight &&
+                ((tempOffset.Y > 0 && (tempOffset.Y < tempImageHeight - _itemsControl.ActualHeight * 0.9||_zoomableCanvas.Offset.Y>tempOffset.Y))
+                || (tempOffset.Y <= 0 && (tempOffset.Y > -_itemsControl.ActualHeight * 0.1||_zoomableCanvas.Offset.Y<tempOffset.Y))))
+
+                || (tempImageHeight <= _itemsControl.ActualHeight &&
+                (tempOffset.Y < 0 && tempOffset.Y > (tempImageHeight - _itemsControl.ActualHeight)
+                || (_zoomableCanvas.Offset.Y > 0 && _zoomableCanvas.Offset.Y > tempOffset.Y)
+                || (_zoomableCanvas.Offset.Y < (tempImageHeight - _itemsControl.ActualHeight) &&
+                   _zoomableCanvas.Offset.Y < tempOffset.Y)
+                )))
+            {
+                _zoomableCanvas.Offset -= new Vector(0, e.DeltaManipulation.Translation.Y);
             }
             e.Handled = true;
         }
@@ -381,7 +399,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             var tempOffset = _zoomableCanvas.Offset;
             var tempImageWidth = Source.ImageSize.Width * scale;
             var tempImageHeight = Source.ImageSize.Height * scale;
-            
+
             if (!(((tempOffset.X >= 0 && tempImageWidth - tempOffset.X > center.X)
                  || (tempOffset.X < 0 && -tempOffset.X < center.X && center.X < tempImageWidth - tempOffset.X))
                 && ((tempOffset.Y >= 0 && tempImageHeight - tempOffset.Y > center.Y)
