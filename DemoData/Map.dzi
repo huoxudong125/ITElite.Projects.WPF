@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Image TileSize="256" Overlap="1" Format="jpg">
-  <Size Width="16308" Height="7101" />
-  <DisplayRects>
-    <DisplayRect MinLevel="1" MaxLevel="14">
-      <Rect X="0" Y="0" Width="16308" Height="7101" />
-    </DisplayRect>
-  </DisplayRects>
-</Image>
