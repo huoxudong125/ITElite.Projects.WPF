@@ -92,7 +92,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         private void AddAdorners()
         {
-            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+              var adornerLayer = AdornerLayer.GetAdornerLayer(_itemsControl);
             if (_multiValueScalebarAdorner != null)
             {
                 adornerLayer.Remove(_multiValueScalebarAdorner);
@@ -103,11 +103,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             }
 
             var scaleBar = new MultiValueScaleBar(this);
-            _multiValueScalebarAdorner = new MultiValueScalebarAdorner(this, scaleBar);
+            _multiValueScalebarAdorner = new MultiValueScalebarAdorner(_itemsControl, scaleBar);
             adornerLayer.Add(_multiValueScalebarAdorner);
 
-            var overViewer = new OverViewer(this);
-            _overViewAdorner = new OverViewerAdorner(this, overViewer);
+            _overViewer = new OverViewer(this);
+            _overViewAdorner = new OverViewerAdorner(_itemsControl, _overViewer);
             adornerLayer.Add(_overViewAdorner);
         }
 
