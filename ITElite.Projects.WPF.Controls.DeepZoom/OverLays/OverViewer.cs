@@ -22,8 +22,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
         {
             MultiScaleImage = (MultiScaleImage) deepZoom;
             MultiScaleImage.ViewChangeOnFrame += MultiScaleImage_ViewChangeOnFrame;
-            this.Width = 150;
-            this.Height = 150;
+            this.Height = 100; 
+            this.Width = Height*MultiScaleImage.AspectRatio;
             this.Margin = new Thickness(10, 0, 0, 30);
         }
 
