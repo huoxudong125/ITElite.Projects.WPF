@@ -7,20 +7,22 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:MultiScaleImage}">
-                    <ItemsControl x:Name="PART_ItemsControl" Background="Transparent" ClipToBounds="True">
-                        <ItemsControl.ItemContainerStyle>
-                            <Style TargetType="ContentPresenter">
-                                <Setter Property="Canvas.Top" Value="{Binding Top}" />
-                                <Setter Property="Canvas.Left" Value="{Binding Left}" />
-                                <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}" />
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <local:TileHost Source="{Binding Source}" Scale="{Binding Scale}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <AdornerDecorator>
+                        <ItemsControl x:Name="PART_ItemsControl" Background="Transparent" ClipToBounds="True">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="Canvas.Top" Value="{Binding Top}" />
+                                    <Setter Property="Canvas.Left" Value="{Binding Left}" />
+                                    <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <local:TileHost Source="{Binding Source}" Scale="{Binding Scale}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </AdornerDecorator>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
