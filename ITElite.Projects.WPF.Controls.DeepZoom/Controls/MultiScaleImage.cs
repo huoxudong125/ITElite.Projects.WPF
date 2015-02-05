@@ -29,6 +29,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         private MultiScaleImageSpatialItemsSource _spatialSource;
         private MultiValueScalebarAdorner _multiValueScalebarAdorner;
         private OverViewerAdorner _overViewAdorner;
+        private OverViewer _overViewer;
         private double _originalScale;
         private int _desiredLevel;
         private readonly DispatcherTimer _levelChangeThrottle;
