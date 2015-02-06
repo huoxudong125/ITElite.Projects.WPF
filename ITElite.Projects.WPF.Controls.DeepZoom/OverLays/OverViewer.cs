@@ -1,10 +1,10 @@
-﻿using System;
+﻿using ITElite.Projects.WPF.Controls.DeepZoom.Controls;
+using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using ITElite.Projects.WPF.Controls.DeepZoom.Controls;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 {
@@ -14,16 +14,16 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         static OverViewer()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof (OverViewer)
-                , new FrameworkPropertyMetadata(typeof (OverViewer)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(OverViewer)
+                , new FrameworkPropertyMetadata(typeof(OverViewer)));
         }
 
         public OverViewer(UIElement deepZoom)
         {
-            MultiScaleImage = (MultiScaleImage) deepZoom;
+            MultiScaleImage = (MultiScaleImage)deepZoom;
             MultiScaleImage.ViewChangeOnFrame += MultiScaleImage_ViewChangeOnFrame;
-            this.Height = 100; 
-            this.Width = Height*MultiScaleImage.AspectRatio;
+            this.Height = 100;
+            this.Width = Height * MultiScaleImage.AspectRatio;
             this.Margin = new Thickness(10, 0, 0, 50);
         }
 
@@ -38,12 +38,12 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         // Using a DependencyProperty as the backing store for ScrollViewer. This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MultiScaleImageProperty =
-            DependencyProperty.Register("MultiScaleImage", typeof (MultiScaleImage), typeof (OverViewer),
+            DependencyProperty.Register("MultiScaleImage", typeof(MultiScaleImage), typeof(OverViewer),
                 new UIPropertyMetadata(null));
 
         public MultiScaleImage MultiScaleImage
         {
-            get { return (MultiScaleImage) GetValue(MultiScaleImageProperty); }
+            get { return (MultiScaleImage)GetValue(MultiScaleImageProperty); }
             set { SetValue(MultiScaleImageProperty, value); }
         }
 
@@ -60,19 +60,16 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         #endregion IsShowOverViewer
 
-
-
-
         public Brush HighlightFill
         {
-            get { return (Brush) GetValue(HighlightFillProperty); }
+            get { return (Brush)GetValue(HighlightFillProperty); }
             set { SetValue(HighlightFillProperty, value); }
         }
 
         public static readonly DependencyProperty HighlightFillProperty =
             DependencyProperty.Register("HighlightFill",
-                typeof (Brush),
-                typeof (OverViewer),
+                typeof(Brush),
+                typeof(OverViewer),
                 new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(128, 255, 0, 0))));
 
         #endregion public Property
@@ -85,7 +82,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
         {
             base.OnApplyTemplate();
 
-            var partHighlight = (Thumb) this.Template.FindName(PART_Highlight, this);
+            var partHighlight = (Thumb)this.Template.FindName(PART_Highlight, this);
             partHighlight.DragDelta += partHighlight_DragDelta;
         }
 
