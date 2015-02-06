@@ -11,7 +11,8 @@ namespace ITElite.Projects.WPF.Controls.TextControl
     {
         static OutlineTextControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(OutlineTextControl), new FrameworkPropertyMetadata(typeof(OutlineTextControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(OutlineTextControl)
+                , new FrameworkPropertyMetadata(typeof(OutlineTextControl)));
         }
 
         #region Private Fields
