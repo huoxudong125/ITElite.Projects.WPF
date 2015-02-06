@@ -24,7 +24,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             MultiScaleImage.ViewChangeOnFrame += MultiScaleImage_ViewChangeOnFrame;
             this.Height = 100; 
             this.Width = Height*MultiScaleImage.AspectRatio;
-            this.Margin = new Thickness(10, 0, 0, 30);
+            this.Margin = new Thickness(100, 0, 0, 0);
         }
 
         private void MultiScaleImage_ViewChangeOnFrame(object sender, double e)
@@ -46,6 +46,22 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             get { return (MultiScaleImage) GetValue(MultiScaleImageProperty); }
             set { SetValue(MultiScaleImageProperty, value); }
         }
+
+        #region IsShowOverViewer
+
+        public static readonly DependencyProperty IsShowOverViewerProperty =
+          DependencyProperty.Register("IsShowOverViewer", typeof(bool), typeof(OverViewer), new PropertyMetadata(false));
+
+        public bool IsShowOverViewer
+        {
+            get { return (bool)GetValue(IsShowOverViewerProperty); }
+            set { SetValue(IsShowOverViewerProperty, value); }
+        }
+
+        #endregion IsShowOverViewer
+
+
+
 
         public Brush HighlightFill
         {
