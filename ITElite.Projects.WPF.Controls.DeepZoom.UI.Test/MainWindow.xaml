@@ -16,9 +16,23 @@
         http://static.seadragon.com/content/misc/color-flower.dzi
         http://gasi.ch/examples/2008/10/13/inside-deep-zoom/mont-saint-michel/silverlight/GeneratedImages/dzc_output.xml
         -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <ComboBox x:Name="ImageSource" 
+                      SelectionChanged="ImageSource_SelectionChanged"
+                      SelectedValuePath="Content">
+                <ComboBoxItem>D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\photo.dzi</ComboBoxItem>
+                <ComboBoxItem>D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\WPF_Poster.dzi</ComboBoxItem>
+            </ComboBox>
 
-        <controls:MultiScaleImage
-            Source="D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\photo.dzi"
-          Resolution="8.683e-5" />
+            <controls:MultiScaleImage x:Name="MultiImage" Grid.Row="1"
+              Source="D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\WPF_Poster.dzi"
+             Resolution="8.683e-5">
+            </controls:MultiScaleImage>
+            
+        </Grid>
     </Border>
 </Window>
