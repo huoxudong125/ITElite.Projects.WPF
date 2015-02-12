@@ -48,6 +48,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdornerExtensions.cs" />
+    <Compile Include="AdornerLabel.cs" />
     <Compile Include="OutlineTextControl.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -64,6 +66,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ShadowedTextBox.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

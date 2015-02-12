@@ -6,6 +6,24 @@
         xmlns:scrollViewThumbnail="clr-namespace:ITElite.Projects.WPF.Controls.ScrollViewThumbnail;assembly=ITElite.Projects.WPF.Controls.ScrollViewThumbnail"
         x:Class="ITElite.Projects.WPF.Controls.Test.MainWindow"
         Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+
+        <Style x:Key="shadowedLabelStyle">
+            <Setter Property="TextBlock.Foreground" Value="{x:Static SystemColors.ControlDarkBrush}" />
+            <Setter Property="FrameworkElement.Opacity" Value="0.8" />
+            <Setter Property="TextBlock.FontSize" Value="12" />
+            <Setter Property="TextBlock.FontStyle" Value="Italic" />
+            <Setter Property="TextBlock.Margin" Value="8,4,4,4" />
+        </Style>
+
+        <Style TargetType="{x:Type textControl:ShadowedTextBox}">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="5,2,2,2" />
+            <Setter Property="LabelStyle" Value="{StaticResource shadowedLabelStyle}" />
+        </Style>
+
+    </Window.Resources>
+    
     <Grid ShowGridLines="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
@@ -66,8 +84,9 @@
                                                    ScrollViewer="{Binding ElementName=scrollViewer}"
       HorizontalAlignment="Center" VerticalAlignment="Stretch"
         Margin="10" />
-        <Border BorderThickness="1" BorderBrush="Black" Grid.Row="1" Grid.Column="1">
        
+        <Border BorderThickness="1" BorderBrush="Black" Grid.Row="1" Grid.Column="1">
+            
         </Border>
 
         <controls:ZoomableCanvas Grid.Row="2">
@@ -80,5 +99,13 @@
             <Calendar  Canvas.Top="40" Canvas.Left="60"
                    DisplayDate="6/18/2008" />
         </controls:ZoomableCanvas>
+
+        <StackPanel Grid.Row="2" Grid.Column="1">
+            <textControl:ShadowedTextBox  Label="Job Title" >ShadowedTextBox</textControl:ShadowedTextBox>
+            <textControl:ShadowedTextBox Label="Address1" Text="{Binding Address1}" />
+
+            <textControl:ShadowedTextBox Label="Address2" Text="{Binding Address2}" />
+            <Button Content="Clickme"/>
+        </StackPanel>
     </Grid>
 </Window>
