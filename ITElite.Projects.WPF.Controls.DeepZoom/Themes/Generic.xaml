@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ITElite.Projects.WPF.Controls.DeepZoom.Controls"
-    xmlns:overLays="clr-namespace:ITElite.Projects.WPF.Controls.DeepZoom.OverLays">
+    xmlns:overLays="clr-namespace:ITElite.Projects.WPF.Controls.DeepZoom.OverLays"
+    xmlns:textControl="http://www.itelite.cn/wpf/TextControl/">
     <Style TargetType="{x:Type local:MultiScaleImage}">
         <Setter Property="Template">
             <Setter.Value>
@@ -62,6 +63,26 @@
                             </Grid>
                         </Viewbox>
                     </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type overLays:MultiValueScaleBar}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid Width="250" Height="35" Margin="0 0 10 30" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <textControl:OutlineTextControl x:Name="PART_MetricScaleValue"
+                            Fill="Black" Stroke="White" StrokeThickness="1"
+                                                 Bold="True" FontSize="18" Font="Bold" HorizontalAlignment="Right" />
+                        <Rectangle x:Name="PART_MetricScaleBar" Grid.Row="1" Fill="DodgerBlue" Stroke="Black" StrokeThickness="1"
+                                   Width="200" Height="10" HorizontalAlignment="Right" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

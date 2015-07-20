@@ -22,8 +22,18 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
         {
             MultiScaleImage = (MultiScaleImage) deepZoom;
             MultiScaleImage.ViewChangeOnFrame += MultiScaleImage_ViewChangeOnFrame;
-            this.Height = 100; 
-            this.Width = Height*MultiScaleImage.AspectRatio;
+
+            if (MultiScaleImage.AspectRatio >= 1)
+            {
+                this.Width = 100;
+                this.Height = Width * MultiScaleImage.AspectRatio;
+            }
+            else
+            {
+                this.Height = 100;
+                this.Width = Height * MultiScaleImage.AspectRatio;
+            }
+
             this.Margin = new Thickness(10, 0, 0, 30);
         }
 
@@ -47,6 +57,20 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             set { SetValue(MultiScaleImageProperty, value); }
         }
 
+
+        #region IsShowOverViewer
+
+        public static readonly DependencyProperty IsShowOverViewerProperty =
+          DependencyProperty.Register("IsShowOverViewer", typeof(bool), typeof(OverViewer), new PropertyMetadata(false));
+
+        public bool IsShowOverViewer
+        {
+            get { return (bool)GetValue(IsShowOverViewerProperty); }
+            set { SetValue(IsShowOverViewerProperty, value); }
+        }
+
+        #endregion IsShowOverViewer
+
         public Brush HighlightFill
         {
             get { return (Brush) GetValue(HighlightFillProperty); }
@@ -69,8 +93,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
         {
             base.OnApplyTemplate();
 
-            var partHighlight = (Thumb) this.Template.FindName(PART_Highlight, this);
-            partHighlight.DragDelta += partHighlight_DragDelta;
+            //var partHighlight = (Thumb)this.Template.FindName(PART_Highlight, this);
+            //partHighlight.DragDelta += partHighlight_DragDelta;
         }
 
         private void partHighlight_DragDelta(object sender, DragDeltaEventArgs e)
