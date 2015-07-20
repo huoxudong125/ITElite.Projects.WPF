@@ -359,6 +359,7 @@ namespace ITElite.Projects.WPF.Controls.TextControl
             set
             {
                 SetValue(TextProperty, value);
+                this.InvalidateMeasure();
             }
         }
 
