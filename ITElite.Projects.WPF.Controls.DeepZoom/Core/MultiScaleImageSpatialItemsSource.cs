@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,53 +13,26 @@ using System.Windows.Media.Imaging;
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
     /// <summary>
-    /// A spatial items source that is able to find and cache visible image
-    /// tiles in a the screen. Used in conjuction with ZoomableCanvas.
+    ///     A spatial items source that is able to find and cache visible image
+    ///     tiles in a the screen. Used in conjuction with ZoomableCanvas.
     /// </summary>
     internal class MultiScaleImageSpatialItemsSource :
         IList,
         ZoomableCanvas.ISpatialItemsSource
     {
         private const int CacheCapacity = 300; // limit cache to 300 tiles
-        private readonly Dictionary<string, BitmapSource> _tileCache = new Dictionary<string, BitmapSource>();
+        private static readonly object CacheLock = new object();
         private readonly Queue<string> _cachedTiles = new Queue<string>(CacheCapacity);
+        private readonly Dictionary<string, BitmapSource> _tileCache = new Dictionary<string, BitmapSource>();
         private readonly MultiScaleTileSource _tileSource;
         private CancellationTokenSource _currentCancellationTokenSource = new CancellationTokenSource();
-        private static readonly object CacheLock = new object();
+
+        private int _currentLevel;
 
         public MultiScaleImageSpatialItemsSource(MultiScaleTileSource tileSource)
         {
             _tileSource = tileSource;
         }
-
-        public void InvalidateSource()
-        {
-            if (ExtentChanged != null)
-                ExtentChanged(this, EventArgs.Empty);
-            if (QueryInvalidated != null)
-                QueryInvalidated(this, EventArgs.Empty);
-        }
-
-        #region ISpatialItemsSource members
-
-        public Rect Extent
-        {
-            get { return new Rect(_tileSource.ImageSize); }
-        }
-
-        public IEnumerable<int> Query(Rect rectangle)
-        {
-            return _tileSource.VisibleTilesUntilFill(rectangle, CurrentLevel)
-                .Select(t => _tileSource.GetTileIndex(t));
-        }
-
-        public event EventHandler ExtentChanged;
-
-        public event EventHandler QueryInvalidated;
-
-        #endregion ISpatialItemsSource members
-
-        private int _currentLevel;
 
         public int CurrentLevel
         {
@@ -75,33 +49,38 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             }
         }
 
+        public int ZoomStep
+        {
+            get { return _tileSource.ZoomStep; }
+        }
+
         public object this[int i]
         {
             get
             {
-                var tile = _tileSource.TileFromIndex(i);
-                var tileId = tile.ToString();
+                Tile tile = _tileSource.TileFromIndex(i);
+                string tileId = tile.ToString();
 
                 if (_tileCache.ContainsKey(tileId))
                     return new VisualTile(tile, _tileSource, _tileCache[tileId]);
 
                 var tileVm = new VisualTile(tile, _tileSource);
 
-                var imageSource = _tileSource.GetTileLayers(tile.Level, tile.Column, tile.Row);
+                object imageSource = _tileSource.GetTileLayers(tile.Level, tile.Column, tile.Row);
 
                 var uri = imageSource as Uri;
                 if (uri != null)
                 {
                     // Capture closure
-                    var token = _currentCancellationTokenSource.Token;
+                    CancellationToken token = _currentCancellationTokenSource.Token;
                     Task.Factory
                         .StartNew(() =>
                         {
-                            var source = ImageLoader.LoadImage(uri);
+                            BitmapSource source = ImageLoader.LoadImage(uri);
                             if (source != null)
                                 source = CacheTile(tileId, source);
                             return source;
-                        }, token, TaskCreationOptions.None, TaskScheduler.Default)
+                        }, token, TaskCreationOptions.None, TaskScheduler.Default) //TODO: change to Task.Run
                         .ContinueWith(t =>
                         {
                             if (t.Result != null)
@@ -121,15 +100,23 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                         source.StreamSource = stream;
                         source.EndInit();
 
-                        var src = CacheTile(tileId, source);
+                        BitmapSource src = CacheTile(tileId, source);
                         tileVm.Source = src;
                     }
                     else return null;
                 }
 
-                return tileVm;
+               return tileVm;
             }
-            set { }
+            set { throw new NotSupportedException(); }
+        }
+
+        public void InvalidateSource()
+        {
+            if (ExtentChanged != null)
+                ExtentChanged(this, EventArgs.Empty);
+            if (QueryInvalidated != null)
+                QueryInvalidated(this, EventArgs.Empty);
         }
 
         private BitmapSource CacheTile(string tileId, BitmapSource source)
@@ -137,9 +124,9 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             lock (CacheLock)
             {
                 if (_tileCache.ContainsKey(tileId))
-                return _tileCache[tileId];
+                    return _tileCache[tileId];
 
-            
+
                 if (_cachedTiles.Count >= CacheCapacity)
                 {
                     _tileCache.Remove(_cachedTiles.Dequeue());
@@ -149,6 +136,25 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             }
             return source;
         }
+
+        #region  ISpatialItems Source members
+
+        public Rect Extent
+        {
+            get { return new Rect(_tileSource.ImageSize); }
+        }
+
+        public IEnumerable<int> Query(Rect rectangle)
+        {
+            return _tileSource.VisibleTilesUntilFill(rectangle, CurrentLevel)
+                .Select(t => _tileSource.GetTileIndex(t));
+        }
+
+        public event EventHandler ExtentChanged;
+
+        public event EventHandler QueryInvalidated;
+
+        #endregion ISpatialItemsSource members
 
         #region Irrelevant IList Members
 

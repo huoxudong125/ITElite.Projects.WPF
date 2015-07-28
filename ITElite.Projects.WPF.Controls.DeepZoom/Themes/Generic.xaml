@@ -19,7 +19,59 @@
                             </ItemsControl.ItemContainerStyle>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <local:TileHost Source="{Binding Source}" Scale="{Binding Scale}" />
+                                    <Border BorderThickness="50" BorderBrush="Red">
+                                        <Grid ShowGridLines="True">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <!--<TextBlock TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="X:{0} Y:{1} Z:{2} Scale:{3}">
+                                                        <Binding Path="Top" />
+                                                        <Binding Path="Left" />
+                                                        <Binding Path="ZIndex" />
+                                                        <Binding Path="Scale" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                                <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Setter Property="Foreground" Value="Red" />
+                                                    <Setter Property="FontSize" Value="100" />
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>-->
+                                            <Grid.ToolTip>
+                                                <StackPanel Background="Gray">
+                                                    <StackPanel.Resources>
+                                                        <Style TargetType="{x:Type TextBlock}">
+                                                            <Setter Property="Foreground" Value="Red" />
+                                                            <Setter Property="FontSize" Value="16" />
+                                                        </Style>
+                                                    </StackPanel.Resources>
+                                                    <TextBlock Text="{Binding Top}" />
+                                                    <TextBlock Text="{Binding Left}" />
+                                                    <TextBlock Text="{Binding ZIndex}" />
+                                                    <TextBlock Text="{Binding Scale}" />
+                                                </StackPanel>
+                                            </Grid.ToolTip>
+
+                                            <StackPanel Background="Gray">
+                                                <StackPanel.Resources>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                        <Setter Property="FontSize" Value="100" />
+                                                    </Style>
+                                                </StackPanel.Resources>
+                                                <TextBlock Text="{Binding Top}" />
+                                                <TextBlock Text="{Binding Left}" />
+                                                <TextBlock Text="{Binding ZIndex}" />
+                                                <TextBlock Text="{Binding Scale}" />
+                                            </StackPanel>
+                                            <local:TileHost Source="{Binding Source}" Scale="{Binding Scale}"
+                                                            Grid.Row="1" />
+                                        </Grid>
+                                    </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -44,15 +96,15 @@
                                     </Rectangle.Fill>
                                 </Rectangle>
                                 <Thumb Name="PART_Highlight"
-                                    Background="{TemplateBinding HighlightFill}"
-                                    Width="{Binding ZoomableCanvas.ActualViewbox.Width}"
-                                    Height="{Binding ZoomableCanvas.ActualViewbox.Height}"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top">
+                                       Background="{TemplateBinding HighlightFill}"
+                                       Width="{Binding ZoomableCanvas.ActualViewbox.Width}"
+                                       Height="{Binding ZoomableCanvas.ActualViewbox.Height}"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top">
                                     <Thumb.RenderTransform>
                                         <TranslateTransform
-                                        X="{Binding ZoomableCanvas.ActualViewbox.X}"
-                                        Y="{Binding ZoomableCanvas.ActualViewbox.Y}" />
+                                            X="{Binding ZoomableCanvas.ActualViewbox.X}"
+                                            Y="{Binding ZoomableCanvas.ActualViewbox.Y}" />
                                     </Thumb.RenderTransform>
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
@@ -72,15 +124,17 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Grid Width="250" Height="35" Margin="0 0 10 30" >
+                    <Grid Width="250" Height="35" Margin="0 0 10 30">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <textControl:OutlineTextControl x:Name="PART_MetricScaleValue"
-                            Fill="Black" Stroke="White" StrokeThickness="1"
-                                                 Bold="True" FontSize="18" Font="Bold" HorizontalAlignment="Right" />
-                        <Rectangle x:Name="PART_MetricScaleBar" Grid.Row="1" Fill="DodgerBlue" Stroke="Black" StrokeThickness="1"
+                                                        Fill="Black" Stroke="White" StrokeThickness="1"
+                                                        Bold="True" FontSize="18" Font="Bold"
+                                                        HorizontalAlignment="Right" />
+                        <Rectangle x:Name="PART_MetricScaleBar" Grid.Row="1" Fill="DodgerBlue" Stroke="Black"
+                                   StrokeThickness="1"
                                    Width="200" Height="10" HorizontalAlignment="Right" />
                     </Grid>
                 </ControlTemplate>

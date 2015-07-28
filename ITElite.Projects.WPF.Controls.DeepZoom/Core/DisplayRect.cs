@@ -1,8 +1,9 @@
 ﻿using System.Windows;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
-{ /// <summary>
-    /// Contains Rect elements that define the rectangle to be displayed.
+{
+    /// <summary>
+    ///     Contains Rect elements that define the rectangle to be displayed.
     /// </summary>
     public struct DisplayRect
     {

@@ -8,7 +8,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
     public static class ImageLoader
     {
         /// <summary>
-        /// Loads an image from a given Uri, synchronously.
+        ///     Loads an image from a given Uri, synchronously.
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
@@ -20,7 +20,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                 MemoryStream mem;
                 using (var client = new WebClient())
                 {
-                    var buffer = client.DownloadData(uri);
+                    byte[] buffer = client.DownloadData(uri);
                     mem = new MemoryStream(buffer);
                 }
                 bi.BeginInit();

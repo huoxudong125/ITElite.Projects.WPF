@@ -5,8 +5,8 @@ using System.Windows.Media;
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
 {
     /// <summary>
-    /// Used to translate mouse events into touch events, enabling a unified
-    /// input processing pipeline.
+    ///     Used to translate mouse events into touch events, enabling a unified
+    ///     input processing pipeline.
     /// </summary>
     /// <remarks>This class originally comes from Blake.NUI - http://blakenui.codeplex.com</remarks>
     public class MouseTouchDevice : TouchDevice
@@ -106,10 +106,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
             Point point = Position;
             if (relativeTo != null)
             {
-                point = this.ActiveSource.RootVisual.TransformToDescendant((Visual)relativeTo).Transform(Position);
+                point = ActiveSource.RootVisual.TransformToDescendant((Visual) relativeTo).Transform(Position);
             }
 
-            Rect rect = new Rect(point, new Size(1, 1));
+            var rect = new Rect(point, new Size(1, 1));
 
             return new TouchPoint(this, point, rect, TouchAction.Move);
         }

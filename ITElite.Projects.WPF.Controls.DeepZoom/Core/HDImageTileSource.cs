@@ -7,17 +7,15 @@ using System.Xml.Linq;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
-    /// <summary>
-    ///     Used to specify the source of a MultiScaleImage.
-    /// </summary>
-    public class DeepZoomImageTileSource : MultiScaleTileSource
+    public class HDImageTileSource : MultiScaleTileSource
     {
         private IList<DisplayRect> _displayRects;
         private string _imageExtension;
+        private string imagePathTemplate;
 
-        public DeepZoomImageTileSource(Uri sourceUri)
+        public HDImageTileSource(Uri sourceUri)
         {
-            UriSource = sourceUri;
+            HdImagesSourrceUri = sourceUri;
         }
 
         #region Dependency Properties
@@ -27,18 +25,18 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         /// <summary>
         ///     UriSource Dependency Property
         /// </summary>
-        public static readonly DependencyProperty UriSourceProperty =
-            DependencyProperty.Register("UriSource", typeof (Uri), typeof (DeepZoomImageTileSource),
+        public static readonly DependencyProperty HdImagesSourrceUriProperty =
+            DependencyProperty.Register("HdImagesSourrceUri", typeof (Uri), typeof (HDImageTileSource),
                 new FrameworkPropertyMetadata(null,
                     OnUriSourceChanged));
 
         /// <summary>
         ///     Gets or sets the source Uri of the DeepZoomImageTileSource.
         /// </summary>
-        public Uri UriSource
+        public Uri HdImagesSourrceUri
         {
-            get { return (Uri) GetValue(UriSourceProperty); }
-            set { SetValue(UriSourceProperty, value); }
+            get { return (Uri) GetValue(HdImagesSourrceUriProperty); }
+            set { SetValue(HdImagesSourrceUriProperty, value); }
         }
 
         /// <summary>
@@ -46,9 +44,9 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         /// </summary>
         private static void OnUriSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var target = (DeepZoomImageTileSource) d;
+            var target = (HDImageTileSource) d;
             var oldUriSource = (Uri) e.OldValue;
-            Uri newUriSource = target.UriSource;
+            Uri newUriSource = target.HdImagesSourrceUri;
             target.OnUriSourceChanged(oldUriSource, newUriSource);
         }
 
@@ -57,7 +55,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         /// </summary>
         protected virtual void OnUriSourceChanged(Uri oldUriSource, Uri newUriSource)
         {
-            LoadDeepZoomXml();
+            LoadHdImageXml();
 
             InitializeTileSource();
 
@@ -73,61 +71,75 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         #region Overriden methods
 
+        protected override int GetMaximumLevel(double width, double height)
+        {
+            return base.GetMaximumLevel(width, height) - (int) Math.Log(TileSize, ImagesGenerateStep) + 1;
+        }
+
         protected internal override object GetTileLayers(int tileLevel, int tilePositionX, int tilePositionY)
         {
             if (!TileExists(tileLevel, tilePositionX, tilePositionY))
                 return null;
 
-            string source = UriSource.OriginalString;
-            string url = source.Substring(0, source.Length - 4) + "_files/"
-                         + tileLevel + "/" + tilePositionX + "_"
-                         + tilePositionY + "." + _imageExtension;
-            return new Uri(url, UriSource.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
+            string source = HdImagesSourrceUri.OriginalString;
+
+            string url = source.Substring(0,
+                source.LastIndexOf("pyramid.xml", StringComparison.CurrentCultureIgnoreCase))
+                         + imagePathTemplate.Replace("{l}", tileLevel.ToString())
+                             .Replace("{c}", tilePositionX.ToString()).Replace("{r}", tilePositionY.ToString());
+
+            var uriResult=new Uri(url, HdImagesSourrceUri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
+         
+            return uriResult;
         }
 
         #endregion Overriden methods
 
         #region Helper methods
 
-        private void LoadDeepZoomXml()
+        private void LoadHdImageXml()
         {
-            XElement imageElement = XElement.Load(UriSource.OriginalString);
+            XElement imageElement = XElement.Load(HdImagesSourrceUri.OriginalString);
 
             if (imageElement == null)
                 throw new FileFormatException("Invalid XML file.");
 
             XNamespace xmlns = imageElement.GetDefaultNamespace();
 
-            TileSize = (int) imageElement.Attribute("TileSize");
-            TileOverlap = (int) imageElement.Attribute("Overlap");
-            _imageExtension = (string) imageElement.Attribute("Format");
-
-            XElement sizeElement = imageElement.Element(xmlns + "Size");
-            if (sizeElement == null)
+            XElement imageSetElement = imageElement.Element(xmlns + "imageset");
+            ;
+            if (imageSetElement == null)
                 throw new FileFormatException("Invalid XML file.");
 
+            imagePathTemplate = imageSetElement.Attribute("url").Value;
+            TileSize = (int) imageSetElement.Attribute("tileWidth");
+            TileOverlap = (int) imageSetElement.Attribute("tileOverlap");
+            _imageExtension = "tif"; //(string)imageElement.Attribute("Format");
+
             ImageSize = new Size(
-                (int) sizeElement.Attribute("Width"),
-                (int) sizeElement.Attribute("Height")
+                (int) imageSetElement.Attribute("width"),
+                (int) imageSetElement.Attribute("height")
                 );
 
-            XElement displayRectsElement = imageElement.Element(xmlns + "DisplayRects");
-            if (displayRectsElement != null)
-            {
-                _displayRects = displayRectsElement
-                    .Elements(xmlns + "DisplayRect")
-                    .Select(el =>
-                    {
-                        XElement rectElement = el.Element(xmlns + "Rect");
-                        var x = (double) rectElement.Attribute("X");
-                        var y = (double) rectElement.Attribute("Y");
-                        var width = (double) rectElement.Attribute("Width");
-                        var height = (double) rectElement.Attribute("Height");
-                        var minLevel = (int) el.Attribute("MinLevel");
-                        var maxLevel = (int) el.Attribute("MaxLevel");
+            ImagesGenerateStep = (int) imageSetElement.Attribute("step");
+            ZoomStep = (int) imageSetElement.Attribute("maxZoom");
 
-                        return new DisplayRect(x, y, width, height, minLevel, maxLevel);
-                    }).ToList();
+            string displayRectsString = imageSetElement.Attribute("subRect").Value;
+            if (!string.IsNullOrEmpty(displayRectsString))
+            {
+                string[] rectDetails = displayRectsString.Split(new[] {' '});
+                _displayRects = new List<DisplayRect>
+                {
+                    new DisplayRect
+                    {
+                        MaxLevel = ((int) imageSetElement.Attribute("levels")),
+                        MinLevel = 0,
+                        Rect = new Rect(int.Parse(rectDetails[0]),
+                            int.Parse(rectDetails[1])
+                            , int.Parse(rectDetails[2]),
+                            int.Parse(rectDetails[3]))
+                    }
+                };
             }
         }
 

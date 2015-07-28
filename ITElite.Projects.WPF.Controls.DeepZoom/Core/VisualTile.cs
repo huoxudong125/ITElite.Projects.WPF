@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Media;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
     /// <summary>
-    /// Represents a tile that displays an image in the screen.
+    ///     Represents a tile that displays an image in the screen.
     /// </summary>
     internal class VisualTile : INotifyPropertyChanged
     {
@@ -13,10 +14,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         public VisualTile(Tile tile, MultiScaleTileSource tileSource)
         {
             ZIndex = tile.Level;
-            Scale = 1 / tileSource.ScaleAtLevel(tile.Level);
-            var position = tileSource.GetTilePosition(tile.Column, tile.Row);
-            Left = position.X * Scale;
-            Top = position.Y * Scale;
+            Scale = 1/tileSource.ScaleAtLevel(tile.Level);
+            Point position = tileSource.GetTilePosition(tile.Column, tile.Row);
+            Left = position.X*Scale;
+            Top = position.Y*Scale;
         }
 
         public VisualTile(Tile tile, MultiScaleTileSource tileSource, ImageSource source)
