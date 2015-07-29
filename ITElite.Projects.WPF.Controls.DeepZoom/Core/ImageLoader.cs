@@ -8,7 +8,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
     public static class ImageLoader
     {
         /// <summary>
-        /// Loads an image from a given Uri, synchronously.
+        ///     Loads an image from a given Uri, synchronously.
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>

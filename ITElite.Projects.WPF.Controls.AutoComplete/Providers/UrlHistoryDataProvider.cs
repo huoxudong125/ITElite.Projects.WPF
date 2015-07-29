@@ -6,25 +6,46 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Providers
 {
     public class UrlHistoryDataProvider : IAutoCompleteDataProvider, IAutoAppendDataProvider
     {
+        private const int ERROR_NO_MORE_ITEMS = 0x103;
+        private const int ERROR_INSUFFICIENT_BUFFER = 122;
         private List<string> _historyUrls;
+
+        public string GetAppendText(string textPattern, string firstMatch)
+        {
+            if (!textPattern.StartsWith("http://"))
+            {
+                textPattern = "http://" + textPattern;
+            }
+            if (firstMatch.IndexOf(textPattern, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                return null;
+            }
+            var result = firstMatch.Substring(textPattern.Length);
+            var slashPos = result.IndexOf('/');
+            if (slashPos != -1)
+            {
+                result = result.Substring(0, slashPos + 1);
+            }
+            return result;
+        }
 
         public IEnumerable<object> GetItems(string textPattern, int maxResults)
         {
-            if(_historyUrls == null)
+            if (_historyUrls == null)
             {
-                lock(this)
+                lock (this)
                 {
                     _historyUrls = LoadHistoryUrls();
                 }
             }
 
-            if("http://".IndexOf(textPattern) == 0)
+            if ("http://".IndexOf(textPattern) == 0)
             {
                 return _historyUrls;
             }
             var pattern = textPattern;
 
-            if(!pattern.StartsWith("http://"))
+            if (!pattern.StartsWith("http://"))
             {
                 pattern = "http://" + textPattern;
             }
@@ -33,7 +54,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Providers
 
             foreach (var url in _historyUrls)
             {
-                if(url.StartsWith(pattern, StringComparison.OrdinalIgnoreCase))
+                if (url.StartsWith(pattern, StringComparison.OrdinalIgnoreCase))
                 {
                     result.Add(url);
                 }
@@ -46,58 +67,37 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Providers
             return result;
         }
 
-        public string GetAppendText(string textPattern, string firstMatch)
-        {
-            if(!textPattern.StartsWith("http://"))
-            {
-                textPattern = "http://" + textPattern;
-            }
-            if(firstMatch.IndexOf(textPattern, StringComparison.OrdinalIgnoreCase) != 0)
-            {
-                return null;
-            }
-            var result = firstMatch.Substring(textPattern.Length);
-            int slashPos = result.IndexOf('/');
-            if(slashPos != -1)
-            {
-                result = result.Substring(0, slashPos + 1);
-            }
-            return result;
-        }
-
         //
         [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Ansi)]
         private static extern IntPtr FindFirstUrlCacheEntry(string lpszUrlSearchPattern,
-                                                           IntPtr lpFirstCacheEntryInfo,
-                                                           ref int lpdwFirstCacheEntryInfoBufferSize);
+            IntPtr lpFirstCacheEntryInfo,
+            ref int lpdwFirstCacheEntryInfoBufferSize);
+
         [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Ansi)]
         private static extern bool FindNextUrlCacheEntry(IntPtr hEnumHandle,
-                                                        IntPtr lpNextCacheEntryInfo,
-                                                        ref int lpdwNextCacheEntryInfoBufferSize);
+            IntPtr lpNextCacheEntryInfo,
+            ref int lpdwNextCacheEntryInfoBufferSize);
 
         [DllImport("wininet.dll", SetLastError = true, CharSet = CharSet.Ansi)]
         private static extern long FindCloseUrlCache(IntPtr hEnumHandle);
 
-        private const int ERROR_NO_MORE_ITEMS = 0x103;
-        private const int ERROR_INSUFFICIENT_BUFFER = 122;
-
         public List<string> LoadHistoryUrls()
         {
             var result = new List<string>();
-            int cb = 0;
+            var cb = 0;
             const string pattern = "visited:";
             FindFirstUrlCacheEntry(pattern, IntPtr.Zero, ref cb);
 
-            IntPtr buf = Marshal.AllocHGlobal(cb);
+            var buf = Marshal.AllocHGlobal(cb);
             try
             {
-                IntPtr hFind = FindFirstUrlCacheEntry(pattern, buf, ref cb);
+                var hFind = FindFirstUrlCacheEntry(pattern, buf, ref cb);
 
                 while (true)
                 {
                     var pSourceUrl = Marshal.ReadIntPtr(buf, 4);
-                    string url = Marshal.PtrToStringAnsi(pSourceUrl);
-                    int atPos = url.IndexOf("@");
+                    var url = Marshal.PtrToStringAnsi(pSourceUrl);
+                    var atPos = url.IndexOf("@");
                     if (atPos != -1)
                     {
                         url = url.Substring(atPos + 1);
@@ -107,7 +107,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Providers
                         result.Add(url);
                     }
 
-                    bool retval = FindNextUrlCacheEntry(hFind, buf, ref cb);
+                    var retval = FindNextUrlCacheEntry(hFind, buf, ref cb);
                     if (!retval)
                     {
                         var win32Err = Marshal.GetLastWin32Error();

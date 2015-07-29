@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.microsoft.com/deepzoom/2008" xmlns:dz="http://schemas.microsoft.com/deepzoom/2008">
+
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.microsoft.com/deepzoom/2008"
+           xmlns:dz="http://schemas.microsoft.com/deepzoom/2008">
   <xs:complexType name="uint32size">
     <xs:attribute name="Width" type="xs:unsignedLong" use="required">
       <xs:annotation>
@@ -7,14 +10,14 @@
           The width of the image.
         </xs:documentation>
       </xs:annotation>
-    </xs:attribute >
+    </xs:attribute>
     <xs:attribute name="Height" type="xs:unsignedLong" use="required">
       <xs:annotation>
         <xs:documentation>
           The height of the image.
         </xs:documentation>
       </xs:annotation>
-    </xs:attribute >
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="uint32rect">
     <xs:attribute name="X" type="xs:unsignedLong" use="required">
@@ -23,14 +26,14 @@
           X coordinate of the upper-left corner of the rectangle.
         </xs:documentation>
       </xs:annotation>
-    </xs:attribute >
+    </xs:attribute>
     <xs:attribute name="Y" type="xs:unsignedLong" use="required">
       <xs:annotation>
         <xs:documentation>
           Y coordinate of the upper-left corner of the rectangle.
         </xs:documentation>
       </xs:annotation>
-    </xs:attribute >
+    </xs:attribute>
     <xs:attribute name="Width" type="xs:unsignedLong" use="required">
       <xs:annotation>
         <xs:documentation>
@@ -44,7 +47,7 @@
           Height of the rectangle.
         </xs:documentation>
       </xs:annotation>
-    </xs:attribute >
+    </xs:attribute>
   </xs:complexType>
   <xs:element name="Image">
     <xs:annotation>

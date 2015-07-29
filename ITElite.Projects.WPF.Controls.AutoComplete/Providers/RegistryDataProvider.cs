@@ -7,9 +7,12 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Providers
 {
     public class RegistryDataProvider : IAutoCompleteDataProvider
     {
-        private List<RegistryKey> _rootKeys = new List<RegistryKey> {
-            Registry.ClassesRoot, Registry.CurrentUser,
-            Registry.LocalMachine, Registry.Users,
+        private readonly List<RegistryKey> _rootKeys = new List<RegistryKey>
+        {
+            Registry.ClassesRoot,
+            Registry.CurrentUser,
+            Registry.LocalMachine,
+            Registry.Users,
             Registry.CurrentConfig
         };
 
@@ -39,17 +42,17 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Providers
                     break;
                 }
             }
-            if(rootKey == null)
+            if (rootKey == null)
             {
                 return null;
             }
             var subKey = rootKey;
             var sb = new StringBuilder();
-            for (int n = 1; n < parts.Length - 1; n++)
+            for (var n = 1; n < parts.Length - 1; n++)
             {
                 sb.Append(parts[n]).Append('\\');
             }
-            string middlePath = sb.ToString();
+            var middlePath = sb.ToString();
             if (middlePath.Length != 0)
             {
                 try

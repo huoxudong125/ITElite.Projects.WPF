@@ -5,19 +5,21 @@ using System.Windows.Media;
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
 {
     /// <summary>
-    /// Used to translate mouse events into touch events, enabling a unified
-    /// input processing pipeline.
+    ///     Used to translate mouse events into touch events, enabling a unified
+    ///     input processing pipeline.
     /// </summary>
     /// <remarks>This class originally comes from Blake.NUI - http://blakenui.codeplex.com</remarks>
     public class MouseTouchDevice : TouchDevice
     {
-        #region Class Members
+        #region Constructors
 
-        private static MouseTouchDevice device;
+        public MouseTouchDevice(int deviceId) :
+            base(deviceId)
+        {
+            Position = new Point();
+        }
 
-        public Point Position { get; set; }
-
-        #endregion Class Members
+        #endregion Constructors
 
         #region Public Static Methods
 
@@ -31,6 +33,14 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
         }
 
         #endregion Public Static Methods
+
+        #region Class Members
+
+        private static MouseTouchDevice device;
+
+        public Point Position { get; set; }
+
+        #endregion Class Members
 
         #region Private Static Methods
 
@@ -84,16 +94,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
 
         #endregion Private Static Methods
 
-        #region Constructors
-
-        public MouseTouchDevice(int deviceId) :
-            base(deviceId)
-        {
-            Position = new Point();
-        }
-
-        #endregion Constructors
-
         #region Overridden methods
 
         public override TouchPointCollection GetIntermediateTouchPoints(IInputElement relativeTo)
@@ -103,13 +103,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Touch
 
         public override TouchPoint GetTouchPoint(IInputElement relativeTo)
         {
-            Point point = Position;
+            var point = Position;
             if (relativeTo != null)
             {
-                point = this.ActiveSource.RootVisual.TransformToDescendant((Visual)relativeTo).Transform(Position);
+                point = ActiveSource.RootVisual.TransformToDescendant((Visual) relativeTo).Transform(Position);
             }
 
-            Rect rect = new Rect(point, new Size(1, 1));
+            var rect = new Rect(point, new Size(1, 1));
 
             return new TouchPoint(this, point, rect, TouchAction.Move);
         }

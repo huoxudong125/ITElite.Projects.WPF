@@ -1,91 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace ITElite.Projects.WPF.IO.DeepZoom
 {
     /// <summary>
-    /// Editable bitmap class created by Justin Dunlap, published by the author on www.codeproject.com:
-    /// http://www.codeproject.com/KB/graphics/fastimagedrawing.aspx
-    /// 
-    /// The code is fully Justin's, except for an addition to one of the constructors:
-    /// I have added bool bSmoothScaling as parameter to the constructor that uses a rescaled
-    /// source image, to allow producing slightly nicer looking scaled bitmaps.
+    ///     Editable bitmap class created by Justin Dunlap, published by the author on www.codeproject.com:
+    ///     http://www.codeproject.com/KB/graphics/fastimagedrawing.aspx
+    ///     The code is fully Justin's, except for an addition to one of the constructors:
+    ///     I have added bool bSmoothScaling as parameter to the constructor that uses a rescaled
+    ///     source image, to allow producing slightly nicer looking scaled bitmaps.
     /// </summary>
     public class EditableBitmap : IDisposable
     {
-        Bitmap bitmap;
-        int stride;
-        int pixelFormatSize;
-
-        SharedPinnedByteArray byteArray;
+        private readonly SharedPinnedByteArray byteArray;
 
         /// <summary>
-        /// Gets the pixel format size in bytes (not bits, as with Image.GetPixelFormatSize()).
-        /// </summary>
-        public int PixelFormatSize
-        {
-            get { return pixelFormatSize; }
-        }
-
-        /// <summary>
-        /// Gets the stride of the bitmap.
-        /// </summary>
-        public int Stride
-        {
-            get { return stride; }
-        }
-
-        /// <summary>
-        /// Gets the underlying <see cref="System.Drawing.Bitmap"/>
-        /// that this EditableBitmap wraps.
-        /// </summary>
-        public Bitmap Bitmap
-        {
-            get { return bitmap; }
-            set { bitmap = value; }
-        }
-
-        /// <summary>
-        /// Gets an array that contains the bitmap bit buffer.
-        /// </summary>
-        public byte[] Bits
-        {
-            get { return byteArray.bits; }
-        }
-
-        private EditableBitmap owner;
-
-        /// <summary>
-        /// The <see cref="EditableBitmap"/> that this <see cref="EditableBitmap"/> is a view on.
-        /// This property's value will be null if this EditableBitmap is not a view on another 
-        /// <see cref="EditableBitmap"/>.
-        /// </summary>
-        public EditableBitmap Owner
-        {
-            get { return owner; }
-        }
-
-
-        /// <summary>
-        /// Gets a safe pointer to the buffer containing the bitmap bits.
-        /// </summary>
-        public IntPtr BitPtr
-        {
-            get
-            {
-                return byteArray.bitPtr;
-            }
-        }
-
-        /// <summary>
-        /// Creates a new EditableBitmap with the specified pixel format, 
-        /// and copies the bitmap passed in onto the buffer.
+        ///     Creates a new EditableBitmap with the specified pixel format,
+        ///     and copies the bitmap passed in onto the buffer.
         /// </summary>
         /// <param name="source">The bitmap to copy from.</param>
         /// <param name="format">The PixelFormat for the new bitmap.</param>
@@ -96,15 +30,15 @@ namespace ITElite.Projects.WPF.IO.DeepZoom
             //It does NOT copy EXIF properties, multiple frames, etc.
             //In places where preserving them is necessary, it must 
             //be done manually.
-            Graphics g = Graphics.FromImage(bitmap);
+            var g = Graphics.FromImage(Bitmap);
             g.DrawImageUnscaledAndClipped(source, new Rectangle(0, 0, source.Width, source.Height));
             g.Dispose();
         }
 
         /// <summary>
-        /// Creates a new EditableBitmap with the specified pixel format and size, 
-        /// and copies the bitmap passed in onto the buffer. The source bitmap is stretched to 
-        /// fit the new size.
+        ///     Creates a new EditableBitmap with the specified pixel format and size,
+        ///     and copies the bitmap passed in onto the buffer. The source bitmap is stretched to
+        ///     fit the new size.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="format"></param>
@@ -118,102 +52,80 @@ namespace ITElite.Projects.WPF.IO.DeepZoom
             //It does NOT copy EXIF properties, multiple frames, etc.
             //In places where preserving them is necessary, it must 
             //be done manually.
-            using (Graphics g = Graphics.FromImage(bitmap))
+            using (var g = Graphics.FromImage(Bitmap))
             {
                 if (bSmoothScaling)
-                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                    g.PixelOffsetMode = PixelOffsetMode.Half;
                 g.DrawImage(source, 0, 0, newWidth, newHeight);
                 g.Dispose();
             }
         }
 
         /// <summary>
-        /// Creates a new EditableBitmap containing a copy of the specified source bitmap.
+        ///     Creates a new EditableBitmap containing a copy of the specified source bitmap.
         /// </summary>
         /// <param name="source"></param>
         public EditableBitmap(Bitmap source)
             : this(source, source.PixelFormat)
         {
-
         }
 
         /// <summary>
-        /// Creates a new, blank EditableBitmap with the specified width, height, and pixel format.
+        ///     Creates a new, blank EditableBitmap with the specified width, height, and pixel format.
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="format"></param>
         public EditableBitmap(int width, int height, PixelFormat format)
         {
-            pixelFormatSize = Image.GetPixelFormatSize(format) / 8;
-            stride = width * pixelFormatSize;
-            int padding = (stride % 4);
-            stride += padding == 0 ? 0 : 4 - padding;//pad out to multiple of 4
-            byteArray = new SharedPinnedByteArray(stride * height);
-            bitmap = new Bitmap(width, height, stride, format, byteArray.bitPtr);
-        }
-
-        #region View Support
-
-        /// <summary>
-        /// Creates an <see cref="EditableBitmap"/> as a view on a section of an existing <see cref="EditableBitmap"/>.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="viewArea"></param>
-        protected EditableBitmap(EditableBitmap source, Rectangle viewArea)
-        {
-            owner = source;
-            pixelFormatSize = source.pixelFormatSize;
-            byteArray = source.byteArray;
-            byteArray.AddReference();
-            stride = source.stride;
-
-            try
-            {
-                startOffset = source.startOffset + (stride * viewArea.Y) + (viewArea.X * pixelFormatSize);
-                bitmap = new Bitmap(viewArea.Width, viewArea.Height, stride, source.Bitmap.PixelFormat,
-                    (IntPtr)(((int)byteArray.bitPtr) + startOffset));
-            }
-            finally
-            {
-                if (bitmap == null)
-                    byteArray.ReleaseReference();
-            }
-
+            PixelFormatSize = Image.GetPixelFormatSize(format)/8;
+            Stride = width*PixelFormatSize;
+            var padding = (Stride%4);
+            Stride += padding == 0 ? 0 : 4 - padding; //pad out to multiple of 4
+            byteArray = new SharedPinnedByteArray(Stride*height);
+            Bitmap = new Bitmap(width, height, Stride, format, byteArray.bitPtr);
         }
 
         /// <summary>
-        /// Creates an <see cref="EditableBitmap"/> as a view on a section of an existing <see cref="EditableBitmap"/>.
+        ///     Gets the pixel format size in bytes (not bits, as with Image.GetPixelFormatSize()).
         /// </summary>
-        /// <param name="viewArea">The area that should form the bounds of the view.</param>
-        public EditableBitmap CreateView(Rectangle viewArea)
-        {
-            if (disposed)
-                throw new ObjectDisposedException("this");
-            return new EditableBitmap(this, viewArea);
-        }
-
-        private int startOffset;
+        public int PixelFormatSize { get; private set; }
 
         /// <summary>
-        /// If this <see cref="EditableBitmap"/> is a view on another <see cref="EditableBitmap"/> instance,
-        /// this property gets the index where the pixels that are within the view's pixel area start.
+        ///     Gets the stride of the bitmap.
         /// </summary>
-        public int StartOffset
+        public int Stride { get; private set; }
+
+        /// <summary>
+        ///     Gets the underlying <see cref="System.Drawing.Bitmap" />
+        ///     that this EditableBitmap wraps.
+        /// </summary>
+        public Bitmap Bitmap { get; set; }
+
+        /// <summary>
+        ///     Gets an array that contains the bitmap bit buffer.
+        /// </summary>
+        public byte[] Bits
         {
-            get { return startOffset; }
+            get { return byteArray.bits; }
         }
 
-        #endregion
+        /// <summary>
+        ///     The <see cref="EditableBitmap" /> that this <see cref="EditableBitmap" /> is a view on.
+        ///     This property's value will be null if this EditableBitmap is not a view on another
+        ///     <see cref="EditableBitmap" />.
+        /// </summary>
+        public EditableBitmap Owner { get; private set; }
 
-
-        private bool disposed;
-
-        public bool Disposed
+        /// <summary>
+        ///     Gets a safe pointer to the buffer containing the bitmap bits.
+        /// </summary>
+        public IntPtr BitPtr
         {
-            get { return disposed; }
+            get { return byteArray.bitPtr; }
         }
 
+        public bool Disposed { get; private set; }
 
         #region IDisposable Members
 
@@ -226,18 +138,18 @@ namespace ITElite.Projects.WPF.IO.DeepZoom
 
         protected void Dispose(bool disposing)
         {
-            if (disposed)
+            if (Disposed)
                 return;
 
-            bitmap.Dispose();
+            Bitmap.Dispose();
             byteArray.ReleaseReference();
-            disposed = true;
+            Disposed = true;
 
             //Set managed object refs to null if explicitly disposing, so that they can be cleaned up by the GC.
             if (disposing)
             {
-                owner = null;
-                bitmap = null;
+                Owner = null;
+                Bitmap = null;
             }
         }
 
@@ -245,15 +157,62 @@ namespace ITElite.Projects.WPF.IO.DeepZoom
         {
             Dispose(false);
         }
+
+        #region View Support
+
+        /// <summary>
+        ///     Creates an <see cref="EditableBitmap" /> as a view on a section of an existing <see cref="EditableBitmap" />.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="viewArea"></param>
+        protected EditableBitmap(EditableBitmap source, Rectangle viewArea)
+        {
+            Owner = source;
+            PixelFormatSize = source.PixelFormatSize;
+            byteArray = source.byteArray;
+            byteArray.AddReference();
+            Stride = source.Stride;
+
+            try
+            {
+                StartOffset = source.StartOffset + (Stride*viewArea.Y) + (viewArea.X*PixelFormatSize);
+                Bitmap = new Bitmap(viewArea.Width, viewArea.Height, Stride, source.Bitmap.PixelFormat,
+                    (IntPtr) (((int) byteArray.bitPtr) + StartOffset));
+            }
+            finally
+            {
+                if (Bitmap == null)
+                    byteArray.ReleaseReference();
+            }
+        }
+
+        /// <summary>
+        ///     Creates an <see cref="EditableBitmap" /> as a view on a section of an existing <see cref="EditableBitmap" />.
+        /// </summary>
+        /// <param name="viewArea">The area that should form the bounds of the view.</param>
+        public EditableBitmap CreateView(Rectangle viewArea)
+        {
+            if (Disposed)
+                throw new ObjectDisposedException("this");
+            return new EditableBitmap(this, viewArea);
+        }
+
+        /// <summary>
+        ///     If this <see cref="EditableBitmap" /> is a view on another <see cref="EditableBitmap" /> instance,
+        ///     this property gets the index where the pixels that are within the view's pixel area start.
+        /// </summary>
+        public int StartOffset { get; private set; }
+
+        #endregion
     }
 
     internal class SharedPinnedByteArray
     {
-        internal byte[] bits;
-        internal GCHandle handle;
         internal IntPtr bitPtr;
-
-        int refCount;
+        internal byte[] bits;
+        private bool destroyed;
+        internal GCHandle handle;
+        private int refCount;
 
         public SharedPinnedByteArray(int length)
         {
@@ -276,7 +235,6 @@ namespace ITElite.Projects.WPF.IO.DeepZoom
                 Destroy();
         }
 
-        bool destroyed;
         private void Destroy()
         {
             if (!destroyed)

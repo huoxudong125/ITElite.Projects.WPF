@@ -5,15 +5,30 @@ using System.Windows.Media;
 namespace ITElite.Projects.WPF.Controls.TextControl
 {
     /// <summary>
-    /// OutlineText custom control class derives layout, event, data binding, and rendering from derived FrameworkElement class.
+    ///     OutlineText custom control class derives layout, event, data binding, and rendering from derived FrameworkElement
+    ///     class.
     /// </summary>
     public class OutlineTextControl : FrameworkElement
     {
         static OutlineTextControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(OutlineTextControl)
-                , new FrameworkPropertyMetadata(typeof(OutlineTextControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof (OutlineTextControl)
+                , new FrameworkPropertyMetadata(typeof (OutlineTextControl)));
         }
+
+        #region Private Methods
+
+        /// <summary>
+        ///     Invoked when a dependency property has changed. Generate a new FormattedText object to display.
+        /// </summary>
+        /// <param name="d">OutlineText object whose property was updated.</param>
+        /// <param name="e">Event arguments for the dependency property.</param>
+        private static void OnOutlineTextInvalidated(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((OutlineTextControl) d).CreateText();
+        }
+
+        #endregion Private Methods
 
         #region Private Fields
 
@@ -22,24 +37,10 @@ namespace ITElite.Projects.WPF.Controls.TextControl
 
         #endregion Private Fields
 
-        #region Private Methods
-
-        /// <summary>
-        /// Invoked when a dependency property has changed. Generate a new FormattedText object to display.
-        /// </summary>
-        /// <param name="d">OutlineText object whose property was updated.</param>
-        /// <param name="e">Event arguments for the dependency property.</param>
-        private static void OnOutlineTextInvalidated(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((OutlineTextControl)d).CreateText();
-        }
-
-        #endregion Private Methods
-
         #region FrameworkElement Overrides
 
         /// <summary>
-        /// OnRender override draws the geometry of the text and optional highlight.
+        ///     OnRender override draws the geometry of the text and optional highlight.
         /// </summary>
         /// <param name="drawingContext">Drawing context of the OutlineText control.</param>
         protected override void OnRender(DrawingContext drawingContext)
@@ -48,25 +49,25 @@ namespace ITElite.Projects.WPF.Controls.TextControl
             drawingContext.DrawGeometry(Fill, new Pen(Stroke, StrokeThickness), _textGeometry);
 
             // Draw the text highlight based on the properties that are set.
-            if (Highlight == true)
+            if (Highlight)
             {
                 drawingContext.DrawGeometry(null, new Pen(Stroke, StrokeThickness), _textHighLightGeometry);
             }
         }
 
         /// <summary>
-        /// Create the outline geometry based on the formatted text.
+        ///     Create the outline geometry based on the formatted text.
         /// </summary>
         public void CreateText()
         {
-            FontStyle fontStyle = FontStyles.Normal;
-            FontWeight fontWeight = FontWeights.Medium;
+            var fontStyle = FontStyles.Normal;
+            var fontWeight = FontWeights.Medium;
 
-            if (Bold == true) fontWeight = FontWeights.Bold;
-            if (Italic == true) fontStyle = FontStyles.Italic;
+            if (Bold) fontWeight = FontWeights.Bold;
+            if (Italic) fontStyle = FontStyles.Italic;
 
             // Create the formatted text based on the properties set.
-            FormattedText formattedText = new FormattedText(
+            var formattedText = new FormattedText(
                 Text,
                 CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.GetCultureInfo("en-us"),
                 FlowDirection.LeftToRight,
@@ -83,7 +84,7 @@ namespace ITElite.Projects.WPF.Controls.TextControl
             _textGeometry = formattedText.BuildGeometry(new Point(0, 0));
 
             // Build the geometry object that represents the text hightlight.
-            if (Highlight == true)
+            if (Highlight)
             {
                 _textHighLightGeometry = formattedText.BuildHighlightGeometry(new Point(0, 0));
             }
@@ -99,220 +100,178 @@ namespace ITElite.Projects.WPF.Controls.TextControl
         #region DependencyProperties
 
         /// <summary>
-        /// Specifies whether the font should display Bold font weight.
+        ///     Specifies whether the font should display Bold font weight.
         /// </summary>
         public bool Bold
         {
-            get
-            {
-                return (bool)GetValue(BoldProperty);
-            }
+            get { return (bool) GetValue(BoldProperty); }
 
-            set
-            {
-                SetValue(BoldProperty, value);
-            }
+            set { SetValue(BoldProperty, value); }
         }
 
         /// <summary>
-        /// Identifies the Bold dependency property.
+        ///     Identifies the Bold dependency property.
         /// </summary>
         public static readonly DependencyProperty BoldProperty = DependencyProperty.Register(
             "Bold",
-            typeof(bool),
-            typeof(OutlineTextControl),
+            typeof (bool),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
                 false,
                 FrameworkPropertyMetadataOptions.AffectsRender,
-                new PropertyChangedCallback(OnOutlineTextInvalidated),
+                OnOutlineTextInvalidated,
                 null
                 )
             );
 
         /// <summary>
-        /// Specifies the brush to use for the fill of the formatted text.
+        ///     Specifies the brush to use for the fill of the formatted text.
         /// </summary>
         public Brush Fill
         {
-            get
-            {
-                return (Brush)GetValue(FillProperty);
-            }
+            get { return (Brush) GetValue(FillProperty); }
 
-            set
-            {
-                SetValue(FillProperty, value);
-            }
+            set { SetValue(FillProperty, value); }
         }
 
         /// <summary>
-        /// Identifies the Fill dependency property.
+        ///     Identifies the Fill dependency property.
         /// </summary>
         public static readonly DependencyProperty FillProperty = DependencyProperty.Register(
             "Fill",
-            typeof(Brush),
-            typeof(OutlineTextControl),
+            typeof (Brush),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
                 new SolidColorBrush(Colors.LightSteelBlue),
                 FrameworkPropertyMetadataOptions.AffectsRender,
-                new PropertyChangedCallback(OnOutlineTextInvalidated),
+                OnOutlineTextInvalidated,
                 null
                 )
             );
 
         /// <summary>
-        /// The font to use for the displayed formatted text.
+        ///     The font to use for the displayed formatted text.
         /// </summary>
         public FontFamily Font
         {
-            get
-            {
-                return (FontFamily)GetValue(FontProperty);
-            }
+            get { return (FontFamily) GetValue(FontProperty); }
 
-            set
-            {
-                SetValue(FontProperty, value);
-            }
+            set { SetValue(FontProperty, value); }
         }
 
         /// <summary>
-        /// Identifies the Font dependency property.
+        ///     Identifies the Font dependency property.
         /// </summary>
         public static readonly DependencyProperty FontProperty = DependencyProperty.Register(
             "Font",
-            typeof(FontFamily),
-            typeof(OutlineTextControl),
+            typeof (FontFamily),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
                 new FontFamily("Arial"),
                 FrameworkPropertyMetadataOptions.AffectsRender,
-                new PropertyChangedCallback(OnOutlineTextInvalidated),
+                OnOutlineTextInvalidated,
                 null
                 )
             );
 
         /// <summary>
-        /// The current font size.
+        ///     The current font size.
         /// </summary>
         public double FontSize
         {
-            get
-            {
-                return (double)GetValue(FontSizeProperty);
-            }
+            get { return (double) GetValue(FontSizeProperty); }
 
-            set
-            {
-                SetValue(FontSizeProperty, value);
-            }
+            set { SetValue(FontSizeProperty, value); }
         }
 
         /// <summary>
-        /// Identifies the FontSize dependency property.
+        ///     Identifies the FontSize dependency property.
         /// </summary>
         public static readonly DependencyProperty FontSizeProperty = DependencyProperty.Register(
             "FontSize",
-            typeof(double),
-            typeof(OutlineTextControl),
+            typeof (double),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
-                 (double)48.0,
-                 FrameworkPropertyMetadataOptions.AffectsRender,
-                 new PropertyChangedCallback(OnOutlineTextInvalidated),
-                 null
-                 )
+                48.0,
+                FrameworkPropertyMetadataOptions.AffectsRender,
+                OnOutlineTextInvalidated,
+                null
+                )
             );
 
         /// <summary>
-        /// Specifies whether to show the text highlight.
+        ///     Specifies whether to show the text highlight.
         /// </summary>
         public bool Highlight
         {
-            get
-            {
-                return (bool)GetValue(HighlightProperty);
-            }
+            get { return (bool) GetValue(HighlightProperty); }
 
-            set
-            {
-                SetValue(HighlightProperty, value);
-            }
+            set { SetValue(HighlightProperty, value); }
         }
 
         /// <summary>
-        /// Identifies the Hightlight dependency property.
+        ///     Identifies the Hightlight dependency property.
         /// </summary>
         public static readonly DependencyProperty HighlightProperty = DependencyProperty.Register(
             "Highlight",
-            typeof(bool),
-            typeof(OutlineTextControl),
+            typeof (bool),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
-                 false,
-                 FrameworkPropertyMetadataOptions.AffectsRender,
-                 new PropertyChangedCallback(OnOutlineTextInvalidated),
-                 null
-                 )
+                false,
+                FrameworkPropertyMetadataOptions.AffectsRender,
+                OnOutlineTextInvalidated,
+                null
+                )
             );
 
         /// <summary>
-        /// Specifies whether the font should display Italic font style.
+        ///     Specifies whether the font should display Italic font style.
         /// </summary>
         public bool Italic
         {
-            get
-            {
-                return (bool)GetValue(ItalicProperty);
-            }
+            get { return (bool) GetValue(ItalicProperty); }
 
-            set
-            {
-                SetValue(ItalicProperty, value);
-            }
+            set { SetValue(ItalicProperty, value); }
         }
 
         /// <summary>
-        /// Identifies the Italic dependency property.
+        ///     Identifies the Italic dependency property.
         /// </summary>
         public static readonly DependencyProperty ItalicProperty = DependencyProperty.Register(
             "Italic",
-            typeof(bool),
-            typeof(OutlineTextControl),
+            typeof (bool),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
-                 false,
-                 FrameworkPropertyMetadataOptions.AffectsRender,
-                 new PropertyChangedCallback(OnOutlineTextInvalidated),
-                 null
-                 )
+                false,
+                FrameworkPropertyMetadataOptions.AffectsRender,
+                OnOutlineTextInvalidated,
+                null
+                )
             );
 
         /// <summary>
-        /// Specifies the brush to use for the stroke and optional hightlight of the formatted text.
+        ///     Specifies the brush to use for the stroke and optional hightlight of the formatted text.
         /// </summary>
         public Brush Stroke
         {
-            get
-            {
-                return (Brush)GetValue(StrokeProperty);
-            }
+            get { return (Brush) GetValue(StrokeProperty); }
 
-            set
-            {
-                SetValue(StrokeProperty, value);
-            }
+            set { SetValue(StrokeProperty, value); }
         }
 
         /// <summary>
-        /// Identifies the Stroke dependency property.
+        ///     Identifies the Stroke dependency property.
         /// </summary>
         public static readonly DependencyProperty StrokeProperty = DependencyProperty.Register(
             "Stroke",
-            typeof(Brush),
-            typeof(OutlineTextControl),
+            typeof (Brush),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
-                 new SolidColorBrush(Colors.Teal),
-                 FrameworkPropertyMetadataOptions.AffectsRender,
-                 new PropertyChangedCallback(OnOutlineTextInvalidated),
-                 null
-                 )
+                new SolidColorBrush(Colors.Teal),
+                FrameworkPropertyMetadataOptions.AffectsRender,
+                OnOutlineTextInvalidated,
+                null
+                )
             );
 
         /// <summary>
@@ -320,61 +279,53 @@ namespace ITElite.Projects.WPF.Controls.TextControl
         /// </summary>
         public ushort StrokeThickness
         {
-            get
-            {
-                return (ushort)GetValue(StrokeThicknessProperty);
-            }
+            get { return (ushort) GetValue(StrokeThicknessProperty); }
 
-            set
-            {
-                SetValue(StrokeThicknessProperty, value);
-            }
+            set { SetValue(StrokeThicknessProperty, value); }
         }
 
         /// <summary>
-        /// Identifies the StrokeThickness dependency property.
+        ///     Identifies the StrokeThickness dependency property.
         /// </summary>
         public static readonly DependencyProperty StrokeThicknessProperty = DependencyProperty.Register(
             "StrokeThickness",
-            typeof(ushort),
-            typeof(OutlineTextControl),
+            typeof (ushort),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
-                 (ushort)0,
-                 FrameworkPropertyMetadataOptions.AffectsRender,
-                 new PropertyChangedCallback(OnOutlineTextInvalidated),
-                 null
-                 )
+                (ushort) 0,
+                FrameworkPropertyMetadataOptions.AffectsRender,
+                OnOutlineTextInvalidated,
+                null
+                )
             );
 
         /// <summary>
-        /// Specifies the text string to display.
+        ///     Specifies the text string to display.
         /// </summary>
         public string Text
         {
-            get
-            {
-                return (string)GetValue(TextProperty);
-            }
+            get { return (string) GetValue(TextProperty); }
 
             set
             {
                 SetValue(TextProperty, value);
+                InvalidateMeasure();
             }
         }
 
         /// <summary>
-        /// Identifies the Text dependency property.
+        ///     Identifies the Text dependency property.
         /// </summary>
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
             "Text",
-            typeof(string),
-            typeof(OutlineTextControl),
+            typeof (string),
+            typeof (OutlineTextControl),
             new FrameworkPropertyMetadata(
-                 "",
-                 FrameworkPropertyMetadataOptions.AffectsRender,
-                 new PropertyChangedCallback(OnOutlineTextInvalidated),
-                 null
-                 )
+                "",
+                FrameworkPropertyMetadataOptions.AffectsRender,
+                OnOutlineTextInvalidated,
+                null
+                )
             );
 
         #endregion DependencyProperties

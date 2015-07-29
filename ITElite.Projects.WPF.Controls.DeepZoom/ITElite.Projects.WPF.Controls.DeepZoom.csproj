@@ -51,6 +51,8 @@
     <Compile Include="Core\DeepZoomImageTileSource.cs" />
     <Compile Include="Core\DeepZoomImageTileSourceConverter.cs" />
     <Compile Include="Core\DisplayRect.cs" />
+    <Compile Include="Core\HDImageTileSource.cs" />
+    <Compile Include="Core\HDImageTileSourceConverter.cs" />
     <Compile Include="Core\ImageLoader.cs" />
     <Compile Include="Core\MultiScaleImageSpatialItemsSource.cs" />
     <Compile Include="Core\MultiScaleTileSource.cs" />

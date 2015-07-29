@@ -3,8 +3,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="http://www.itelite.cn/wpf/DeepZoom/"
         Title="Deep Zoom for WPF" Height="386.611" Width="535.251">
-    <Border Margin="3">
-        <!--
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ToolBar>
+            <Button Click="ButtonBase_OnClick">Load</Button>
+            <Separator />
+            <Label Content="Resolution(nm):" />
+            <TextBox x:Name="ResolutionTextBox" Width="100" Text="10" />
+            <Button Click="BtnSetResolution_OnClick">Set</Button>
+            <Separator />
+        </ToolBar>
+        <Border Margin="3" Grid.Row="1">
+            <!--
         Some sample images:
 
         http://cache.zoom.it/content/fmOv.dzi
@@ -16,9 +30,39 @@
         http://static.seadragon.com/content/misc/color-flower.dzi
         http://gasi.ch/examples/2008/10/13/inside-deep-zoom/mont-saint-michel/silverlight/GeneratedImages/dzc_output.xml
         -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <ComboBox x:Name="ImageSource" 
+                      SelectionChanged="ImageSource_SelectionChanged"
+                      SelectedValuePath="Content">
+                <ComboBoxItem>D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\photo.dzi</ComboBoxItem>
+                <ComboBoxItem>D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\WPF_Poster.dzi</ComboBoxItem>
+            </ComboBox>
 
-        <controls:MultiScaleImage
-            Source="D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\photo.dzi"
-          Resolution="8.683e-5" />
-    </Border>
+                <controls:MultiScaleImage Grid.Row="1" x:Name="MultiImage"
+                                      Resolution="8.683e-5" Background="DarkGray">
+                <controls:MultiScaleImage.Style>
+                    <Style TargetType="{x:Type controls:MultiScaleImage}">
+                        <Style.Triggers>
+                            <Trigger Property="Source" Value="{x:Null}">
+                                <Trigger.Setters>
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </Trigger.Setters>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </controls:MultiScaleImage.Style>
+            </controls:MultiScaleImage>
+            </Grid>
+        
+        </Border>
+
+        <StatusBar Grid.Row="2">
+            <Label x:Name="FilePathLabel" />
+            <Label x:Name="FileSize" />
+        </StatusBar>
+    </Grid>
 </Window>

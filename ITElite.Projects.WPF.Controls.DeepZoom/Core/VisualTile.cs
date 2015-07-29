@@ -4,7 +4,7 @@ using System.Windows.Media;
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
     /// <summary>
-    /// Represents a tile that displays an image in the screen.
+    ///     Represents a tile that displays an image in the screen.
     /// </summary>
     internal class VisualTile : INotifyPropertyChanged
     {
@@ -13,10 +13,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         public VisualTile(Tile tile, MultiScaleTileSource tileSource)
         {
             ZIndex = tile.Level;
-            Scale = 1 / tileSource.ScaleAtLevel(tile.Level);
+            Scale = 1/tileSource.ScaleAtLevel(tile.Level);
             var position = tileSource.GetTilePosition(tile.Column, tile.Row);
-            Left = position.X * Scale;
-            Top = position.Y * Scale;
+            Left = position.X*Scale;
+            Top = position.Y*Scale;
         }
 
         public VisualTile(Tile tile, MultiScaleTileSource tileSource, ImageSource source)
@@ -26,11 +26,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         }
 
         public int ZIndex { get; private set; }
-
         public double Left { get; private set; }
-
         public double Top { get; private set; }
-
         public double Scale { get; private set; }
 
         public ImageSource Source
@@ -49,7 +46,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         protected void RaisePropertyChanged(string name)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(name));
         }
 

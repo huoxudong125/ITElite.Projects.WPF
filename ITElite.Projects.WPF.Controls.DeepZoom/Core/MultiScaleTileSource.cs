@@ -7,45 +7,16 @@ using System.Windows;
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 {
     /// <summary>
-    /// Used to specify the source of Deep Zoom images.
+    ///     Used to specify the source of Deep Zoom images.
     /// </summary>
-    [TypeConverter(typeof(DeepZoomImageTileSourceConverter))]
+    //[TypeConverter(typeof(HDImageTileSourceConverter))]
+    [TypeConverter(typeof (DeepZoomImageTileSourceConverter))]
     public abstract class MultiScaleTileSource : DependencyObject
     {
-        #region Constructors
-
-        /// <summary>
-        /// Exclusive for DeepZoomImageTileSource
-        /// </summary>
-        internal MultiScaleTileSource()
-        {
-        }
-
-        public MultiScaleTileSource(long imageWidth, long imageHeight, int tileSize, int tileOverlap)
-        {
-            ImageSize = new Size(imageWidth, imageHeight);
-            TileSize = tileSize;
-            TileOverlap = tileOverlap;
-
-            InitializeTileSource();
-        }
-
-        internal void InitializeTileSource()
-        {
-            _maxLevel = GetMaximumLevel(ImageSize.Width, ImageSize.Height);
-            _zoomLimitLevel = _maxLevel;
-            CalculateLevelOffsets();
-        }
-
-        public MultiScaleTileSource(int imageWidth, int imageHeight, int tileSize, int tileOverlap) :
-            this((long)imageWidth, (long)imageHeight, tileSize, tileOverlap) { }
-
-        #endregion Constructors
-
         #region Abstract methods
 
         /// <summary>
-        /// Gets a Uri or Stream to be used as source for a given tile.
+        ///     Gets a Uri or Stream to be used as source for a given tile.
         /// </summary>
         /// <param name="tileLevel">Level of the tile.</param>
         /// <param name="tilePositionX">X-coordinate position of the tile.</param>
@@ -56,15 +27,51 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         #endregion Abstract methods
 
+        #region Constructors
+
+        /// <summary>
+        ///     Exclusive for DeepZoomImageTileSource
+        /// </summary>
+        internal MultiScaleTileSource()
+        {
+            ZoomStep = 2;
+            ImagesGenerateStep = 2;
+        }
+
+        public MultiScaleTileSource(long imageWidth, long imageHeight, int tileSize, int tileOverlap) : this()
+        {
+            ImageSize = new Size(imageWidth, imageHeight);
+            TileSize = tileSize;
+            TileOverlap = tileOverlap;
+
+            InitializeTileSource();
+        }
+
+        public MultiScaleTileSource(int imageWidth, int imageHeight, int tileSize, int tileOverlap) :
+            this(imageWidth, (long) imageHeight, tileSize, tileOverlap)
+        {
+        }
+
+        internal void InitializeTileSource()
+        {
+            _maxLevel = GetMaximumLevel(ImageSize.Width, ImageSize.Height);
+            _zoomLimitLevel = _maxLevel;
+            CalculateLevelOffsets();
+        }
+
+        #endregion Constructors
+
         #region Internal methods
 
         /// <summary>
-        /// Returns the visible tiles inside a rectangle starting from a chosen
-        /// level and moving upwards until there are no missing tiles.
+        ///     Returns the visible tiles inside a rectangle starting from a chosen
+        ///     level and moving upwards until there are no missing tiles.
         /// </summary>
         /// <param name="rectangle">The rectangle in which tiles will be searched.</param>
-        /// <param name="startingLevel">The level where the search will start. If there are missing tiles in this level,
-        /// the next level will be rendered, until a level with no missing tiles is found.</param>
+        /// <param name="startingLevel">
+        ///     The level where the search will start. If there are missing tiles in this level,
+        ///     the next level will be rendered, until a level with no missing tiles is found.
+        /// </param>
         /// <returns>The visible tiles inside the rectangle at the requested level.</returns>
         internal IEnumerable<Tile> VisibleTilesUntilFill(Rect rectangle, int startingLevel)
         {
@@ -96,10 +103,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             visibleTiles = levels.SelectMany(level =>
             {
                 var levelScale = ScaleAtLevel(level);
-                var scaledBounds = new Rect(rectangle.X * levelScale,
-                                            rectangle.Y * levelScale,
-                                            rectangle.Width * levelScale,
-                                            rectangle.Height * levelScale);
+                var scaledBounds = new Rect(rectangle.X*levelScale,
+                    rectangle.Y*levelScale,
+                    rectangle.Width*levelScale,
+                    rectangle.Height*levelScale);
                 return VisibleTiles(scaledBounds, level);
             });
             return visibleTiles;
@@ -110,20 +117,21 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             var offsetX = column == 0 ? 0 : TileOverlap;
             var offsetY = row == 0 ? 0 : TileOverlap;
 
-            return new Point(column * TileSize - offsetX, row * TileSize - offsetY);
+            return new Point(column*TileSize - offsetX, row*TileSize - offsetY);
         }
 
         internal int GetLevel(double scaleRatio)
         {
-            var level = _maxLevel + (int)Math.Log(scaleRatio, 2);
+            var level = _maxLevel + (int) Math.Log(scaleRatio, ImagesGenerateStep);
+                // _maxLevel + (int)Math.Log(scaleRatio, 2);
 
             return level.Clamp(0, _zoomLimitLevel);
         }
 
         internal int GetLevel(double viewportWidth, double viewportHeight)
         {
-            var originalAspectRatio = ImageSize.Width / ImageSize.Height;
-            var viewportAspectRatio = viewportWidth / viewportHeight;
+            var originalAspectRatio = ImageSize.Width/ImageSize.Height;
+            var viewportAspectRatio = viewportWidth/viewportHeight;
 
             var currentLevel = 0;
             if (viewportAspectRatio > originalAspectRatio)
@@ -143,16 +151,16 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             if (_levelScales.Count > level)
                 return _levelScales[level];
-            return Math.Pow(0.5, _maxLevel - level);
+            return Math.Pow((1.0/ImagesGenerateStep), _maxLevel - level); //Math.Pow(0.5, _maxLevel - level)
         }
 
         internal Size ImageSizeAtLevel(int level)
         {
             var scale = ScaleAtLevel(level);
             return new Size(
-                Math.Ceiling(ImageSize.Width * scale),
-                Math.Ceiling(ImageSize.Height * scale)
-            );
+                Math.Ceiling(ImageSize.Width*scale),
+                Math.Ceiling(ImageSize.Height*scale)
+                );
         }
 
         internal int LevelOffset(int level)
@@ -173,14 +181,14 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             if (_columnCounts.Count > level)
                 return _columnCounts[level];
-            return (int)Math.Ceiling(ImageSizeAtLevel(level).Width / TileSize);
+            return (int) Math.Ceiling(ImageSizeAtLevel(level).Width/TileSize);
         }
 
         internal int RowsAtLevel(int level)
         {
             if (_rowCounts.Count > level)
                 return _rowCounts[level];
-            return (int)Math.Ceiling(ImageSizeAtLevel(level).Height / TileSize);
+            return (int) Math.Ceiling(ImageSizeAtLevel(level).Height/TileSize);
         }
 
         // Note: This uses an int because ZoomableCanvas uses ints to determine visible tiles.
@@ -195,9 +203,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             var levelOffset = LevelOffset(tile.Level);
 
             if (columnsAtLevel > rowsAtLevel)
-                return levelOffset + columnsAtLevel * tile.Row + tile.Column;
-            else
-                return levelOffset + rowsAtLevel * tile.Column + tile.Row;
+                return levelOffset + columnsAtLevel*tile.Row + tile.Column;
+            return levelOffset + rowsAtLevel*tile.Column + tile.Row;
         }
 
         internal Tile TileFromIndex(int index)
@@ -215,13 +222,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
             if (columnsAtLevel > rowsAtLevel)
             {
-                row = index / columnsAtLevel;
-                column = index - row * columnsAtLevel;
+                row = index/columnsAtLevel;
+                column = index - row*columnsAtLevel;
             }
             else
             {
-                column = index / rowsAtLevel;
-                row = index - column * rowsAtLevel;
+                column = index/rowsAtLevel;
+                row = index - column*rowsAtLevel;
             }
 
             return new Tile(level, column, row);
@@ -244,7 +251,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                 {
                     checked
                     {
-                        offset += TilesAtLevel(level);
+                        offset += TilesAtLevel(level); //TODO:Why to accumulative the offset
                     }
                 }
                 catch (OverflowException)
@@ -256,16 +263,17 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             }
         }
 
-        protected static int GetMaximumLevel(double width, double height)
+        protected virtual int GetMaximumLevel(double width, double height)
         {
-            return (int)Math.Ceiling(Math.Log(Math.Max(width, height), 2));
+            return (int) Math.Ceiling(Math.Log(Math.Max(width, height), ImagesGenerateStep));
+            //(int)Math.Ceiling(Math.Log(Math.Max(width, height), 2))
         }
 
         protected int TilesAtLevel(int level)
         {
             checked
             {
-                return ColumnsAtLevel(level) * RowsAtLevel(level);
+                return ColumnsAtLevel(level)*RowsAtLevel(level);
             }
         }
 
@@ -278,10 +286,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             rectangle.Intersect(new Rect(ImageSize));
 
-            var top = Math.Floor(rectangle.Top / TileSize);
-            var left = Math.Floor(rectangle.Left / TileSize);
-            var right = Math.Ceiling(rectangle.Right / TileSize);
-            var bottom = Math.Ceiling(rectangle.Bottom / TileSize);
+            var top = Math.Floor(rectangle.Top/TileSize);
+            var left = Math.Floor(rectangle.Left/TileSize);
+            var right = Math.Ceiling(rectangle.Right/TileSize);
+            var bottom = Math.Ceiling(rectangle.Bottom/TileSize);
 
             right = right.AtMost(ColumnsAtLevel(level));
             bottom = bottom.AtMost(RowsAtLevel(level));
@@ -294,7 +302,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             else
             {
                 foreach (var pt in Quadivide(new Rect(left, top, width, height)))
-                    yield return new Tile(level, (int)pt.X, (int)pt.Y);
+                    yield return new Tile(level, (int) pt.X, (int) pt.Y);
             }
         }
 
@@ -335,23 +343,26 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         #region Private Fields
 
+        private readonly IList<int> _columnCounts = new List<int>();
+        private readonly IList<int> _levelOffsets = new List<int>();
+        private readonly IList<double> _levelScales = new List<double>();
+        private readonly IList<int> _rowCounts = new List<int>();
         private int _maxLevel;
         private int _zoomLimitLevel;
-
-        private readonly IList<int> _levelOffsets = new List<int>();
-        private readonly IList<int> _rowCounts = new List<int>();
-        private readonly IList<int> _columnCounts = new List<int>();
-        private readonly IList<double> _levelScales = new List<double>();
 
         #endregion Private Fields
 
         #region Protected Properties
 
-        protected internal Size ImageSize { get; set; }
+        public Size ImageSize { get; protected set; }
 
         protected internal int TileSize { get; set; }
 
         protected internal int TileOverlap { get; set; }
+
+        protected internal int ZoomStep { get; set; }
+
+        protected internal int ImagesGenerateStep { get; set; }
 
         #endregion Protected Properties
     }

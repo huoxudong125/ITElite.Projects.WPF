@@ -14,22 +14,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             : base(adornerElement)
         {
             Child = childControl;
-            this.HorizontalAlignment = HorizontalAlignment.Right;
-            this.VerticalAlignment = VerticalAlignment.Bottom;
+            HorizontalAlignment = HorizontalAlignment.Right;
+            VerticalAlignment = VerticalAlignment.Bottom;
         }
 
         protected override int VisualChildrenCount
         {
-            get
-            {
-                return 1;
-            }
-        }
-
-        protected override Visual GetVisualChild(int index)
-        {
-            if (index != 0) throw new ArgumentOutOfRangeException();
-            return _child;
+            get { return 1; }
         }
 
         public Control Child
@@ -49,6 +40,12 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             }
         }
 
+        protected override Visual GetVisualChild(int index)
+        {
+            if (index != 0) throw new ArgumentOutOfRangeException();
+            return _child;
+        }
+
         protected override Size MeasureOverride(Size constraint)
         {
             _child.Measure(constraint);
@@ -57,8 +54,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _child.Arrange(new Rect(new Point(((FrameworkElement)AdornedElement).ActualWidth - finalSize.Width,
-                ((FrameworkElement)AdornedElement).ActualHeight - finalSize.Height), finalSize));
+            _child.Arrange(new Rect(new Point(((FrameworkElement) AdornedElement).ActualWidth - finalSize.Width,
+                ((FrameworkElement) AdornedElement).ActualHeight - finalSize.Height), finalSize));
 
             return new Size(_child.ActualWidth, _child.ActualHeight);
         }

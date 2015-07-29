@@ -5,9 +5,47 @@ using System.Windows.Media;
 
 namespace ITElite.Projects.WPF.Converters
 {
-    [ValueConversion(typeof(string), typeof(string))]
+    [ValueConversion(typeof (string), typeof (string))]
     public class HlsValueConverter : IValueConverter
     {
+        #region Utility Methods
+
+        /// <summary>
+        ///     Used by the HSL-to-RGB converter.
+        /// </summary>
+        /// <param name="t1">A temporary variable.</param>
+        /// <param name="t2">A temporary variable.</param>
+        /// <param name="t3">A temporary variable.</param>
+        /// <returns>An RGB color value, in decimal format.</returns>
+        private static double SetColor(double t1, double t2, double t3)
+        {
+            if (t3 < 0) t3 += 1.0;
+            if (t3 > 1) t3 -= 1.0;
+
+            double color;
+            if (6.0*t3 < 1)
+            {
+                color = t2 + (t1 - t2)*6.0*t3;
+            }
+            else if (2.0*t3 < 1)
+            {
+                color = t1;
+            }
+            else if (3.0*t3 < 2)
+            {
+                color = t2 + (t1 - t2)*((2.0/3.0) - t3)*6.0;
+            }
+            else
+            {
+                color = t2;
+            }
+
+            // Set return value
+            return color;
+        }
+
+        #endregion
+
         /* Note: This class is not used in the demo. It is included
          * solely to provide sample code for an IValueConverter based 
          * on the methods in the demo. */
@@ -28,7 +66,7 @@ namespace ITElite.Projects.WPF.Converters
         #region IValueConverter Members
 
         /// <summary>
-        /// Adjusts an RGB color by a specified percentage.
+        ///     Adjusts an RGB color by a specified percentage.
         /// </summary>
         /// <param name="value">The hex representation of the RGB color to adjust.</param>
         /// <param name="targetType">WPF Type.</param>
@@ -47,7 +85,7 @@ namespace ITElite.Projects.WPF.Converters
             var hlsColor = RgbToHls(rgbColorIn);
 
             // Adjust color by factor passed in
-            var brightnessAdjustment = Double.Parse((parameter.ToString()));
+            var brightnessAdjustment = double.Parse((parameter.ToString()));
             hlsColor.L *= brightnessAdjustment;
 
             // Return result
@@ -58,7 +96,7 @@ namespace ITElite.Projects.WPF.Converters
         }
 
         /// <summary>
-        /// Not implemented in this converter; will throw an exception if called.
+        ///     Not implemented in this converter; will throw an exception if called.
         /// </summary>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -70,20 +108,20 @@ namespace ITElite.Projects.WPF.Converters
         #region RGB-HLS Conversions
 
         /// <summary>
-        /// Converts a WPF RGB color to an HSL color
+        ///     Converts a WPF RGB color to an HSL color
         /// </summary>
         /// <param name="rgbColor">The RGB color to convert.</param>
         /// <returns>An HSL color object equivalent to the RGB color object passed in.</returns>
-        static HlsColor RgbToHls(Color rgbColor)
+        private static HlsColor RgbToHls(Color rgbColor)
         {
             // Initialize result
             var hlsColor = new HlsColor();
 
             // Convert RGB values to percentages
-            double r = (double)rgbColor.R / 255;
-            var g = (double)rgbColor.G / 255;
-            var b = (double)rgbColor.B / 255;
-            var a = (double)rgbColor.A / 255;
+            var r = (double) rgbColor.R/255;
+            var g = (double) rgbColor.G/255;
+            var b = (double) rgbColor.B/255;
+            var a = (double) rgbColor.A/255;
 
             // Find min and max RGB values
             var min = Math.Min(r, Math.Min(g, b));
@@ -106,22 +144,22 @@ namespace ITElite.Projects.WPF.Converters
             /* If we get to this point, we know we don't have a shade of gray. */
 
             // Set L
-            hlsColor.L = (min + max) / 2;
+            hlsColor.L = (min + max)/2;
 
             // Set S
-            if(hlsColor.L < 0.5)
+            if (hlsColor.L < 0.5)
             {
-                hlsColor.S = delta / (max + min);
+                hlsColor.S = delta/(max + min);
             }
             else
             {
-                hlsColor.S = delta / (2.0 - max - min);
+                hlsColor.S = delta/(2.0 - max - min);
             }
 
             // Set H
-            if (r == max) hlsColor.H = (g - b) / delta;
-            if (g == max) hlsColor.H = 2.0 + (b - r) / delta;
-            if (b == max) hlsColor.H = 4.0 + (r - g) / delta;
+            if (r == max) hlsColor.H = (g - b)/delta;
+            if (g == max) hlsColor.H = 2.0 + (b - r)/delta;
+            if (b == max) hlsColor.H = 4.0 + (r - g)/delta;
             hlsColor.H *= 60;
             if (hlsColor.H < 0) hlsColor.H += 360;
 
@@ -130,15 +168,14 @@ namespace ITElite.Projects.WPF.Converters
 
             // Set return value
             return hlsColor;
-
         }
 
         /// <summary>
-        /// Converts a WPF HSL color to an RGB color
+        ///     Converts a WPF HSL color to an RGB color
         /// </summary>
         /// <param name="hlsColor">The HSL color to convert.</param>
         /// <returns>An RGB color object equivalent to the HSL color object passed in.</returns>
-        static Color HlsToRgb(HlsColor hlsColor)
+        private static Color HlsToRgb(HlsColor hlsColor)
         {
             // Initialize result
             var rgbColor = new Color();
@@ -149,10 +186,10 @@ namespace ITElite.Projects.WPF.Converters
             // Special case: Gray
             if (hlsColor.S == 0)
             {
-                rgbColor.R = (byte)(hlsColor.L  * 255);
-                rgbColor.G = (byte)(hlsColor.L * 255);
-                rgbColor.B = (byte)(hlsColor.L * 255);
-                rgbColor.A = (byte)(hlsColor.A * 255);
+                rgbColor.R = (byte) (hlsColor.L*255);
+                rgbColor.G = (byte) (hlsColor.L*255);
+                rgbColor.B = (byte) (hlsColor.L*255);
+                rgbColor.A = (byte) (hlsColor.A*255);
                 return rgbColor;
             }
 
@@ -163,13 +200,13 @@ namespace ITElite.Projects.WPF.Converters
             }
             else
             {
-                t1 = hlsColor.L + hlsColor.S - (hlsColor.L * hlsColor.S);
+                t1 = hlsColor.L + hlsColor.S - (hlsColor.L*hlsColor.S);
             }
 
             var t2 = 2.0*hlsColor.L - t1;
 
             // Convert H from degrees to a percentage
-            var h = hlsColor.H / 360;
+            var h = hlsColor.H/360;
 
             // Set colors as percentage values
             var tR = h + (1.0/3.0);
@@ -178,55 +215,17 @@ namespace ITElite.Projects.WPF.Converters
             var tG = h;
             var g = SetColor(t1, t2, tG);
 
-            var tB = h - (1.0 / 3.0);
+            var tB = h - (1.0/3.0);
             var b = SetColor(t1, t2, tB);
 
             // Assign colors to Color object
-            rgbColor.R = (byte)(r * 255);
-            rgbColor.G = (byte)(g * 255);
-            rgbColor.B = (byte)(b * 255);
-            rgbColor.A = (byte)(hlsColor.A * 255);
+            rgbColor.R = (byte) (r*255);
+            rgbColor.G = (byte) (g*255);
+            rgbColor.B = (byte) (b*255);
+            rgbColor.A = (byte) (hlsColor.A*255);
 
             // Set return value
             return rgbColor;
-        }
-
-        #endregion
-
-        #region Utility Methods
-
-        /// <summary>
-        /// Used by the HSL-to-RGB converter.
-        /// </summary>
-        /// <param name="t1">A temporary variable.</param>
-        /// <param name="t2">A temporary variable.</param>
-        /// <param name="t3">A temporary variable.</param>
-        /// <returns>An RGB color value, in decimal format.</returns>
-        private static double SetColor(double t1, double t2, double t3)
-        {
-            if (t3 < 0) t3 += 1.0;
-            if (t3 > 1) t3 -= 1.0;
-
-            double color;
-            if (6.0 * t3 < 1)
-            {
-                color = t2 + (t1 - t2) * 6.0 * t3;
-            }
-            else if(2.0 * t3 < 1)
-            {
-                color = t1;
-            }
-            else if(3.0*t3 < 2)
-            {
-                color = t2 + (t1 - t2) * ((2.0/3.0) - t3) * 6.0;
-            }
-            else
-            {
-                color = t2;
-            }
-
-            // Set return value
-            return color;
         }
 
         #endregion
