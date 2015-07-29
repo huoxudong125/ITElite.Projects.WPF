@@ -157,9 +157,9 @@ namespace System.Windows.Controls
             var canvas = d as ZoomableCanvas;
             if (canvas != null)
             {
-                Point offset = canvas.Offset;
-                double scale = canvas.Scale;
-                Size renderSize = canvas.RenderSize;
+                var offset = canvas.Offset;
+                var scale = canvas.Scale;
+                var renderSize = canvas.RenderSize;
                 value = new Rect(offset.X/scale, offset.Y/scale, renderSize.Width/scale, renderSize.Height/scale);
             }
 
@@ -235,10 +235,10 @@ namespace System.Windows.Controls
         {
             var viewbox = (Rect) value;
             return viewbox.IsEmpty
-                   || (viewbox.X.IsBetween(Double.MinValue, Double.MaxValue)
-                       && viewbox.Y.IsBetween(Double.MinValue, Double.MaxValue)
-                       && viewbox.Width.IsBetween(Double.Epsilon, Double.MaxValue)
-                       && viewbox.Height.IsBetween(Double.Epsilon, Double.MaxValue));
+                   || (viewbox.X.IsBetween(double.MinValue, double.MaxValue)
+                       && viewbox.Y.IsBetween(double.MinValue, double.MaxValue)
+                       && viewbox.Width.IsBetween(double.Epsilon, double.MaxValue)
+                       && viewbox.Height.IsBetween(double.Epsilon, double.MaxValue));
         }
 
         /// <summary>
@@ -437,8 +437,8 @@ namespace System.Windows.Controls
         private static bool IsOffsetValid(object value)
         {
             var point = (Point) value;
-            return point.X.IsBetween(Double.MinValue, Double.MaxValue)
-                   && point.Y.IsBetween(Double.MinValue, Double.MaxValue);
+            return point.X.IsBetween(double.MinValue, double.MaxValue)
+                   && point.Y.IsBetween(double.MinValue, double.MaxValue);
         }
 
         /// <summary>
@@ -456,11 +456,11 @@ namespace System.Windows.Controls
             var canvas = d as ZoomableCanvas;
             if (canvas != null)
             {
-                Rect viewbox = canvas.Viewbox;
+                var viewbox = canvas.Viewbox;
                 if (!viewbox.IsEmpty)
                 {
-                    double scale = canvas.Scale;
-                    Size renderSize = canvas.RenderSize;
+                    var scale = canvas.Scale;
+                    var renderSize = canvas.RenderSize;
                     value = new Point((viewbox.X + viewbox.Width/2)*scale - renderSize.Width/2,
                         (viewbox.Y + viewbox.Height/2)*scale - renderSize.Height/2);
                 }
@@ -557,7 +557,7 @@ namespace System.Windows.Controls
         /// <returns><c>true</c> if the value is a valid value for the property; otherwise, <c>false</c>.</returns>
         private static bool IsScaleValid(object value)
         {
-            return ((double) value).IsBetween(Double.Epsilon, Double.MaxValue);
+            return ((double) value).IsBetween(double.Epsilon, double.MaxValue);
         }
 
         /// <summary>
@@ -574,10 +574,10 @@ namespace System.Windows.Controls
             var canvas = d as ZoomableCanvas;
             if (canvas != null)
             {
-                Size renderSize = canvas.RenderSize;
+                var renderSize = canvas.RenderSize;
                 if (renderSize.Width > 0 && renderSize.Height > 0)
                 {
-                    Rect viewbox = canvas.Viewbox;
+                    var viewbox = canvas.Viewbox;
                     if (!viewbox.IsEmpty)
                     {
                         switch (canvas.Stretch)
@@ -857,7 +857,7 @@ namespace System.Windows.Controls
 
             if (RealizedItems != null)
             {
-                LinkedListNode<int> item = RealizedItems.First;
+                var item = RealizedItems.First;
                 while (item != null)
                 {
                     if (item.Value >= index)
@@ -883,10 +883,10 @@ namespace System.Windows.Controls
 
             if (RealizedItems != null)
             {
-                LinkedListNode<int> item = RealizedItems.First;
+                var item = RealizedItems.First;
                 while (item != null)
                 {
-                    LinkedListNode<int> next = item.Next;
+                    var next = item.Next;
                     if (item.Value >= index)
                     {
                         if (item.Value < index + items.Count)
@@ -1047,13 +1047,13 @@ namespace System.Windows.Controls
                 get { return _items[index].Bounds; }
                 set
                 {
-                    SpatialItem item = _items[index];
-                    Rect bounds = item.Bounds;
+                    var item = _items[index];
+                    var bounds = item.Bounds;
                     if (bounds != value)
                     {
                         _extent = Rect.Empty;
                         _tree.Remove(item, bounds);
-                        _tree.Insert(item, value, value.IsEmpty ? Double.PositiveInfinity : value.Width + value.Height);
+                        _tree.Insert(item, value, value.IsEmpty ? double.PositiveInfinity : value.Width + value.Height);
                         item.Bounds = value;
 
                         if (ExtentChanged != null)
@@ -1104,7 +1104,7 @@ namespace System.Windows.Controls
                 {
                     if (_extent.IsEmpty)
                     {
-                        foreach (SpatialItem item in _items)
+                        foreach (var item in _items)
                         {
                             _extent.Union(item.Bounds);
                         }
@@ -1124,11 +1124,11 @@ namespace System.Windows.Controls
             public void InsertRange(int index, int count)
             {
                 var items = new SpatialItem[count];
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
                     items[i] = new SpatialItem();
                     items[i].Index = index + i;
-                    _tree.Insert(items[i], Rect.Empty, Double.PositiveInfinity);
+                    _tree.Insert(items[i], Rect.Empty, double.PositiveInfinity);
                 }
                 _items.InsertRange(index, items);
 
@@ -1145,7 +1145,7 @@ namespace System.Windows.Controls
             /// <param name="count">The number of items to remove.</param>
             public void RemoveRange(int index, int count)
             {
-                for (int i = index; i < _items.Count; i++)
+                for (var i = index; i < _items.Count; i++)
                 {
                     if (i < index + count)
                     {
@@ -1196,8 +1196,8 @@ namespace System.Windows.Controls
             /// </summary>
             public void Optimize()
             {
-                Rect treeExtent = _tree.Extent;
-                Rect realExtent = Extent;
+                var treeExtent = _tree.Extent;
+                var realExtent = Extent;
                 if (treeExtent.Top - realExtent.Top > treeExtent.Height ||
                     treeExtent.Left - realExtent.Left > treeExtent.Width ||
                     realExtent.Right - treeExtent.Right > treeExtent.Width ||
@@ -1227,7 +1227,6 @@ namespace System.Windows.Controls
                 }
 
                 public int Index { get; set; }
-
                 public Rect Bounds { get; set; }
 
                 public override string ToString()
@@ -1251,8 +1250,8 @@ namespace System.Windows.Controls
         /// <returns>A non-<c>null</c> value if further realization is required; otherwise, <c>null</c>.</returns>
         protected override object RealizeOverride(IEnumerable items, object state)
         {
-            IEnumerator enumerator = state as IEnumerator ?? RealizeOverride();
-            int rate = RealizationRate;
+            var enumerator = state as IEnumerator ?? RealizeOverride();
+            var rate = RealizationRate;
             while (rate-- > 0)
             {
                 if (!enumerator.MoveNext())
@@ -1282,8 +1281,8 @@ namespace System.Windows.Controls
                 if (IsVirtualizing)
                 {
                     // Only realize the items within our viewbox.
-                    Rect viewbox = ActualViewbox;
-                    int limit = RealizationLimit;
+                    var viewbox = ActualViewbox;
+                    var limit = RealizationLimit;
 
                     // Buffer the viewbox so that panning by small amounts is smooth.
                     viewbox.Inflate(viewbox.Width/10, viewbox.Height/10);
@@ -1295,19 +1294,19 @@ namespace System.Windows.Controls
                 {
                     // Get all items.
                     query =
-                        SpatialIndex.Query(new Rect(Double.NegativeInfinity, Double.NegativeInfinity,
-                            Double.PositiveInfinity, Double.PositiveInfinity));
+                        SpatialIndex.Query(new Rect(double.NegativeInfinity, double.NegativeInfinity,
+                            double.PositiveInfinity, double.PositiveInfinity));
                 }
 
                 // We insert nodes at the head of the linked list in the order they are returned.
                 LinkedListNode<int> lastNode = null;
-                LinkedListNode<int> nextNode = RealizedItems.First;
+                var nextNode = RealizedItems.First;
 
                 // Realize them.
-                foreach (int index in query)
+                foreach (var index in query)
                 {
                     // See if the item was already realized.
-                    LinkedListNode<int> node = RealizedItems.FindNext(lastNode, index);
+                    var node = RealizedItems.FindNext(lastNode, index);
                     if (node == null || node != nextNode)
                     {
                         if (node != null)
@@ -1345,11 +1344,11 @@ namespace System.Windows.Controls
                 nextNode = RealizedItems.Last;
                 while (nextNode != lastNode)
                 {
-                    LinkedListNode<int> node = nextNode;
+                    var node = nextNode;
                     nextNode = nextNode.Previous;
 
-                    int index = node.Value;
-                    UIElement container = ContainerFromIndex(index);
+                    var index = node.Value;
+                    var container = ContainerFromIndex(index);
                     if (container == null || (!container.IsMouseCaptureWithin && !container.IsKeyboardFocusWithin))
                     {
                         VirtualizeItem(index);
@@ -1417,7 +1416,7 @@ namespace System.Windows.Controls
         /// <param name="e">Event arguments related to the change.</param>
         private static void OnPositioningChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            DependencyObject parent = VisualTreeHelper.GetParent(d);
+            var parent = VisualTreeHelper.GetParent(d);
             var zoomable = parent as ZoomableCanvas;
             if (zoomable != null)
             {
@@ -1441,7 +1440,7 @@ namespace System.Windows.Controls
         /// <param name="scale">The new scale of the canvas.</param>
         protected virtual void ScaleOverride(double scale)
         {
-            ScaleTransform appliedTransform = AppliedScaleTransform;
+            var appliedTransform = AppliedScaleTransform;
             if (appliedTransform != null)
             {
                 appliedTransform.ScaleX = scale;
@@ -1461,7 +1460,7 @@ namespace System.Windows.Controls
         /// <param name="offset">The new offset of the canvas.</param>
         protected virtual void OffsetOverride(Point offset)
         {
-            TranslateTransform appliedTransform = AppliedTranslateTransform;
+            var appliedTransform = AppliedTranslateTransform;
             if (appliedTransform != null)
             {
                 appliedTransform.X = -offset.X;
@@ -1481,7 +1480,7 @@ namespace System.Windows.Controls
         /// <returns>A <see cref="Size" /> that represents the size that is required to arrange child content.</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            var childConstraint = new Size(Double.PositiveInfinity, Double.PositiveInfinity);
+            var childConstraint = new Size(double.PositiveInfinity, double.PositiveInfinity);
 
             foreach (UIElement child in InternalChildren)
             {
@@ -1507,9 +1506,9 @@ namespace System.Windows.Controls
         /// </returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            bool applyTransform = ApplyTransform;
-            Point offset = applyTransform ? new Point() : Offset;
-            double scale = applyTransform ? 1.0 : Scale;
+            var applyTransform = ApplyTransform;
+            var offset = applyTransform ? new Point() : Offset;
+            var scale = applyTransform ? 1.0 : Scale;
 
             ChildrenExtent = Rect.Empty;
 
@@ -1525,8 +1524,8 @@ namespace System.Windows.Controls
                     // If we are maintaining our own spatial wrapper then update its bounds.
                     if (PrivateIndex != null)
                     {
-                        int index = IndexFromContainer(child);
-                        Rect oldBounds = PrivateIndex[index];
+                        var index = IndexFromContainer(child);
+                        var oldBounds = PrivateIndex[index];
                         const double tolerance = .001; // The exact values during arrange can vary slightly.
                         if (Math.Abs(oldBounds.Top - bounds.Top) > tolerance ||
                             Math.Abs(oldBounds.Left - bounds.Left) > tolerance ||
@@ -1549,10 +1548,10 @@ namespace System.Windows.Controls
                     bounds.Height *= scale;
 
                     // WPF Arrange will crash if the values are too large.
-                    bounds.X = bounds.X.AtLeast(Single.MinValue/2);
-                    bounds.Y = bounds.Y.AtLeast(Single.MinValue/2);
-                    bounds.Width = bounds.Width.AtMost(Single.MaxValue);
-                    bounds.Height = bounds.Height.AtMost(Single.MaxValue);
+                    bounds.X = bounds.X.AtLeast(float.MinValue/2);
+                    bounds.Y = bounds.Y.AtLeast(float.MinValue/2);
+                    bounds.Width = bounds.Width.AtMost(float.MaxValue);
+                    bounds.Height = bounds.Height.AtMost(float.MaxValue);
 
                     child.Arrange(bounds);
                 }
@@ -1619,7 +1618,7 @@ namespace System.Windows.Controls
         {
             get
             {
-                Point position = Mouse.GetPosition(this);
+                var position = Mouse.GetPosition(this);
                 if (ApplyTransform)
                 {
                     return position;
@@ -1634,7 +1633,7 @@ namespace System.Windows.Controls
         protected void InvalidateExtent()
         {
             ComputedExtent = Rect.Empty;
-            ScrollViewer owner = ((IScrollInfo) this).ScrollOwner;
+            var owner = ((IScrollInfo) this).ScrollOwner;
             if (owner != null)
             {
                 owner.InvalidateScrollInfo();
@@ -1808,7 +1807,7 @@ namespace System.Windows.Controls
             offset = Math.Max(Math.Min(offset, ((IScrollInfo) this).ExtentWidth - ((IScrollInfo) this).ViewportWidth),
                 0.0);
 
-            Rect viewbox = Viewbox;
+            var viewbox = Viewbox;
             if (viewbox.IsEmpty)
             {
                 Offset = new Point(Offset.X + offset - ((IScrollInfo) this).HorizontalOffset, Offset.Y);
@@ -1826,7 +1825,7 @@ namespace System.Windows.Controls
             offset = Math.Max(
                 Math.Min(offset, ((IScrollInfo) this).ExtentHeight - ((IScrollInfo) this).ViewportHeight), 0.0);
 
-            Rect viewbox = Viewbox;
+            var viewbox = Viewbox;
             if (viewbox.IsEmpty)
             {
                 Offset = new Point(Offset.X, Offset.Y + offset - ((IScrollInfo) this).VerticalOffset);
@@ -1849,20 +1848,20 @@ namespace System.Windows.Controls
             rectangle = visual.TransformToAncestor(this).TransformBounds(rectangle);
             rectangle = RenderTransform.TransformBounds(rectangle);
 
-            double width = ((IScrollInfo) this).ViewportWidth;
-            double height = ((IScrollInfo) this).ViewportHeight;
-            double left = -rectangle.X;
-            double right = left + width - rectangle.Width;
-            double top = -rectangle.Y;
-            double bottom = top + height - rectangle.Height;
-            double deltaX = left > 0 && right > 0
+            var width = ((IScrollInfo) this).ViewportWidth;
+            var height = ((IScrollInfo) this).ViewportHeight;
+            var left = -rectangle.X;
+            var right = left + width - rectangle.Width;
+            var top = -rectangle.Y;
+            var bottom = top + height - rectangle.Height;
+            var deltaX = left > 0 && right > 0
                 ? Math.Min(left, right)
                 : left < 0 && right < 0 ? Math.Max(left, right) : 0.0;
-            double deltaY = top > 0 && bottom > 0
+            var deltaY = top > 0 && bottom > 0
                 ? Math.Min(top, bottom)
                 : top < 0 && bottom < 0 ? Math.Max(top, bottom) : 0.0;
 
-            Point offset = Offset;
+            var offset = Offset;
             offset.X -= deltaX;
             offset.Y -= deltaY;
             Offset = offset;

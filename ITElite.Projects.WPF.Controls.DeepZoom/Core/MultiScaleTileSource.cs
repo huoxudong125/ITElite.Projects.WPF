@@ -13,6 +13,20 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
     [TypeConverter(typeof (DeepZoomImageTileSourceConverter))]
     public abstract class MultiScaleTileSource : DependencyObject
     {
+        #region Abstract methods
+
+        /// <summary>
+        ///     Gets a Uri or Stream to be used as source for a given tile.
+        /// </summary>
+        /// <param name="tileLevel">Level of the tile.</param>
+        /// <param name="tilePositionX">X-coordinate position of the tile.</param>
+        /// <param name="tilePositionY">Y-coordinate position of the tile.</param>
+        /// <returns>An Uri or Stream object that can be used as source for an image tile.</returns>
+        /// <remarks>If this method returns a Uri, it will be used as UriSo</remarks>
+        protected internal abstract object GetTileLayers(int tileLevel, int tilePositionX, int tilePositionY);
+
+        #endregion Abstract methods
+
         #region Constructors
 
         /// <summary>
@@ -47,20 +61,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         #endregion Constructors
 
-        #region Abstract methods
-
-        /// <summary>
-        ///     Gets a Uri or Stream to be used as source for a given tile.
-        /// </summary>
-        /// <param name="tileLevel">Level of the tile.</param>
-        /// <param name="tilePositionX">X-coordinate position of the tile.</param>
-        /// <param name="tilePositionY">Y-coordinate position of the tile.</param>
-        /// <returns>An Uri or Stream object that can be used as source for an image tile.</returns>
-        /// <remarks>If this method returns a Uri, it will be used as UriSo</remarks>
-        protected internal abstract object GetTileLayers(int tileLevel, int tilePositionX, int tilePositionY);
-
-        #endregion Abstract methods
-
         #region Internal methods
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         /// <returns>The visible tiles inside the rectangle at the requested level.</returns>
         internal IEnumerable<Tile> VisibleTilesUntilFill(Rect rectangle, int startingLevel)
         {
-            IEnumerable<Tile> visibleTiles = Enumerable.Empty<Tile>();
+            var visibleTiles = Enumerable.Empty<Tile>();
 
             /*
             // Algorithm : start on "closest" layer, go down until there are no more layers to paint
@@ -99,10 +99,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             // Advantage - smoother loading, user doesn't see holes
             // Disadvantage - downloads up to 33% more data
 
-            IEnumerable<int> levels = Enumerable.Range(0, startingLevel + 1);
+            var levels = Enumerable.Range(0, startingLevel + 1);
             visibleTiles = levels.SelectMany(level =>
             {
-                double levelScale = ScaleAtLevel(level);
+                var levelScale = ScaleAtLevel(level);
                 var scaledBounds = new Rect(rectangle.X*levelScale,
                     rectangle.Y*levelScale,
                     rectangle.Width*levelScale,
@@ -114,25 +114,26 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         internal Point GetTilePosition(int column, int row)
         {
-            int offsetX = column == 0 ? 0 : TileOverlap;
-            int offsetY = row == 0 ? 0 : TileOverlap;
+            var offsetX = column == 0 ? 0 : TileOverlap;
+            var offsetY = row == 0 ? 0 : TileOverlap;
 
             return new Point(column*TileSize - offsetX, row*TileSize - offsetY);
         }
 
         internal int GetLevel(double scaleRatio)
         {
-            int level = _maxLevel + (int) Math.Log(scaleRatio, ImagesGenerateStep); // _maxLevel + (int)Math.Log(scaleRatio, 2);
+            var level = _maxLevel + (int) Math.Log(scaleRatio, ImagesGenerateStep);
+                // _maxLevel + (int)Math.Log(scaleRatio, 2);
 
             return level.Clamp(0, _zoomLimitLevel);
         }
 
         internal int GetLevel(double viewportWidth, double viewportHeight)
         {
-            double originalAspectRatio = ImageSize.Width/ImageSize.Height;
-            double viewportAspectRatio = viewportWidth/viewportHeight;
+            var originalAspectRatio = ImageSize.Width/ImageSize.Height;
+            var viewportAspectRatio = viewportWidth/viewportHeight;
 
-            int currentLevel = 0;
+            var currentLevel = 0;
             if (viewportAspectRatio > originalAspectRatio)
             {
                 while (ImageSizeAtLevel(currentLevel).Height < viewportHeight && currentLevel < _zoomLimitLevel)
@@ -155,7 +156,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         internal Size ImageSizeAtLevel(int level)
         {
-            double scale = ScaleAtLevel(level);
+            var scale = ScaleAtLevel(level);
             return new Size(
                 Math.Ceiling(ImageSize.Width*scale),
                 Math.Ceiling(ImageSize.Height*scale)
@@ -169,7 +170,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         internal int LevelFromOffset(long tileId)
         {
-            int level = _levelOffsets.Count - 1;
+            var level = _levelOffsets.Count - 1;
             while (level > 0 && _levelOffsets[level] > tileId)
                 level--;
 
@@ -196,10 +197,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         // 4 billion pixel limit from DeepZoom Composer.
         internal int GetTileIndex(Tile tile)
         {
-            int rowsAtLevel = RowsAtLevel(tile.Level);
-            int columnsAtLevel = ColumnsAtLevel(tile.Level);
+            var rowsAtLevel = RowsAtLevel(tile.Level);
+            var columnsAtLevel = ColumnsAtLevel(tile.Level);
 
-            int levelOffset = LevelOffset(tile.Level);
+            var levelOffset = LevelOffset(tile.Level);
 
             if (columnsAtLevel > rowsAtLevel)
                 return levelOffset + columnsAtLevel*tile.Row + tile.Column;
@@ -208,16 +209,16 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         internal Tile TileFromIndex(int index)
         {
-            int level = LevelFromOffset(index);
-            int levelOffset = LevelOffset(level);
+            var level = LevelFromOffset(index);
+            var levelOffset = LevelOffset(level);
 
-            int rowsAtLevel = RowsAtLevel(level);
-            int columnsAtLevel = ColumnsAtLevel(level);
+            var rowsAtLevel = RowsAtLevel(level);
+            var columnsAtLevel = ColumnsAtLevel(level);
 
             index -= levelOffset;
 
-            int row = default(int);
-            int column = default(int);
+            var row = default(int);
+            var column = default(int);
 
             if (columnsAtLevel > rowsAtLevel)
             {
@@ -239,8 +240,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         protected void CalculateLevelOffsets()
         {
-            int offset = 0;
-            for (int level = 0; level <= _maxLevel; level++)
+            var offset = 0;
+            for (var level = 0; level <= _maxLevel; level++)
             {
                 _levelOffsets.Add(offset);
                 _levelScales.Add(ScaleAtLevel(level));
@@ -250,7 +251,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                 {
                     checked
                     {
-                        offset += TilesAtLevel(level);//TODO:Why to accumulative the offset
+                        offset += TilesAtLevel(level); //TODO:Why to accumulative the offset
                     }
                 }
                 catch (OverflowException)
@@ -265,7 +266,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         protected virtual int GetMaximumLevel(double width, double height)
         {
             return (int) Math.Ceiling(Math.Log(Math.Max(width, height), ImagesGenerateStep));
-                //(int)Math.Ceiling(Math.Log(Math.Max(width, height), 2))
+            //(int)Math.Ceiling(Math.Log(Math.Max(width, height), 2))
         }
 
         protected int TilesAtLevel(int level)
@@ -285,22 +286,22 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             rectangle.Intersect(new Rect(ImageSize));
 
-            double top = Math.Floor(rectangle.Top/TileSize);
-            double left = Math.Floor(rectangle.Left/TileSize);
-            double right = Math.Ceiling(rectangle.Right/TileSize);
-            double bottom = Math.Ceiling(rectangle.Bottom/TileSize);
+            var top = Math.Floor(rectangle.Top/TileSize);
+            var left = Math.Floor(rectangle.Left/TileSize);
+            var right = Math.Ceiling(rectangle.Right/TileSize);
+            var bottom = Math.Ceiling(rectangle.Bottom/TileSize);
 
             right = right.AtMost(ColumnsAtLevel(level));
             bottom = bottom.AtMost(RowsAtLevel(level));
 
-            double width = (right - left).AtLeast(0);
-            double height = (bottom - top).AtLeast(0);
+            var width = (right - left).AtLeast(0);
+            var height = (bottom - top).AtLeast(0);
 
             if (top == 0.0 && left == 0.0 && width == 1.0 && height == 1.0) // This level only has one tile
                 yield return new Tile(level, 0, 0);
             else
             {
-                foreach (Point pt in Quadivide(new Rect(left, top, width, height)))
+                foreach (var pt in Quadivide(new Rect(left, top, width, height)))
                     yield return new Tile(level, (int) pt.X, (int) pt.Y);
             }
         }
@@ -309,10 +310,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             if (area.Width > 0 && area.Height > 0)
             {
-                Point center = area.GetCenter();
+                var center = area.GetCenter();
 
-                double x = Math.Floor(center.X);
-                double y = Math.Floor(center.Y);
+                var x = Math.Floor(center.X);
+                var y = Math.Floor(center.Y);
 
                 yield return new Point(x, y);
 
@@ -328,7 +329,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                 quads.Enqueue(Quadivide(quad4).GetEnumerator());
                 while (quads.Count > 0)
                 {
-                    IEnumerator<Point> quad = quads.Dequeue();
+                    var quad = quads.Dequeue();
                     if (quad.MoveNext())
                     {
                         yield return quad.Current;
@@ -353,11 +354,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         #region Protected Properties
 
-        public  Size ImageSize { get;protected set; }
+        public Size ImageSize { get; protected set; }
 
-        protected internal int TileSize { get;  set; }
+        protected internal int TileSize { get; set; }
 
-        protected internal int TileOverlap { get;set; }
+        protected internal int TileOverlap { get; set; }
 
         protected internal int ZoomStep { get; set; }
 

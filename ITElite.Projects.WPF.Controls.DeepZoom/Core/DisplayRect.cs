@@ -16,9 +16,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         }
 
         public Rect Rect { get; set; }
-
         public int MinLevel { get; set; }
-
         public int MaxLevel { get; set; }
     }
 }

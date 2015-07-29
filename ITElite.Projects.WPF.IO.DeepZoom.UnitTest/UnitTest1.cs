@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ITElite.Projects.WPF.IO.DeepZoom.UnitTest
 {
@@ -9,7 +8,6 @@ namespace ITElite.Projects.WPF.IO.DeepZoom.UnitTest
         [TestMethod]
         public void TestMethod1()
         {
-
         }
     }
 }

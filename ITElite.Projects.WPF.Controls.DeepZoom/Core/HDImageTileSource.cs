@@ -46,7 +46,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             var target = (HDImageTileSource) d;
             var oldUriSource = (Uri) e.OldValue;
-            Uri newUriSource = target.HdImagesSourrceUri;
+            var newUriSource = target.HdImagesSourrceUri;
             target.OnUriSourceChanged(oldUriSource, newUriSource);
         }
 
@@ -81,15 +81,15 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             if (!TileExists(tileLevel, tilePositionX, tilePositionY))
                 return null;
 
-            string source = HdImagesSourrceUri.OriginalString;
+            var source = HdImagesSourrceUri.OriginalString;
 
-            string url = source.Substring(0,
+            var url = source.Substring(0,
                 source.LastIndexOf("pyramid.xml", StringComparison.CurrentCultureIgnoreCase))
-                         + imagePathTemplate.Replace("{l}", tileLevel.ToString())
-                             .Replace("{c}", tilePositionX.ToString()).Replace("{r}", tilePositionY.ToString());
+                      + imagePathTemplate.Replace("{l}", tileLevel.ToString())
+                          .Replace("{c}", tilePositionX.ToString()).Replace("{r}", tilePositionY.ToString());
 
-            var uriResult=new Uri(url, HdImagesSourrceUri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
-         
+            var uriResult = new Uri(url, HdImagesSourrceUri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
+
             return uriResult;
         }
 
@@ -99,14 +99,14 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         private void LoadHdImageXml()
         {
-            XElement imageElement = XElement.Load(HdImagesSourrceUri.OriginalString);
+            var imageElement = XElement.Load(HdImagesSourrceUri.OriginalString);
 
             if (imageElement == null)
                 throw new FileFormatException("Invalid XML file.");
 
-            XNamespace xmlns = imageElement.GetDefaultNamespace();
+            var xmlns = imageElement.GetDefaultNamespace();
 
-            XElement imageSetElement = imageElement.Element(xmlns + "imageset");
+            var imageSetElement = imageElement.Element(xmlns + "imageset");
             ;
             if (imageSetElement == null)
                 throw new FileFormatException("Invalid XML file.");
@@ -124,10 +124,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             ImagesGenerateStep = (int) imageSetElement.Attribute("step");
             ZoomStep = (int) imageSetElement.Attribute("maxZoom");
 
-            string displayRectsString = imageSetElement.Attribute("subRect").Value;
+            var displayRectsString = imageSetElement.Attribute("subRect").Value;
             if (!string.IsNullOrEmpty(displayRectsString))
             {
-                string[] rectDetails = displayRectsString.Split(new[] {' '});
+                var rectDetails = displayRectsString.Split(' ');
                 _displayRects = new List<DisplayRect>
                 {
                     new DisplayRect
@@ -147,14 +147,14 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             if (_displayRects == null) return true;
 
-            double scale = ScaleAtLevel(level);
+            var scale = ScaleAtLevel(level);
 
-            foreach (DisplayRect dRect in _displayRects.Where(r => level >= r.MinLevel && level <= r.MaxLevel))
+            foreach (var dRect in _displayRects.Where(r => level >= r.MinLevel && level <= r.MaxLevel))
             {
-                double minColumn = dRect.Rect.X*scale;
-                double minRow = dRect.Rect.Y*scale;
-                double maxColumn = minColumn + dRect.Rect.Width*scale;
-                double maxRow = minRow + dRect.Rect.Height*scale;
+                var minColumn = dRect.Rect.X*scale;
+                var minRow = dRect.Rect.Y*scale;
+                var maxColumn = minColumn + dRect.Rect.Width*scale;
+                var maxRow = minRow + dRect.Rect.Height*scale;
 
                 minColumn = Math.Floor(minColumn/TileSize);
                 minRow = Math.Floor(minRow/TileSize);

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -13,11 +9,11 @@ namespace ITElite.Projects.WPF.Controls.TextControl
     {
         public static void RemoveAdorners<T>(this AdornerLayer adr, UIElement elem)
         {
-            Adorner[] adorners = adr.GetAdorners(elem);
+            var adorners = adr.GetAdorners(elem);
 
             if (adorners == null) return;
 
-            for (int i = adorners.Length - 1; i >= 0; i--)
+            for (var i = adorners.Length - 1; i >= 0; i--)
             {
                 if (adorners[i] is T)
                     adr.Remove(adorners[i]);
@@ -26,11 +22,11 @@ namespace ITElite.Projects.WPF.Controls.TextControl
 
         public static bool Contains<T>(this AdornerLayer adr, UIElement elem)
         {
-            Adorner[] adorners = adr.GetAdorners(elem);
+            var adorners = adr.GetAdorners(elem);
 
             if (adorners == null) return false;
 
-            for (int i = adorners.Length - 1; i >= 0; i--)
+            for (var i = adorners.Length - 1; i >= 0; i--)
             {
                 if (adorners[i] is T)
                     return true;
@@ -42,14 +38,16 @@ namespace ITElite.Projects.WPF.Controls.TextControl
         {
             try
             {
-                Adorner[] adorners = adr.GetAdorners(elem);
+                var adorners = adr.GetAdorners(elem);
 
                 if (adorners == null) return;
 
-                foreach (Adorner toRemove in adorners)
+                foreach (var toRemove in adorners)
                     adr.Remove(toRemove);
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         public static void RemoveAllRecursive(this AdornerLayer adr, UIElement element)
@@ -57,30 +55,30 @@ namespace ITElite.Projects.WPF.Controls.TextControl
             try
             {
                 Action<UIElement> recurse = null;
-                recurse = ((Action<UIElement>)delegate(UIElement elem)
+                recurse = delegate(UIElement elem)
                 {
                     adr.RemoveAll(elem);
                     if (elem is Panel)
                     {
-                        foreach (UIElement e in ((Panel)elem).Children)
+                        foreach (UIElement e in ((Panel) elem).Children)
                             recurse(e);
                     }
                     else if (elem is Decorator)
                     {
-                        recurse(((Decorator)elem).Child);
+                        recurse(((Decorator) elem).Child);
                     }
                     else if (elem is ContentControl)
                     {
-                        if (((ContentControl)elem).Content is UIElement)
-                            recurse(((ContentControl)elem).Content as UIElement);
+                        if (((ContentControl) elem).Content is UIElement)
+                            recurse(((ContentControl) elem).Content as UIElement);
                     }
-
-                });
+                };
 
                 recurse(element);
             }
-            catch { }
+            catch
+            {
+            }
         }
     }
-
 }

@@ -8,8 +8,8 @@
         <GradientStop Color="#6D83A9" Offset="1" />
     </LinearGradientBrush>
 
-    <Style x:Key="AcTb_ResizeGripStyle" 
-         TargetType="{x:Type ResizeGrip}">
+    <Style x:Key="AcTb_ResizeGripStyle"
+           TargetType="{x:Type ResizeGrip}">
         <Setter Property="MinWidth" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />
         <Setter Property="MinHeight" Value="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarHeightKey}}" />
         <Setter Property="Background" Value="Transparent" />
@@ -23,19 +23,19 @@
                             </Path.Data>
                         </Path>
                         <Path HorizontalAlignment="Right"
-                                Margin="0,0,2,2"
-                                VerticalAlignment="Bottom"
-                                Data="M 9,0 L 11,0 L 11,11 L 0,11 L 0,9 L 3,9 L 3,6 L 6,6 L 6,3 L 9,3 z">
+                              Margin="0,0,2,2"
+                              VerticalAlignment="Bottom"
+                              Data="M 9,0 L 11,0 L 11,11 L 0,11 L 0,9 L 3,9 L 3,6 L 6,6 L 6,3 L 9,3 z">
                             <Path.Fill>
                                 <DrawingBrush TileMode="Tile"
-                                        Viewbox="0,0,3,3"
-                                        ViewboxUnits="Absolute"
-                                        Viewport="0,0,3,3"
-                                        ViewportUnits="Absolute">
+                                              Viewbox="0,0,3,3"
+                                              ViewboxUnits="Absolute"
+                                              Viewport="0,0,3,3"
+                                              ViewportUnits="Absolute">
                                     <DrawingBrush.Drawing>
                                         <DrawingGroup>
                                             <GeometryDrawing Brush="{StaticResource ResizeGripperForeground}"
-                                                    Geometry="M 0,0 L 2,0 L 2,2 L 0,2 z " />
+                                                             Geometry="M 0,0 L 2,0 L 2,2 L 0,2 z " />
                                         </DrawingGroup>
                                     </DrawingBrush.Drawing>
                                 </DrawingBrush>
@@ -47,7 +47,7 @@
         </Setter>
     </Style>
 
-    
+
     <ControlTemplate x:Key="AcTb_ScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">
         <Grid x:Name="PART_ScrollViewerOuterGrid">
             <Grid x:Name="Grid" Background="{TemplateBinding Background}">
@@ -59,47 +59,46 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Rectangle x:Name="Corner" Grid.Row="1" Grid.Column="1"                   
-                        Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                <Rectangle x:Name="Corner" Grid.Row="1" Grid.Column="1"
+                           Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                 <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
-                        CanContentScroll="{TemplateBinding CanContentScroll}"
-                        CanHorizontallyScroll="False"
-                        CanVerticallyScroll="False"
-                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                        Content="{TemplateBinding Content}"
-                        Grid.Column="0"
-                        Margin="{TemplateBinding Padding}"
-                        Grid.Row="0" />
+                                        CanContentScroll="{TemplateBinding CanContentScroll}"
+                                        CanHorizontallyScroll="False"
+                                        CanVerticallyScroll="False"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        Content="{TemplateBinding Content}"
+                                        Grid.Column="0"
+                                        Margin="{TemplateBinding Padding}"
+                                        Grid.Row="0" />
                 <ScrollBar x:Name="PART_VerticalScrollBar"
-                        AutomationProperties.AutomationId="VerticalScrollBar"
-                        Cursor="Arrow"
-                        Grid.Column="1"
-                        Maximum="{TemplateBinding ScrollableHeight}"
-                        Minimum="0"
-                        Grid.Row="0"
-                        Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                        Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
-                        ViewportSize="{TemplateBinding ViewportHeight}"
-                        Margin="0 17 0 0">
-                </ScrollBar>
+                           AutomationProperties.AutomationId="VerticalScrollBar"
+                           Cursor="Arrow"
+                           Grid.Column="1"
+                           Maximum="{TemplateBinding ScrollableHeight}"
+                           Minimum="0"
+                           Grid.Row="0"
+                           Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                           Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                           ViewportSize="{TemplateBinding ViewportHeight}"
+                           Margin="0 17 0 0" />
                 <ScrollBar x:Name="PART_HorizontalScrollBar"
-                        AutomationProperties.AutomationId="HorizontalScrollBar"
-                        Cursor="Arrow"
-                        Grid.Column="0"
-                        Maximum="{TemplateBinding ScrollableWidth}"
-                        Minimum="0"
-                        Orientation="Horizontal"
-                        Grid.Row="1"
-                        Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
-                        Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
-                        ViewportSize="{TemplateBinding ViewportWidth}" />
+                           AutomationProperties.AutomationId="HorizontalScrollBar"
+                           Cursor="Arrow"
+                           Grid.Column="0"
+                           Maximum="{TemplateBinding ScrollableWidth}"
+                           Minimum="0"
+                           Orientation="Horizontal"
+                           Grid.Row="1"
+                           Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                           Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                           ViewportSize="{TemplateBinding ViewportWidth}" />
             </Grid>
 
             <ResizeGrip HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Style="{StaticResource AcTb_ResizeGripStyle}"
-                    Cursor="SizeNESW"
-                    Name="ResizeGrip">
+                        VerticalAlignment="Top"
+                        Style="{StaticResource AcTb_ResizeGripStyle}"
+                        Cursor="SizeNESW"
+                        Name="ResizeGrip">
                 <ResizeGrip.LayoutTransform>
                     <ScaleTransform ScaleX="1" ScaleY="-1" />
                 </ResizeGrip.LayoutTransform>
@@ -113,32 +112,32 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    
-    
-    <Style x:Key="AcTb_ListBoxItemStyle" 
-         TargetType="{x:Type ListBoxItem}">
 
-        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+
+    <Style x:Key="AcTb_ListBoxItemStyle"
+           TargetType="{x:Type ListBoxItem}">
+
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
                     <Border x:Name="Border"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        Padding="{TemplateBinding Padding}"
-                        SnapsToDevicePixels="true">
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="true">
                         <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                              Margin="0 0 0 0" />
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Margin="0 0 0 0" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="true">
                             <Setter Property="Background" TargetName="Border"
-                                Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"  />
-                            <Setter Property="Foreground" 
-                                Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                                    Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -147,11 +146,10 @@
     </Style>
 
     <SolidColorBrush x:Key="ListBorder" Color="#828790" />
-    <Style x:Key="AcTb_ListBoxStyle" 
-         TargetType="{x:Type ListBox}">
+    <Style x:Key="AcTb_ListBoxStyle"
+           TargetType="{x:Type ListBox}">
 
-        <Setter Property="ItemContainerStyle" Value="{DynamicResource AcTb_ListBoxItemStyle}">
-        </Setter>
+        <Setter Property="ItemContainerStyle" Value="{DynamicResource AcTb_ListBoxItemStyle}" />
 
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
         <Setter Property="BorderBrush" Value="{StaticResource ListBorder}" />
@@ -171,14 +169,14 @@
                             Padding="0"
                             SnapsToDevicePixels="true">
                         <ScrollViewer Focusable="false"
-                                Padding="{TemplateBinding Padding}"
-                                Template="{StaticResource AcTb_ScrollViewerControlTemplate}">
+                                      Padding="{TemplateBinding Padding}"
+                                      Template="{StaticResource AcTb_ScrollViewerControlTemplate}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Background" 
+                            <Setter Property="Background"
                                     TargetName="Border"
                                     Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                         </Trigger>

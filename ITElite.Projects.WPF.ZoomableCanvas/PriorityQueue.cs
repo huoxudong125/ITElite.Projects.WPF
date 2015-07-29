@@ -1,20 +1,20 @@
 //http://blogs.msdn.com/b/kaelr/archive/2006/01/09/priorityqueue.aspx
+
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Collections.Generic
 {
     /// <summary>
-    /// Represents a queue of items that are sorted based on individual priorities.
+    ///     Represents a queue of items that are sorted based on individual priorities.
     /// </summary>
     /// <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
     /// <typeparam name="TPriority">Specifies the type of object representing the priority.</typeparam>
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
     public class PriorityQueue<T, TPriority>
     {
+        private readonly IComparer<TPriority> comparer;
         private readonly List<KeyValuePair<T, TPriority>> heap = new List<KeyValuePair<T, TPriority>>();
         private readonly Dictionary<T, int> indexes = new Dictionary<T, int>();
-
-        private readonly IComparer<TPriority> comparer;
         private readonly bool invert;
 
         public PriorityQueue()
@@ -34,9 +34,46 @@ namespace System.Collections.Generic
             heap.Add(default(KeyValuePair<T, TPriority>));
         }
 
+        public TPriority this[T item]
+        {
+            get { return heap[indexes[item]].Value; }
+            set
+            {
+                int index;
+
+                if (indexes.TryGetValue(item, out index))
+                {
+                    var order = comparer.Compare(value, heap[index].Value);
+                    if (order != 0)
+                    {
+                        if (invert)
+                            order = ~order;
+
+                        var element = new KeyValuePair<T, TPriority>(item, value);
+                        if (order < 0)
+                            MoveUp(element, index);
+                        else
+                            MoveDown(element, index);
+                    }
+                }
+                else
+                {
+                    var element = new KeyValuePair<T, TPriority>(item, value);
+                    heap.Add(element);
+
+                    MoveUp(element, Count);
+                }
+            }
+        }
+
+        public int Count
+        {
+            get { return heap.Count - 1; }
+        }
+
         public void Enqueue(T item, TPriority priority)
         {
-            KeyValuePair<T, TPriority> tail = new KeyValuePair<T, TPriority>(item, priority);
+            var tail = new KeyValuePair<T, TPriority>(item, priority);
             heap.Add(tail);
 
             MoveUp(tail, Count);
@@ -44,12 +81,12 @@ namespace System.Collections.Generic
 
         public KeyValuePair<T, TPriority> Dequeue()
         {
-            int bound = Count;
+            var bound = Count;
             if (bound < 1)
                 throw new InvalidOperationException("Queue is empty.");
 
-            KeyValuePair<T, TPriority> head = heap[1];
-            KeyValuePair<T, TPriority> tail = heap[bound];
+            var head = heap[1];
+            var tail = heap[bound];
 
             heap.RemoveAt(bound);
 
@@ -77,61 +114,15 @@ namespace System.Collections.Generic
                 priority = heap[indexes[item]].Value;
                 return true;
             }
-            else
-            {
-                priority = default(TPriority);
-                return false;
-            }
-        }
-
-        public TPriority this[T item]
-        {
-            get
-            {
-                return heap[indexes[item]].Value;
-            }
-            set
-            {
-                int index;
-
-                if (indexes.TryGetValue(item, out index))
-                {
-                    int order = comparer.Compare(value, heap[index].Value);
-                    if (order != 0)
-                    {
-                        if (invert)
-                            order = ~order;
-
-                        KeyValuePair<T, TPriority> element = new KeyValuePair<T, TPriority>(item, value);
-                        if (order < 0)
-                            MoveUp(element, index);
-                        else
-                            MoveDown(element, index);
-                    }
-                }
-                else
-                {
-                    KeyValuePair<T, TPriority> element = new KeyValuePair<T, TPriority>(item, value);
-                    heap.Add(element);
-
-                    MoveUp(element, Count);
-                }
-            }
-        }
-
-        public int Count
-        {
-            get
-            {
-                return heap.Count - 1;
-            }
+            priority = default(TPriority);
+            return false;
         }
 
         private void MoveUp(KeyValuePair<T, TPriority> element, int index)
         {
             while (index > 1)
             {
-                int parent = index >> 1;
+                var parent = index >> 1;
 
                 if (IsPrior(heap[parent], element))
                     break;
@@ -148,12 +139,12 @@ namespace System.Collections.Generic
 
         private void MoveDown(KeyValuePair<T, TPriority> element, int index)
         {
-            int count = heap.Count;
+            var count = heap.Count;
 
             while (index << 1 < count)
             {
-                int child = index << 1;
-                int sibling = child | 1;
+                var child = index << 1;
+                var sibling = child | 1;
 
                 if (sibling < count && IsPrior(heap[sibling], heap[child]))
                     child = sibling;
@@ -173,7 +164,7 @@ namespace System.Collections.Generic
 
         private bool IsPrior(KeyValuePair<T, TPriority> element1, KeyValuePair<T, TPriority> element2)
         {
-            int order = comparer.Compare(element1.Value, element2.Value);
+            var order = comparer.Compare(element1.Value, element2.Value);
             if (invert)
                 order = ~order;
             return order < 0;

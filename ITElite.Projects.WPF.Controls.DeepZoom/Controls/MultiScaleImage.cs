@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -22,19 +21,78 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
     {
         private const double MinScaleRelativeToMinSize = 0.8;
         private const double MaxScaleRelativeToMaxSize = 2.0; //1.2;
-
         private const int ScaleAnimationRelativeDuration = 400;
         private const int ThrottleIntervalMilliseconds = 200;
         private readonly DispatcherTimer _levelChangeThrottle;
         private int _desiredLevel;
-
         private ItemsControl _itemsControl;
         private MultiValueScalebarAdorner _multiValueScalebarAdorner;
         private double _originalScale;
         private OverViewerAdorner _overViewAdorner;
         private OverViewer _overViewer;
         private MultiScaleImageSpatialItemsSource _spatialSource;
-        private ZoomableCanvas _zoomableCanvas;
+
+        public double Scale
+        {
+            get { return ZoomableCanvas.Scale; }
+        }
+
+        public Visibility ScaleVisibility { get; set; }
+        public ZoomableCanvas ZoomableCanvas { get; private set; }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            IsManipulationEnabled = true;
+            _itemsControl = GetTemplateChild("PART_ItemsControl") as ItemsControl;
+            if (_itemsControl == null) return;
+
+            _itemsControl.ApplyTemplate();
+
+            var factoryPanel = new FrameworkElementFactory(typeof (ZoomableCanvas));
+            factoryPanel.AddHandler(LoadedEvent, new RoutedEventHandler(ZoomableCanvasLoaded));
+            _itemsControl.ItemsPanel = new ItemsPanelTemplate(factoryPanel);
+
+            if (_spatialSource != null)
+                _itemsControl.ItemsSource = _spatialSource;
+        }
+
+        private void ZoomableCanvasLoaded(object sender, RoutedEventArgs e)
+        {
+            ZoomableCanvas = sender as ZoomableCanvas;
+            if (ZoomableCanvas != null)
+            {
+                ZoomableCanvas.RealizationPriority = DispatcherPriority.Background;
+                ZoomableCanvas.RealizationRate = 10;
+                InitializeCanvas();
+
+                AddAdorners();
+            }
+        }
+
+        private void AddAdorners()
+        {
+            var adornerLayer = AdornerLayer.GetAdornerLayer(_itemsControl);
+            if (_multiValueScalebarAdorner != null)
+            {
+                adornerLayer.Remove(_multiValueScalebarAdorner);
+            }
+            if (_overViewAdorner != null)
+            {
+                adornerLayer.Remove(_overViewAdorner);
+            }
+
+            var scaleBar = new MultiValueScaleBar(this);
+            _multiValueScalebarAdorner = new MultiValueScalebarAdorner(_itemsControl, scaleBar);
+            adornerLayer.Add(_multiValueScalebarAdorner);
+
+            _overViewer = new OverViewer(this);
+            _overViewAdorner = new OverViewerAdorner(_itemsControl, _overViewer);
+            adornerLayer.Add(_overViewAdorner);
+        }
+
+        public event EventHandler<double> ViewChangeOnFrame;
 
         #region .octor
 
@@ -62,18 +120,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         #endregion .octor
 
-        public double Scale
-        {
-            get { return _zoomableCanvas.Scale; }
-        }
-
-        public Visibility ScaleVisibility { get; set; }
-
-        public ZoomableCanvas ZoomableCanvas
-        {
-            get { return _zoomableCanvas; }
-        }
-
         #region Overriden Input Event Handlers
 
         protected override void OnManipulationDelta(ManipulationDeltaEventArgs e)
@@ -85,55 +131,55 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
             base.OnManipulationDelta(e);
 
-            double oldScale = _zoomableCanvas.Scale;
-            _zoomableCanvas.ApplyAnimationClock(ZoomableCanvas.ScaleProperty, null);
-            _zoomableCanvas.Scale = oldScale;
+            var oldScale = ZoomableCanvas.Scale;
+            ZoomableCanvas.ApplyAnimationClock(ZoomableCanvas.ScaleProperty, null);
+            ZoomableCanvas.Scale = oldScale;
 
-            Point oldOffset = _zoomableCanvas.Offset;
-            _zoomableCanvas.ApplyAnimationClock(ZoomableCanvas.OffsetProperty, null);
-            _zoomableCanvas.Offset = oldOffset;
+            var oldOffset = ZoomableCanvas.Offset;
+            ZoomableCanvas.ApplyAnimationClock(ZoomableCanvas.OffsetProperty, null);
+            ZoomableCanvas.Offset = oldOffset;
 
-            double scale = e.DeltaManipulation.Scale.X;
+            var scale = e.DeltaManipulation.Scale.X;
             ScaleCanvas(scale, e.ManipulationOrigin);
 
             //limit the move scale
-            Point tempOffset = _zoomableCanvas.Offset - e.DeltaManipulation.Translation;
-            double tempImageWidth = Source.ImageSize.Width*oldScale;
-            double tempImageHeight = Source.ImageSize.Height*oldScale;
+            var tempOffset = ZoomableCanvas.Offset - e.DeltaManipulation.Translation;
+            var tempImageWidth = Source.ImageSize.Width*oldScale;
+            var tempImageHeight = Source.ImageSize.Height*oldScale;
 
             if ((tempImageWidth > _itemsControl.ActualWidth &&
                  ((tempOffset.X > 0 &&
                    (tempOffset.X < tempImageWidth - _itemsControl.ActualWidth*0.9 ||
-                    _zoomableCanvas.Offset.X > tempOffset.X))
+                    ZoomableCanvas.Offset.X > tempOffset.X))
                   ||
                   (tempOffset.X <= 0 &&
-                   (tempOffset.X > -_itemsControl.ActualWidth*0.1 || _zoomableCanvas.Offset.X < tempOffset.X))))
+                   (tempOffset.X > -_itemsControl.ActualWidth*0.1 || ZoomableCanvas.Offset.X < tempOffset.X))))
                 || (tempImageWidth <= _itemsControl.ActualWidth &&
                     (tempOffset.X < 0 && tempOffset.X > (tempImageWidth - _itemsControl.ActualWidth)
-                     || (_zoomableCanvas.Offset.X > 0 && _zoomableCanvas.Offset.X > tempOffset.X)
+                     || (ZoomableCanvas.Offset.X > 0 && ZoomableCanvas.Offset.X > tempOffset.X)
                      ||
-                     ((_zoomableCanvas.Offset.X < (tempImageWidth - _itemsControl.ActualWidth)) //zoom out it at side.
-                      && _zoomableCanvas.Offset.X < tempOffset.X)))
+                     ((ZoomableCanvas.Offset.X < (tempImageWidth - _itemsControl.ActualWidth)) //zoom out it at side.
+                      && ZoomableCanvas.Offset.X < tempOffset.X)))
                 )
             {
-                _zoomableCanvas.Offset -= new Vector(e.DeltaManipulation.Translation.X, 0);
+                ZoomableCanvas.Offset -= new Vector(e.DeltaManipulation.Translation.X, 0);
             }
 
             if ((tempImageHeight > _itemsControl.ActualHeight &&
                  ((tempOffset.Y > 0 &&
                    (tempOffset.Y < tempImageHeight - _itemsControl.ActualHeight*0.9 ||
-                    _zoomableCanvas.Offset.Y > tempOffset.Y))
+                    ZoomableCanvas.Offset.Y > tempOffset.Y))
                   ||
                   (tempOffset.Y <= 0 &&
-                   (tempOffset.Y > -_itemsControl.ActualHeight*0.1 || _zoomableCanvas.Offset.Y < tempOffset.Y))))
+                   (tempOffset.Y > -_itemsControl.ActualHeight*0.1 || ZoomableCanvas.Offset.Y < tempOffset.Y))))
                 || (tempImageHeight <= _itemsControl.ActualHeight &&
                     (tempOffset.Y < 0 && tempOffset.Y > (tempImageHeight - _itemsControl.ActualHeight)
-                     || (_zoomableCanvas.Offset.Y > 0 && _zoomableCanvas.Offset.Y > tempOffset.Y)
-                     || (_zoomableCanvas.Offset.Y < (tempImageHeight - _itemsControl.ActualHeight) &&
-                         _zoomableCanvas.Offset.Y < tempOffset.Y)
+                     || (ZoomableCanvas.Offset.Y > 0 && ZoomableCanvas.Offset.Y > tempOffset.Y)
+                     || (ZoomableCanvas.Offset.Y < (tempImageHeight - _itemsControl.ActualHeight) &&
+                         ZoomableCanvas.Offset.Y < tempOffset.Y)
                         )))
             {
-                _zoomableCanvas.Offset -= new Vector(0, e.DeltaManipulation.Translation.Y);
+                ZoomableCanvas.Offset -= new Vector(0, e.DeltaManipulation.Translation.Y);
             }
             e.Handled = true;
         }
@@ -148,10 +194,9 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
         {
-        
-            double relativeScale = Math.Pow(_spatialSource.ZoomStep, (double) e.Delta/Mouse.MouseWheelDeltaForOneLine);
-                //Math.Pow(2, (double) e.Delta/Mouse.MouseWheelDeltaForOneLine);
-            Point position = e.GetPosition(_itemsControl);
+            var relativeScale = Math.Pow(_spatialSource.ZoomStep, (double) e.Delta/Mouse.MouseWheelDeltaForOneLine);
+            //Math.Pow(2, (double) e.Delta/Mouse.MouseWheelDeltaForOneLine);
+            var position = e.GetPosition(_itemsControl);
 
             ScaleCanvas(relativeScale, position, true);
 
@@ -168,21 +213,21 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             {
                 return;
             }
-            int level = Source.GetLevel(_zoomableCanvas.ActualWidth, _zoomableCanvas.ActualHeight);
+            var level = Source.GetLevel(ZoomableCanvas.ActualWidth, ZoomableCanvas.ActualHeight);
             _spatialSource.CurrentLevel = level;
 
 
-            Size imageSize = Source.ImageSize;
-            double relativeScale = Math.Min(_itemsControl.ActualWidth/imageSize.Width,
+            var imageSize = Source.ImageSize;
+            var relativeScale = Math.Min(_itemsControl.ActualWidth/imageSize.Width,
                 _itemsControl.ActualHeight/imageSize.Height);
 
             _originalScale = relativeScale;
 
-            _zoomableCanvas.Scale = _originalScale;
-            _zoomableCanvas.Offset =
-                new Point(imageSize.Width*0.5*relativeScale - _zoomableCanvas.ActualWidth*0.5,
-                    imageSize.Height*0.5*relativeScale - _zoomableCanvas.ActualHeight*0.5);
-            _zoomableCanvas.Clip = new RectangleGeometry(
+            ZoomableCanvas.Scale = _originalScale;
+            ZoomableCanvas.Offset =
+                new Point(imageSize.Width*0.5*relativeScale - ZoomableCanvas.ActualWidth*0.5,
+                    imageSize.Height*0.5*relativeScale - ZoomableCanvas.ActualHeight*0.5);
+            ZoomableCanvas.Clip = new RectangleGeometry(
                 new Rect(0, 0,
                     imageSize.Width,
                     imageSize.Height));
@@ -199,16 +244,16 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 return;
             }
 
-            Debug.Assert(Source!=null);
+            Debug.Assert(Source != null);
 
-            double scale = _zoomableCanvas.Scale;
+            var scale = ZoomableCanvas.Scale;
 
             if (scale <= 0) return;
 
             //limit the zoom scale.
-            Point tempOffset = _zoomableCanvas.Offset;
-            double tempImageWidth = Source.ImageSize.Width*scale;
-            double tempImageHeight = Source.ImageSize.Height*scale;
+            var tempOffset = ZoomableCanvas.Offset;
+            var tempImageWidth = Source.ImageSize.Width*scale;
+            var tempImageHeight = Source.ImageSize.Height*scale;
 
             if (!(((tempOffset.X >= 0 && tempImageWidth - tempOffset.X > center.X)
                    || (tempOffset.X < 0 && -tempOffset.X < center.X && center.X < tempImageWidth - tempOffset.X))
@@ -224,10 +269,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 MinScaleRelativeToMinSize*_originalScale/scale,
                 Math.Max(MaxScaleRelativeToMaxSize, MaxScaleRelativeToMaxSize*_originalScale)/scale);
 
-            double targetScale = scale*relativeScale;
+            var targetScale = scale*relativeScale;
 
-            int newLevel = Source.GetLevel(targetScale);
-            int level = _spatialSource.CurrentLevel;
+            var newLevel = Source.GetLevel(targetScale);
+            var level = _spatialSource.CurrentLevel;
             if (newLevel != level)
             {
                 // If it's zooming in, throttle
@@ -240,23 +285,23 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             if (targetScale != scale)
             {
                 var position = (Vector) center;
-                var targetOffset = (Point) ((Vector) (_zoomableCanvas.Offset + position)*relativeScale - position);
+                var targetOffset = (Point) ((Vector) (ZoomableCanvas.Offset + position)*relativeScale - position);
 
                 if (animate)
                 {
                     if (relativeScale < 1)
                         relativeScale = 1/relativeScale;
-                    TimeSpan duration = TimeSpan.FromMilliseconds(relativeScale*ScaleAnimationRelativeDuration);
+                    var duration = TimeSpan.FromMilliseconds(relativeScale*ScaleAnimationRelativeDuration);
                     var easing = new CubicEase();
-                    _zoomableCanvas.BeginAnimation(ZoomableCanvas.ScaleProperty,
+                    ZoomableCanvas.BeginAnimation(ZoomableCanvas.ScaleProperty,
                         new DoubleAnimation(targetScale, duration) {EasingFunction = easing}, HandoffBehavior.Compose);
-                    _zoomableCanvas.BeginAnimation(ZoomableCanvas.OffsetProperty,
+                    ZoomableCanvas.BeginAnimation(ZoomableCanvas.OffsetProperty,
                         new PointAnimation(targetOffset, duration) {EasingFunction = easing}, HandoffBehavior.Compose);
                 }
                 else
                 {
-                    _zoomableCanvas.Scale = targetScale;
-                    _zoomableCanvas.Offset = targetOffset;
+                    ZoomableCanvas.Scale = targetScale;
+                    ZoomableCanvas.Offset = targetOffset;
                 }
 
                 if (ViewChangeOnFrame != null)
@@ -275,60 +320,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         }
 
         #endregion Private helpers
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            IsManipulationEnabled = true;
-            _itemsControl = GetTemplateChild("PART_ItemsControl") as ItemsControl;
-            if (_itemsControl == null) return;
-
-            _itemsControl.ApplyTemplate();
-
-            var factoryPanel = new FrameworkElementFactory(typeof (ZoomableCanvas));
-            factoryPanel.AddHandler(LoadedEvent, new RoutedEventHandler(ZoomableCanvasLoaded));
-            _itemsControl.ItemsPanel = new ItemsPanelTemplate(factoryPanel);
-
-            if (_spatialSource != null)
-                _itemsControl.ItemsSource = _spatialSource;
-        }
-
-        private void ZoomableCanvasLoaded(object sender, RoutedEventArgs e)
-        {
-            _zoomableCanvas = sender as ZoomableCanvas;
-            if (_zoomableCanvas != null)
-            {
-                _zoomableCanvas.RealizationPriority = DispatcherPriority.Background;
-                _zoomableCanvas.RealizationRate = 10;
-                InitializeCanvas();
-
-                AddAdorners();
-            }
-        }
-
-        private void AddAdorners()
-        {
-            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(_itemsControl);
-            if (_multiValueScalebarAdorner != null)
-            {
-                adornerLayer.Remove(_multiValueScalebarAdorner);
-            }
-            if (_overViewAdorner != null)
-            {
-                adornerLayer.Remove(_overViewAdorner);
-            }
-
-            var scaleBar = new MultiValueScaleBar(this);
-            _multiValueScalebarAdorner = new MultiValueScalebarAdorner(_itemsControl, scaleBar);
-            adornerLayer.Add(_multiValueScalebarAdorner);
-
-            _overViewer = new OverViewer(this);
-            _overViewAdorner = new OverViewerAdorner(_itemsControl, _overViewer);
-            adornerLayer.Add(_overViewAdorner);
-        }
-
-        public event EventHandler<double> ViewChangeOnFrame;
 
         #region Public methods
 
@@ -365,9 +356,9 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         /// <returns>The logical point translated from the elementPoint.</returns>
         public Point ElementToLogicalPoint(Point elementPoint)
         {
-            Point absoluteCanvasPoint = _zoomableCanvas.GetCanvasPoint(elementPoint);
-            return new Point(absoluteCanvasPoint.X/_zoomableCanvas.Extent.Width,
-                absoluteCanvasPoint.Y/_zoomableCanvas.Extent.Height);
+            var absoluteCanvasPoint = ZoomableCanvas.GetCanvasPoint(elementPoint);
+            return new Point(absoluteCanvasPoint.X/ZoomableCanvas.Extent.Width,
+                absoluteCanvasPoint.Y/ZoomableCanvas.Extent.Height);
         }
 
         /// <summary>
@@ -378,10 +369,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         public Point LogicalToElementPoint(Point logicalPoint)
         {
             var absoluteCanvasPoint = new Point(
-                logicalPoint.X*_zoomableCanvas.Extent.Width,
-                logicalPoint.Y*_zoomableCanvas.Extent.Height
+                logicalPoint.X*ZoomableCanvas.Extent.Width,
+                logicalPoint.Y*ZoomableCanvas.Extent.Height
                 );
-            return _zoomableCanvas.GetVisualPoint(absoluteCanvasPoint);
+            return ZoomableCanvas.GetVisualPoint(absoluteCanvasPoint);
         }
 
         #endregion Public methods
@@ -415,7 +406,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         {
             var target = (MultiScaleImage) d;
             var oldSource = (MultiScaleTileSource) e.OldValue;
-            MultiScaleTileSource newSource = target.Source;
+            var newSource = target.Source;
             target.OnSourceChanged(oldSource, newSource);
         }
 
@@ -435,7 +426,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             if (_itemsControl != null)
                 _itemsControl.ItemsSource = _spatialSource;
 
-            if (_zoomableCanvas != null)
+            if (ZoomableCanvas != null)
             {
                 InitializeCanvas();
                 AddAdorners();

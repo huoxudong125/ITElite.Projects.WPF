@@ -7,17 +7,68 @@ using System.Windows.Threading;
 namespace System.Windows.Controls
 {
     /// <summary>
-    /// Provides a framework for <see cref="Panel"/> elements that virtualize their child data collection. This is an abstract class.
+    ///     Provides a framework for <see cref="Panel" /> elements that virtualize their child data collection. This is an
+    ///     abstract class.
     /// </summary>
     public abstract class VirtualPanel : VirtualizingPanel
     {
         /// <summary>
-        /// Identifies the <see cref="IsVirtualizing"/> property.
+        ///     Identifies the <see cref="IsVirtualizing" /> property.
         /// </summary>
-        public static new readonly DependencyProperty IsVirtualizingProperty = VirtualizingStackPanel.IsVirtualizingProperty.AddOwner(typeof(VirtualPanel), new FrameworkPropertyMetadata(VirtualizingStackPanel.IsVirtualizingProperty.DefaultMetadata.DefaultValue, OnIsVirtualizingChanged));
+        public new static readonly DependencyProperty IsVirtualizingProperty =
+            VirtualizingStackPanel.IsVirtualizingProperty.AddOwner(typeof (VirtualPanel),
+                new FrameworkPropertyMetadata(
+                    VirtualizingStackPanel.IsVirtualizingProperty.DefaultMetadata.DefaultValue, OnIsVirtualizingChanged));
 
         /// <summary>
-        /// Handles the event that occurs when the value of the <see cref="IsVirtualizing"/> dependency property has changed.
+        ///     Identifies the <see cref="RealizationPriority" /> property.
+        /// </summary>
+        public static readonly DependencyProperty RealizationPriorityProperty =
+            DependencyProperty.Register("RealizationPriority", typeof (DispatcherPriority), typeof (VirtualPanel),
+                new FrameworkPropertyMetadata(DispatcherPriority.Normal));
+
+        /// <summary>
+        ///     This is an attached property that the panel sets on each container (generated or direct) to point back to the index
+        ///     of the item.
+        /// </summary>
+        private static readonly DependencyProperty IndexForItemContainerProperty =
+            DependencyProperty.RegisterAttached("IndexForItemContainer", typeof (int), typeof (VirtualPanel),
+                new FrameworkPropertyMetadata(-1));
+
+        /// <summary>
+        ///     Gets or sets a value that indicates that this <see cref="VirtualPanel" /> is virtualizing its child collection.
+        /// </summary>
+        public bool IsVirtualizing
+        {
+            get { return (bool) GetValue(IsVirtualizingProperty); }
+            set { SetValue(IsVirtualizingProperty, value); }
+        }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="DispatcherPriority" /> of the realization pass for this <see cref="VirtualPanel" />.
+        /// </summary>
+        public DispatcherPriority RealizationPriority
+        {
+            get { return (DispatcherPriority) GetValue(RealizationPriorityProperty); }
+            set { SetValue(RealizationPriorityProperty, value); }
+        }
+
+        /// <summary>
+        ///     Holds the latest queued realization operation.
+        /// </summary>
+        private DispatcherOperation RealizeOperation { get; set; }
+
+        /// <summary>
+        ///     Returns the <see cref="ItemsControl" /> that this panel hosts items for.
+        /// </summary>
+        /// <value></value>
+        public ItemsControl ItemsOwner
+        {
+            get { return ItemsControl.GetItemsOwner(this); }
+        }
+
+        /// <summary>
+        ///     Handles the event that occurs when the value of the <see cref="IsVirtualizing" /> dependency property has changed.
         /// </summary>
         /// <param name="d">The dependency object on which the dependency property has changed.</param>
         /// <param name="e">The event args containing the old and new values of the dependency property.</param>
@@ -26,64 +77,18 @@ namespace System.Windows.Controls
             var panel = d as VirtualPanel;
             if (panel != null)
             {
-                panel.OnIsVirtualizingChanged((bool)e.OldValue, (bool)e.NewValue);
+                panel.OnIsVirtualizingChanged((bool) e.OldValue, (bool) e.NewValue);
             }
         }
 
         /// <summary>
-        /// Gets or sets a value that indicates that this <see cref="VirtualPanel"/> is virtualizing its child collection.
+        ///     Returns the index to an item that corresponds to the specified, generated <see cref="UIElement" />.
         /// </summary>
-        public bool IsVirtualizing
-        {
-            get { return (bool)GetValue(IsVirtualizingProperty); }
-            set { SetValue(IsVirtualizingProperty, value); }
-        }
-
-        /// <summary>
-        /// Identifies the <see cref="RealizationPriority"/> property.
-        /// </summary>
-        public static readonly DependencyProperty RealizationPriorityProperty = DependencyProperty.Register("RealizationPriority", typeof(DispatcherPriority), typeof(VirtualPanel), new FrameworkPropertyMetadata(DispatcherPriority.Normal));
-
-        /// <summary>
-        /// Gets or sets the <see cref="DispatcherPriority"/> of the realization pass for this <see cref="VirtualPanel"/>.
-        /// </summary>
-        public DispatcherPriority RealizationPriority
-        {
-            get { return (DispatcherPriority)GetValue(RealizationPriorityProperty); }
-            set { SetValue(RealizationPriorityProperty, value); }
-        }
-
-        /// <summary>
-        /// This is an attached property that the panel sets on each container (generated or direct) to point back to the index of the item.
-        /// </summary>
-        private static readonly DependencyProperty IndexForItemContainerProperty = DependencyProperty.RegisterAttached("IndexForItemContainer", typeof(int), typeof(VirtualPanel), new FrameworkPropertyMetadata(-1));
-
-        /// <summary>
-        /// Holds the latest queued realization operation.
-        /// </summary>
-        private DispatcherOperation RealizeOperation
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Returns the <see cref="ItemsControl"/> that this panel hosts items for.
-        /// </summary>
-        /// <value></value>
-        public ItemsControl ItemsOwner
-        {
-            get
-            {
-                return ItemsControl.GetItemsOwner(this);
-            }
-        }
-
-        /// <summary>
-        /// Returns the index to an item that corresponds to the specified, generated <see cref="UIElement"/>.
-        /// </summary>
-        /// <param name="container">The <see cref="UIElement"/> that corresponds to the item index to be returned.</param>
-        /// <returns>An <see cref="Int32"/> index to an item that corresponds to the specified <see cref="UIElement"/> if it was generated and hosted by this panel; otherwise, <c>-1</c>.</returns>
+        /// <param name="container">The <see cref="UIElement" /> that corresponds to the item index to be returned.</param>
+        /// <returns>
+        ///     An <see cref="Int32" /> index to an item that corresponds to the specified <see cref="UIElement" /> if it was
+        ///     generated and hosted by this panel; otherwise, <c>-1</c>.
+        /// </returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public int IndexFromContainer(UIElement container)
         {
@@ -103,10 +108,13 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Returns the item that corresponds to the specified, generated <see cref="UIElement"/>.
+        ///     Returns the item that corresponds to the specified, generated <see cref="UIElement" />.
         /// </summary>
-        /// <param name="container">The <see cref="UIElement"/> that corresponds to the item to be returned.</param>
-        /// <returns>An <see cref="Object"/> that is the item which corresponds to the specified <see cref="UIElement"/> if it was generated and hosted by this panel; otherwise, <c>null</c>.</returns>
+        /// <param name="container">The <see cref="UIElement" /> that corresponds to the item to be returned.</param>
+        /// <returns>
+        ///     An <see cref="Object" /> that is the item which corresponds to the specified <see cref="UIElement" /> if it
+        ///     was generated and hosted by this panel; otherwise, <c>null</c>.
+        /// </returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public object ItemFromContainer(UIElement container)
         {
@@ -125,10 +133,14 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Returns the <see cref="UIElement"/> corresponding to the item at the given index within the item collection if it has been realized.
+        ///     Returns the <see cref="UIElement" /> corresponding to the item at the given index within the item collection if it
+        ///     has been realized.
         /// </summary>
         /// <param name="itemIndex">The index of the desired item. </param>
-        /// <returns>The element corresponding to the item at the given index within the item collection or returns <c>null</c> if the item is not realized.</returns>
+        /// <returns>
+        ///     The element corresponding to the item at the given index within the item collection or returns <c>null</c> if
+        ///     the item is not realized.
+        /// </returns>
         public UIElement ContainerFromIndex(int itemIndex)
         {
             var generator = ItemContainerGenerator as ItemContainerGenerator;
@@ -140,11 +152,17 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Returns the <see cref="UIElement"/> corresponding to the given item if it has been realized.
+        ///     Returns the <see cref="UIElement" /> corresponding to the given item if it has been realized.
         /// </summary>
-        /// <param name="item">The <see cref="Object"/> item to find the <see cref="UIElement"/> for.</param>
-        /// <returns>A <see cref="UIElement"/> that corresponds to the given item. Returns <c>null</c> if the item does not belong to the item collection, or if a <see cref="UIElement"/> has not been generated for it.</returns>
-        /// <remarks>Use caution when calling this method as it does a linear search for the item.  Consider calling <see cref="ContainerFromIndex"/> instead.</remarks>
+        /// <param name="item">The <see cref="Object" /> item to find the <see cref="UIElement" /> for.</param>
+        /// <returns>
+        ///     A <see cref="UIElement" /> that corresponds to the given item. Returns <c>null</c> if the item does not belong
+        ///     to the item collection, or if a <see cref="UIElement" /> has not been generated for it.
+        /// </returns>
+        /// <remarks>
+        ///     Use caution when calling this method as it does a linear search for the item.  Consider calling
+        ///     <see cref="ContainerFromIndex" /> instead.
+        /// </remarks>
         public UIElement ContainerFromItem(object item)
         {
             var generator = ItemContainerGenerator as ItemContainerGenerator;
@@ -156,7 +174,9 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Invalidates the realization state of all items being hosted by this panel. After the invalidation, the panel will have its reality updated, which will occur asynchronously unless subsequently forced by <see cref="UpdateReality"/>.
+        ///     Invalidates the realization state of all items being hosted by this panel. After the invalidation, the panel will
+        ///     have its reality updated, which will occur asynchronously unless subsequently forced by
+        ///     <see cref="UpdateReality" />.
         /// </summary>
         public void InvalidateReality()
         {
@@ -182,7 +202,7 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Ensures that all items being hosted by this panel are properly realized or virtualized.
+        ///     Ensures that all items being hosted by this panel are properly realized or virtualized.
         /// </summary>
         public void UpdateReality()
         {
@@ -192,14 +212,16 @@ namespace System.Windows.Controls
             do
             {
                 state = RealizeCore(state);
-            }
-            while (state != null);
+            } while (state != null);
         }
 
         /// <summary>
-        /// Manages calls to <see cref="RealizeOverride"/>.
+        ///     Manages calls to <see cref="RealizeOverride" />.
         /// </summary>
-        /// <param name="state">A custom state object left over from a previous call to <see cref="RealizeCore"/> if additional processing was needed.</param>
+        /// <param name="state">
+        ///     A custom state object left over from a previous call to <see cref="RealizeCore" /> if additional
+        ///     processing was needed.
+        /// </param>
         /// <returns>A custom state object if additional processing is needed; otherwise, <c>null</c>.</returns>
         private object RealizeCore(object state)
         {
@@ -218,7 +240,7 @@ namespace System.Windows.Controls
                     var generator = ItemContainerGenerator;
                     using (generator.StartAt(new GeneratorPosition(-1, 0), GeneratorDirection.Forward))
                     {
-                        int index = 0;
+                        var index = 0;
                         DependencyObject next;
                         while ((next = generator.GenerateNext()) != null)
                         {
@@ -238,15 +260,21 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// When overridden in a derived class, realizes and/or virtualizes items, optionally deferring additional realization.
+        ///     When overridden in a derived class, realizes and/or virtualizes items, optionally deferring additional realization.
         /// </summary>
         /// <param name="items">The current items being hosted by this panel.</param>
-        /// <param name="state">A custom state object left over from a previous call to <see cref="RealizeOverride"/> if additional processing was needed.</param>
-        /// <returns>Implementations may optionally defer additional processing by return a non-<c>null</c> object, which will then be passed to a future call to <see cref="RealizeOverride"/>.</returns>
+        /// <param name="state">
+        ///     A custom state object left over from a previous call to <see cref="RealizeOverride" /> if
+        ///     additional processing was needed.
+        /// </param>
+        /// <returns>
+        ///     Implementations may optionally defer additional processing by return a non-<c>null</c> object, which will then
+        ///     be passed to a future call to <see cref="RealizeOverride" />.
+        /// </returns>
         protected abstract object RealizeOverride(IEnumerable items, object state);
 
         /// <summary>
-        /// Indicates that the <see cref="Panel.IsItemsHost"/> property value has changed.
+        ///     Indicates that the <see cref="Panel.IsItemsHost" /> property value has changed.
         /// </summary>
         /// <param name="oldIsItemsHost">The old property value.</param>
         /// <param name="newIsItemsHost">The new property value.</param>
@@ -258,7 +286,7 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Indicates that the <see cref="IsVirtualizing"/> property value has changed.
+        ///     Indicates that the <see cref="IsVirtualizing" /> property value has changed.
         /// </summary>
         /// <param name="oldIsVirtualizing">The old property value.</param>
         /// <param name="newIsVirtualizing">The new property value.</param>
@@ -268,10 +296,10 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Maintains event handlers when the items source has changed.
+        ///     Maintains event handlers when the items source has changed.
         /// </summary>
-        /// <param name="sender">The <see cref="object"/> that raised the event.</param>
-        /// <param name="args">Provides data for the <see cref="ItemContainerGenerator.ItemsChanged"/> event.</param>
+        /// <param name="sender">The <see cref="object" /> that raised the event.</param>
+        /// <param name="args">Provides data for the <see cref="ItemContainerGenerator.ItemsChanged" /> event.</param>
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         protected override sealed void OnItemsChanged(object sender, ItemsChangedEventArgs args)
         {
@@ -305,7 +333,7 @@ namespace System.Windows.Controls
 
                         if (!IsVirtualizing)
                         {
-                            for (int i = index; i < index + args.ItemCount; i++)
+                            for (var i = index; i < index + args.ItemCount; i++)
                             {
                                 RealizeItem(i);
                             }
@@ -319,13 +347,13 @@ namespace System.Windows.Controls
                         var oldItems = new ArrayList(args.ItemCount);
 
                         // Since we can't actually get the old items directly, and sometimes we can't even get the old index from the generator, we'll get as many as we can from the visuals.
-                        for (int i = 0; i < args.ItemUICount; i++)
+                        for (var i = 0; i < args.ItemUICount; i++)
                         {
                             var element = InternalChildren[args.Position.Index + i];
                             oldItems.Add(ItemFromContainer(element));
                             if (oldIndex == -1)
                             {
-                                oldIndex = (int)element.ReadLocalValue(IndexForItemContainerProperty);
+                                oldIndex = (int) element.ReadLocalValue(IndexForItemContainerProperty);
                             }
                             element.ClearValue(IndexForItemContainerProperty);
                         }
@@ -353,10 +381,11 @@ namespace System.Windows.Controls
                                 elements[i] = InternalChildren[args.OldPosition.Index + i];
                                 if (oldIndex == -1)
                                 {
-                                    oldIndex = (int)elements[i].ReadLocalValue(IndexForItemContainerProperty);
+                                    oldIndex = (int) elements[i].ReadLocalValue(IndexForItemContainerProperty);
                                 }
                             }
-                            RemoveInternalChildRange(args.OldPosition.Index + Math.Min(args.OldPosition.Offset, 1), count);
+                            RemoveInternalChildRange(args.OldPosition.Index + Math.Min(args.OldPosition.Offset, 1),
+                                count);
                             for (var i = 0; i < count; i++)
                             {
                                 InsertInternalChild(args.Position.Index + i, elements[i]);
@@ -383,17 +412,18 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Called when the <see cref="ItemsControl.Items"/> collection that is associated with the <see cref="ItemsControl"/> for this <see cref="Panel"/> changes.
+        ///     Called when the <see cref="ItemsControl.Items" /> collection that is associated with the
+        ///     <see cref="ItemsControl" /> for this <see cref="Panel" /> changes.
         /// </summary>
-        /// <param name="sender">The <see cref="object"/> that raised the event.</param>
-        /// <param name="args">Provides data for the <see cref="ItemsChanged"/> event.</param>
+        /// <param name="sender">The <see cref="object" /> that raised the event.</param>
+        /// <param name="args">Provides data for the <see cref="ItemsChanged" /> event.</param>
         [SuppressMessage("Microsoft.Security", "CA2109:ReviewVisibleEventHandlers")]
         protected virtual void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
         }
 
         /// <summary>
-        /// Realizes an item container for the item with the given index.
+        ///     Realizes an item container for the item with the given index.
         /// </summary>
         /// <param name="itemIndex">The index of the item.</param>
         /// <returns>The child that was created and added to the internal children.</returns>
@@ -416,7 +446,7 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Removes an item container for the item with the given index.
+        ///     Removes an item container for the item with the given index.
         /// </summary>
         /// <param name="itemIndex">The index of the item.</param>
         /// <returns><c>true</c> if the child had been previously realized and was now removed; otherwise, <c>false</c>.</returns>
@@ -436,14 +466,14 @@ namespace System.Windows.Controls
         }
 
         /// <summary>
-        /// Returns a list which represents a subset of the elements in the source list.
+        ///     Returns a list which represents a subset of the elements in the source list.
         /// </summary>
         /// <remarks>
-        /// This list is used in NotifyCollectionChangedEventArgs because we might be dealing with
-        /// virtualized lists that raise events for items changing when the items haven't been
-        /// loaded into memory yet.  If the client needs to inspect the item, then they can index
-        /// into this list and it will retrieve it from the original source, but if they don't need
-        /// to inspect the item then we spare the cost of the lookup and retrieval.
+        ///     This list is used in NotifyCollectionChangedEventArgs because we might be dealing with
+        ///     virtualized lists that raise events for items changing when the items haven't been
+        ///     loaded into memory yet.  If the client needs to inspect the item, then they can index
+        ///     into this list and it will retrieve it from the original source, but if they don't need
+        ///     to inspect the item then we spare the cost of the lookup and retrieval.
         /// </remarks>
         private class VirtualItemsList : IList
         {
@@ -454,23 +484,11 @@ namespace System.Windows.Controls
                 Count = count;
             }
 
-            public IList Items
-            {
-                get;
-                set;
-            }
+            public IList Items { get; set; }
 
-            public int Offset
-            {
-                get;
-                set;
-            }
+            public int Offset { get; set; }
 
-            public int Count
-            {
-                get;
-                set;
-            }
+            public int Count { get; set; }
 
             public object this[int index]
             {
@@ -488,19 +506,16 @@ namespace System.Windows.Controls
 
                     return null;
                 }
-                set
-                {
-                    throw new NotSupportedException();
-                }
+                set { throw new NotSupportedException(); }
             }
 
             public int IndexOf(object value)
             {
                 if (Items != null)
                 {
-                    for (int i = 0; i < Count && i + Offset < Items.Count; i++)
+                    for (var i = 0; i < Count && i + Offset < Items.Count; i++)
                     {
-                        if (Object.Equals(Items[i + Offset], value))
+                        if (Equals(Items[i + Offset], value))
                         {
                             return i;
                         }
@@ -519,7 +534,7 @@ namespace System.Windows.Controls
             {
                 if (Items != null)
                 {
-                    for (int i = 0; i < Count && i + Offset < Items.Count; i++)
+                    for (var i = 0; i < Count && i + Offset < Items.Count; i++)
                     {
                         yield return Items[i + Offset];
                     }

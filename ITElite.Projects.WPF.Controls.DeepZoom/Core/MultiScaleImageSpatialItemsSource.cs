@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -26,7 +25,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         private readonly Dictionary<string, BitmapSource> _tileCache = new Dictionary<string, BitmapSource>();
         private readonly MultiScaleTileSource _tileSource;
         private CancellationTokenSource _currentCancellationTokenSource = new CancellationTokenSource();
-
         private int _currentLevel;
 
         public MultiScaleImageSpatialItemsSource(MultiScaleTileSource tileSource)
@@ -58,25 +56,25 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             get
             {
-                Tile tile = _tileSource.TileFromIndex(i);
-                string tileId = tile.ToString();
+                var tile = _tileSource.TileFromIndex(i);
+                var tileId = tile.ToString();
 
                 if (_tileCache.ContainsKey(tileId))
                     return new VisualTile(tile, _tileSource, _tileCache[tileId]);
 
                 var tileVm = new VisualTile(tile, _tileSource);
 
-                object imageSource = _tileSource.GetTileLayers(tile.Level, tile.Column, tile.Row);
+                var imageSource = _tileSource.GetTileLayers(tile.Level, tile.Column, tile.Row);
 
                 var uri = imageSource as Uri;
                 if (uri != null)
                 {
                     // Capture closure
-                    CancellationToken token = _currentCancellationTokenSource.Token;
+                    var token = _currentCancellationTokenSource.Token;
                     Task.Factory
                         .StartNew(() =>
                         {
-                            BitmapSource source = ImageLoader.LoadImage(uri);
+                            var source = ImageLoader.LoadImage(uri);
                             if (source != null)
                                 source = CacheTile(tileId, source);
                             return source;
@@ -100,13 +98,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                         source.StreamSource = stream;
                         source.EndInit();
 
-                        BitmapSource src = CacheTile(tileId, source);
+                        var src = CacheTile(tileId, source);
                         tileVm.Source = src;
                     }
                     else return null;
                 }
 
-               return tileVm;
+                return tileVm;
             }
             set { throw new NotSupportedException(); }
         }

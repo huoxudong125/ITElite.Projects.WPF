@@ -7,7 +7,7 @@ using Microsoft.Win32;
 namespace ITElite.Projects.WPF.Controls.DeepZoom.UI.Test
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -26,11 +26,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.UI.Test
                 {
                     if (openFileDialog.FilterIndex == 1)
                     {
-                        MultiScaleImage.Source = new DeepZoomImageTileSource(new Uri(openFileDialog.FileName, UriKind.Absolute));
+                        MultiScaleImage.Source =
+                            new DeepZoomImageTileSource(new Uri(openFileDialog.FileName, UriKind.Absolute));
                     }
                     else if (openFileDialog.FilterIndex == 2)
                     {
-                        MultiScaleImage.Source = new HDImageTileSource(new Uri(openFileDialog.FileName, UriKind.Absolute));
+                        MultiScaleImage.Source =
+                            new HDImageTileSource(new Uri(openFileDialog.FileName, UriKind.Absolute));
                     }
 
                     FilePathLabel.Content = openFileDialog.FileName;
@@ -45,17 +47,18 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.UI.Test
 
         private void ChangeFileSize()
         {
-            FileSize.Content = string.Format("Pixle Size：{0}*{1} ,Physic Size:{2}*{3}", MultiScaleImage.Source.ImageSize.Width,
+            FileSize.Content = string.Format("Pixle Size：{0}*{1} ,Physic Size:{2}*{3}",
+                MultiScaleImage.Source.ImageSize.Width,
                 MultiScaleImage.Source.ImageSize.Height,
-                (MultiScaleImage.Source.ImageSize.Width * MultiScaleImage.Resolution).ToLengthSize(),
-                (MultiScaleImage.Source.ImageSize.Height * MultiScaleImage.Resolution).ToLengthSize());
+                (MultiScaleImage.Source.ImageSize.Width*MultiScaleImage.Resolution).ToLengthSize(),
+                (MultiScaleImage.Source.ImageSize.Height*MultiScaleImage.Resolution).ToLengthSize());
         }
 
         private void BtnSetResolution_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                var resolution = int.Parse(ResolutionTextBox.Text) * 1e-9;
+                var resolution = int.Parse(ResolutionTextBox.Text)*1e-9;
                 MultiScaleImage.Resolution = resolution;
                 ChangeFileSize();
             }

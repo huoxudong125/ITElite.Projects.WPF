@@ -8,12 +8,12 @@
                 <ControlTemplate TargetType="{x:Type local:ScrollViewerThumbnail}">
                     <Viewbox DataContext="{TemplateBinding ScrollViewer}" Stretch="Uniform">
                         <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
                             <Grid>
                                 <Rectangle
-                                Width="{Binding Content.ActualWidth}"
-                                Height="{Binding Content.ActualHeight}">
+                                    Width="{Binding Content.ActualWidth}"
+                                    Height="{Binding Content.ActualHeight}">
                                     <Rectangle.Fill>
                                         <VisualBrush Visual="{Binding Content}" />
                                     </Rectangle.Fill>
@@ -32,11 +32,11 @@
                             </Border>-->
 
                                 <Thumb Name="PART_Highlight"
-                                    Background="{TemplateBinding HighlightFill}"
-                                    Width="{Binding ViewportWidth}"
-                                    Height="{Binding ViewportHeight}"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top">
+                                       Background="{TemplateBinding HighlightFill}"
+                                       Width="{Binding ViewportWidth}"
+                                       Height="{Binding ViewportHeight}"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top">
                                     <Thumb.RenderTransform>
                                         <TranslateTransform
                                             X="{Binding HorizontalOffset}"

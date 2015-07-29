@@ -1,8 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:local="clr-namespace:ITElite.Projects.WPF.Controls.TextControl"
-
->
+                    xmlns:local="clr-namespace:ITElite.Projects.WPF.Controls.TextControl">
 
 
     <Style x:Key="shadowedLabelStyle">
@@ -19,8 +17,7 @@
                 <ControlTemplate TargetType="{x:Type local:ShadowedTextBox}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                    </Border>
+                            BorderThickness="{TemplateBinding BorderThickness}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -29,8 +26,5 @@
         <Setter Property="LabelStyle" Value="{StaticResource shadowedLabelStyle}" />
     </Style>
 
-    
-
-    
 
 </ResourceDictionary>

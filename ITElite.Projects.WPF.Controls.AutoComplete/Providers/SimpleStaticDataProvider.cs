@@ -5,7 +5,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Providers
 {
     public class SimpleStaticDataProvider : IAutoCompleteDataProvider
     {
-        private IEnumerable<string> _source;
+        private readonly IEnumerable<string> _source;
 
         public SimpleStaticDataProvider(IEnumerable<string> source)
         {

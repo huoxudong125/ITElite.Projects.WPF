@@ -32,7 +32,7 @@ namespace ITElite.Projects.WPF.Controls.ZoomableCanvas.Test
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 var control = sender as System.Windows.Controls.ZoomableCanvas;
-                Point currentPoint = e.GetPosition(control);
+                var currentPoint = e.GetPosition(control);
                 control.Offset = new Point(control.Offset.X - (currentPoint.X - _StartPoint.X)
                     , control.Offset.Y - (currentPoint.Y - _StartPoint.Y));
             }

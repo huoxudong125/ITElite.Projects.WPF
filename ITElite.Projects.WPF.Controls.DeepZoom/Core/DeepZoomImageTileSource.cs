@@ -20,6 +20,22 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             UriSource = sourceUri;
         }
 
+        #region Overriden methods
+
+        protected internal override object GetTileLayers(int tileLevel, int tilePositionX, int tilePositionY)
+        {
+            if (!TileExists(tileLevel, tilePositionX, tilePositionY))
+                return null;
+
+            var source = UriSource.OriginalString;
+            var url = source.Substring(0, source.Length - 4) + "_files/"
+                      + tileLevel + "/" + tilePositionX + "_"
+                      + tilePositionY + "." + _imageExtension;
+            return new Uri(url, UriSource.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
+        }
+
+        #endregion Overriden methods
+
         #region Dependency Properties
 
         #region UriSource
@@ -48,7 +64,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             var target = (DeepZoomImageTileSource) d;
             var oldUriSource = (Uri) e.OldValue;
-            Uri newUriSource = target.UriSource;
+            var newUriSource = target.UriSource;
             target.OnUriSourceChanged(oldUriSource, newUriSource);
         }
 
@@ -71,38 +87,22 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         #endregion Dependency Properties
 
-        #region Overriden methods
-
-        protected internal override object GetTileLayers(int tileLevel, int tilePositionX, int tilePositionY)
-        {
-            if (!TileExists(tileLevel, tilePositionX, tilePositionY))
-                return null;
-
-            string source = UriSource.OriginalString;
-            string url = source.Substring(0, source.Length - 4) + "_files/"
-                         + tileLevel + "/" + tilePositionX + "_"
-                         + tilePositionY + "." + _imageExtension;
-            return new Uri(url, UriSource.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
-        }
-
-        #endregion Overriden methods
-
         #region Helper methods
 
         private void LoadDeepZoomXml()
         {
-            XElement imageElement = XElement.Load(UriSource.OriginalString);
+            var imageElement = XElement.Load(UriSource.OriginalString);
 
             if (imageElement == null)
                 throw new FileFormatException("Invalid XML file.");
 
-            XNamespace xmlns = imageElement.GetDefaultNamespace();
+            var xmlns = imageElement.GetDefaultNamespace();
 
             TileSize = (int) imageElement.Attribute("TileSize");
             TileOverlap = (int) imageElement.Attribute("Overlap");
             _imageExtension = (string) imageElement.Attribute("Format");
 
-            XElement sizeElement = imageElement.Element(xmlns + "Size");
+            var sizeElement = imageElement.Element(xmlns + "Size");
             if (sizeElement == null)
                 throw new FileFormatException("Invalid XML file.");
 
@@ -111,14 +111,14 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                 (int) sizeElement.Attribute("Height")
                 );
 
-            XElement displayRectsElement = imageElement.Element(xmlns + "DisplayRects");
+            var displayRectsElement = imageElement.Element(xmlns + "DisplayRects");
             if (displayRectsElement != null)
             {
                 _displayRects = displayRectsElement
                     .Elements(xmlns + "DisplayRect")
                     .Select(el =>
                     {
-                        XElement rectElement = el.Element(xmlns + "Rect");
+                        var rectElement = el.Element(xmlns + "Rect");
                         var x = (double) rectElement.Attribute("X");
                         var y = (double) rectElement.Attribute("Y");
                         var width = (double) rectElement.Attribute("Width");
@@ -135,14 +135,14 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             if (_displayRects == null) return true;
 
-            double scale = ScaleAtLevel(level);
+            var scale = ScaleAtLevel(level);
 
-            foreach (DisplayRect dRect in _displayRects.Where(r => level >= r.MinLevel && level <= r.MaxLevel))
+            foreach (var dRect in _displayRects.Where(r => level >= r.MinLevel && level <= r.MaxLevel))
             {
-                double minColumn = dRect.Rect.X*scale;
-                double minRow = dRect.Rect.Y*scale;
-                double maxColumn = minColumn + dRect.Rect.Width*scale;
-                double maxRow = minRow + dRect.Rect.Height*scale;
+                var minColumn = dRect.Rect.X*scale;
+                var minRow = dRect.Rect.Y*scale;
+                var maxColumn = minColumn + dRect.Rect.Width*scale;
+                var maxRow = minRow + dRect.Rect.Height*scale;
 
                 minColumn = Math.Floor(minColumn/TileSize);
                 minRow = Math.Floor(minRow/TileSize);

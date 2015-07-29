@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
 using ITElite.Projects.WPF.Controls.AutoComplete.Providers;
@@ -52,7 +50,7 @@ namespace ITElite.Projects.WPF.Controls.Test.AutoCompleteProviders
                 var result = new string[suggestions.Length];
                 for (var n = 0; n < suggestions.Length; n++)
                 {
-                    result[n] = (string)suggestions[n];
+                    result[n] = (string) suggestions[n];
                 }
                 return result;
             }
@@ -69,5 +67,4 @@ namespace ITElite.Projects.WPF.Controls.Test.AutoCompleteProviders
             }
         }
     }
-
 }

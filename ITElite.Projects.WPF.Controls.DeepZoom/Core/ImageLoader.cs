@@ -20,7 +20,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
                 MemoryStream mem;
                 using (var client = new WebClient())
                 {
-                    byte[] buffer = client.DownloadData(uri);
+                    var buffer = client.DownloadData(uri);
                     mem = new MemoryStream(buffer);
                 }
                 bi.BeginInit();

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Windows;
 using System.Windows.Media;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
@@ -15,7 +14,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         {
             ZIndex = tile.Level;
             Scale = 1/tileSource.ScaleAtLevel(tile.Level);
-            Point position = tileSource.GetTilePosition(tile.Column, tile.Row);
+            var position = tileSource.GetTilePosition(tile.Column, tile.Row);
             Left = position.X*Scale;
             Top = position.Y*Scale;
         }
@@ -27,11 +26,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
         }
 
         public int ZIndex { get; private set; }
-
         public double Left { get; private set; }
-
         public double Top { get; private set; }
-
         public double Scale { get; private set; }
 
         public ImageSource Source
@@ -50,7 +46,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         protected void RaisePropertyChanged(string name)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(name));
         }
 

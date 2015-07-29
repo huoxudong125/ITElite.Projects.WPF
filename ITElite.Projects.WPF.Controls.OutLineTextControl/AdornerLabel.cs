@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace ITElite.Projects.WPF.Controls.TextControl
 {
     // Adorners must subclass the abstract base class Adorner.
     public class AdornerLabel : Adorner
     {
-        private TextBlock _textBlock;
-
+        private readonly TextBlock _textBlock;
         // Be sure to call the base class constructor.
         public AdornerLabel(UIElement adornedElement, string label, Style labelStyle)
             : base(adornedElement)
@@ -20,6 +16,12 @@ namespace ITElite.Projects.WPF.Controls.TextControl
             _textBlock = new TextBlock();
             _textBlock.Style = labelStyle;
             _textBlock.Text = label;
+        }
+
+        //return the count of the visuals
+        protected override int VisualChildrenCount
+        {
+            get { return 1; }
         }
 
         //make sure that the layout system knows of the element
@@ -37,16 +39,9 @@ namespace ITElite.Projects.WPF.Controls.TextControl
         }
 
         //return the visual that we want to display
-        protected override System.Windows.Media.Visual GetVisualChild(int index)
+        protected override Visual GetVisualChild(int index)
         {
             return _textBlock;
         }
-
-        //return the count of the visuals
-        protected override int VisualChildrenCount
-        {
-            get { return 1; }
-        }
     }
-
 }

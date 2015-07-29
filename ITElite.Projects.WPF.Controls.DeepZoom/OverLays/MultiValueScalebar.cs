@@ -48,7 +48,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             {
                 deepZoom.ViewChangeOnFrame +=
                     (s, e) => UpdateScalebar(((MultiScaleImage) s).Resolution/((MultiScaleImage) s).Scale);
-                DependencyPropertyDescriptor dpd =
+                var dpd =
                     DependencyPropertyDescriptor.FromProperty(MultiScaleImage.ResolutionProperty,
                         typeof (MultiScaleImage));
 
@@ -77,15 +77,19 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         private void UpdateScalebar(double resolution)
         {
+            if (_metricScaleValue == null || _metricScaleBar == null)
+            {
+                return;
+            }
             //Calculate the ground resolution in km/pixel based on the center of the map and current zoom level.
-            double metricResolution = resolution;
+            var metricResolution = resolution;
             // GroundResolution(_map.Center.Latitude, (int)Math.Round(_map.ZoomLevel));
             //var imperialResolution = metricResolution * 0.62137119; //KM to miles
 
             double maxScaleBarWidth = 100;
 
-            string metricUnitName = "m";
-            double metricDistance = maxScaleBarWidth*metricResolution;
+            var metricUnitName = "m";
+            var metricDistance = maxScaleBarWidth*metricResolution;
 
             if (metricDistance < 1e-6)
             {
@@ -106,15 +110,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
                 metricResolution *= 1000;
             }
 
-            for (int i = 0; i < _scaleMultipliers.Length; i++)
+            for (var i = 0; i < _scaleMultipliers.Length; i++)
             {
                 if (metricDistance/_scaleMultipliers[i] > 1)
                 {
-                    double scaleValue = metricDistance - metricDistance%_scaleMultipliers[i];
-                    if (_metricScaleValue != null)
-                    { _metricScaleValue.Text = string.Format("{0:F0} {1}", scaleValue, metricUnitName);}
-                    if (_metricScaleBar != null) 
-                    {_metricScaleBar.Width = scaleValue/metricResolution;}
+                    var scaleValue = metricDistance - metricDistance%_scaleMultipliers[i];
+                    _metricScaleValue.Text = string.Format("{0:F0} {1}", scaleValue, metricUnitName);
+                    _metricScaleBar.Width = scaleValue/metricResolution;
                     break;
                 }
             }

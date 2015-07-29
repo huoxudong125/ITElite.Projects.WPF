@@ -52,7 +52,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
             if (tileSource != null)
                 if (CanConvertTo(context, destinationType))
                 {
-                    Uri uri = tileSource.HdImagesSourrceUri;
+                    var uri = tileSource.HdImagesSourrceUri;
                     return uri.IsAbsoluteUri ? uri.AbsoluteUri : uri.OriginalString;
                 }
 

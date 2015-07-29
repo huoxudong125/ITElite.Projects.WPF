@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,8 +19,8 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
 {
     public class ItemSelectedEventArgs : EventArgs
     {
-        public object SelectedItem;
         public string OutputText;
+        public object SelectedItem;
     }
 
     public delegate void ItemSelectedEventHandler(object sender, ItemSelectedEventArgs args);
@@ -32,55 +33,38 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
         private const int WM_NCRBUTTONDOWN = 0x00A4;
         private const int WM_SIZE = 0x0005;
         private const int WM_WINDOWPOSCHANGED = 0x0047;
-
-
         private const int POPUP_SHADOW_DEPTH = 5;
         private const int MAX_RESULTS = 50;
-
         /*+---------------------------------------------------------------------+
           |                                                                     |
           |                  Internal States                                    |
           |                                                                     |
           +---------------------------------------------------------------------*/
 
-        private static ResourceDictionary _resources;
-
-        private FrameworkElement _ownerControl;
-
-        private double _itemHeight;
-        private double _downWidth;
+        private static readonly ResourceDictionary _resources;
+        private Thread _asyncThread;
+        private bool _autoSelectFirstSuggestion = true; // new added
+        private SystemDropShadowChrome _chrome;
+        private bool _disabled;
         private double _downHeight;
         private double _downTop;
-        private Point _ptDown;
-
-        private bool _popupOnTop = true;
-        private bool _manualResized;
-        private string _textBeforeChangedByCode;
-        private bool _textChangedByCode;
-
-        private TextBox _textBox;
-        private Popup _popup;
-        private SystemDropShadowChrome _chrome;
-        private ListBox _listBox;
-        private ScrollBar _scrollBar;
-        private ResizeGrip _resizeGrip;
-        private ScrollViewer _scrollViewer;
-        private Thread _asyncThread;
-
+        private double _downWidth;
+        private double _itemHeight;
         private ItemSelectedEventHandler _itemSelectedEventHandler;
-        private DataTemplate _listBoxItemTemplate;
-        private DataTemplateSelector _listBoxItemTemplateSelector;
-
-        private IAutoCompleteDataProvider _dataProvider;
-        private bool _disabled;
-        private bool _asynchronous;
-        private bool _autoAppend;
-        private bool _supressAutoAppend;
-
+        private ListBox _listBox;
+        private bool _manualResized;
         private int _maxResults = MAX_RESULTS;
-
-        private bool _autoSelectFirstSuggestion = true;   // new added
-
+        private FrameworkElement _ownerControl;
+        private Popup _popup;
+        private bool _popupOnTop = true;
+        private Point _ptDown;
+        private ResizeGrip _resizeGrip;
+        private ScrollBar _scrollBar;
+        private ScrollViewer _scrollViewer;
+        private bool _supressAutoAppend;
+        private string _textBeforeChangedByCode;
+        private TextBox _textBox;
+        private bool _textChangedByCode;
         /*+---------------------------------------------------------------------+
           |                                                                     |
           |                       Initialier                                    |
@@ -89,7 +73,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
 
         static AutoCompleteManager()
         {
-            string assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
             _resources = new ResourceDictionary();
             var uri = new Uri(assemblyName + ";component/Resources/Resources.xaml", UriKind.Relative);
             _resources.Source = uri;
@@ -105,14 +89,57 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             AttachTextBox(textBox);
         }
 
+        private bool PopupOnTop
+        {
+            get { return _popupOnTop; }
+            set
+            {
+                if (_popupOnTop == value)
+                {
+                    return;
+                }
+                _popupOnTop = value;
+                if (_popupOnTop)
+                {
+                    _resizeGrip.VerticalAlignment = VerticalAlignment.Top;
+                    _scrollBar.Margin = new Thickness(0, SystemParameters.HorizontalScrollBarHeight, 0, 0);
+                    _resizeGrip.LayoutTransform = new ScaleTransform(1, -1);
+                    _resizeGrip.Cursor = Cursors.SizeNESW;
+                }
+                else
+                {
+                    _resizeGrip.VerticalAlignment = VerticalAlignment.Bottom;
+                    _scrollBar.Margin = new Thickness(0, 0, 0, SystemParameters.HorizontalScrollBarHeight);
+                    _resizeGrip.LayoutTransform = Transform.Identity;
+                    _resizeGrip.Cursor = Cursors.SizeNWSE;
+                }
+            }
+        }
+
+        public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            handled = false;
+
+            switch (msg)
+            {
+                case WM_WINDOWPOSCHANGED:
+                case WM_LBUTTONDOWN:
+                case WM_RBUTTONDOWN:
+                case WM_NCLBUTTONDOWN: // pass through
+                case WM_NCRBUTTONDOWN:
+                    PopupIsOpen = false;
+                    break;
+            }
+            return IntPtr.Zero;
+        }
+
         private object GetResource(string resKey)
         {
             return (_resources[resKey]);
         }
 
-
         /// <summary>
-        /// Finds immediate parent of the child control 
+        ///     Finds immediate parent of the child control
         /// </summary>
         /// <typeparam name="T">Finds specific Type of parent control</typeparam>
         /// <param name="child">Child control in use</param>
@@ -154,7 +181,8 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
 
             if (_ownerControl == null)
             {
-                throw new Exception("AutoCompleteManager can only be bound with a control hosted in a Window or UserControl.");
+                throw new Exception(
+                    "AutoCompleteManager can only be bound with a control hosted in a Window or UserControl.");
             }
 
             if (_ownerControl.IsLoaded)
@@ -184,16 +212,17 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             _listBox.Items.Add(tempItem);
             _listBox.Focusable = false;
             _listBox.Style = (Style) GetResource("AcTb_ListBoxStyle");
-            _listBox.ItemContainerStyle = (Style)GetResource("AcTb_ListBoxItemStyle"); // This is a MUST if we use local ResourceDictionary to load xaml.
+            _listBox.ItemContainerStyle = (Style) GetResource("AcTb_ListBoxItemStyle");
+                // This is a MUST if we use local ResourceDictionary to load xaml.
 
-            if (_listBoxItemTemplate != null)
+            if (ItemTemplate != null)
             {
-                _listBox.ItemTemplate = _listBoxItemTemplate;
+                _listBox.ItemTemplate = ItemTemplate;
             }
 
-            if (_listBoxItemTemplateSelector != null)
+            if (ItemTemplateSelector != null)
             {
-                _listBox.ItemTemplateSelector = _listBoxItemTemplateSelector;
+                _listBox.ItemTemplateSelector = ItemTemplateSelector;
             }
 
             _chrome = new SystemDropShadowChrome();
@@ -208,7 +237,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             _popup.VerticalOffset = SystemParameters.PrimaryScreenHeight + 100;
             _popup.Child = _chrome;
             _popup.IsOpen = true;
-            
+
             _itemHeight = tempItem.ActualHeight;
             _listBox.Items.Clear();
 
@@ -226,7 +255,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
 
             Resources[typeof(ListBoxItem)] = style;
             // End My code.
- */ 
+ */
 
             //
             GetInnerElementReferences();
@@ -264,7 +293,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
         private void SetupEventHandlers()
         {
             var ownerWindow = Window.GetWindow(_textBox);
-            
+
             if (ownerWindow != null)
             {
                 ownerWindow.PreviewMouseDown += OwnerWindow_PreviewMouseDown;
@@ -283,7 +312,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
                 // We need to deal with the UserControl's events, too.
                 _ownerControl.PreviewMouseDown += OwnerWindow_PreviewMouseDown;
 
-                HwndSource hwndSource = PresentationSource.FromVisual(_textBox) as HwndSource;
+                var hwndSource = PresentationSource.FromVisual(_textBox) as HwndSource;
                 var hwndSourceHook = new HwndSourceHook(WndProc);
                 hwndSource.AddHook(hwndSourceHook);
 
@@ -292,7 +321,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
                  * So, in addition to the above code, you need to call this class' WndProc() method in your WinForm.
                  * Or else when the parent form is resized, re-positioned, the popup window will not be closed.
                  */
-            }                        
+            }
 
             _textBox.TextChanged += TextBox_TextChanged;
             _textBox.PreviewKeyDown += TextBox_PreviewKeyDown;
@@ -315,7 +344,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (_textChangedByCode || Disabled || _dataProvider == null)
+            if (_textChangedByCode || Disabled || DataProvider == null)
             {
                 return;
             }
@@ -326,34 +355,34 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
                 return;
             }
 
-            if (_asynchronous)
+            if (Asynchronous)
             {
-
                 if (_asyncThread != null && _asyncThread.IsAlive)
                 {
                     _asyncThread.Abort();
                 }
 
-                _asyncThread = new Thread(() => {
-                    var items = _dataProvider.GetItems(text, _maxResults);
-                    var dispatcher = System.Windows.Application.Current.Dispatcher;
+                _asyncThread = new Thread(() =>
+                {
+                    var items = DataProvider.GetItems(text, _maxResults);
+                    var dispatcher = Application.Current.Dispatcher;
                     if (dispatcher == null)
                     {
                         dispatcher = Dispatcher.CurrentDispatcher;
                     }
 
-                    var currentText = dispatcher.Invoke(new Func<string>(() => _textBox.Text)).ToString();
+                    var currentText = dispatcher.Invoke(() => _textBox.Text);
                     if (text != currentText)
                     {
                         return;
                     }
-                    dispatcher.Invoke(new Action(() => PopulatePopupList(items)));
+                    dispatcher.Invoke(() => PopulatePopupList(items));
                 });
                 _asyncThread.Start();
             }
             else
             {
-                var items = _dataProvider.GetItems(text, _maxResults);
+                var items = DataProvider.GetItems(text, _maxResults);
                 PopulatePopupList(items);
             }
         }
@@ -364,7 +393,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             {
                 return;
             }
-            string text = String.Empty;
+            var text = string.Empty;
             OnItemSelected(_listBox.SelectedItem, out text);
             UpdateText(text, false);
         }
@@ -381,7 +410,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
                 if (_autoSelectFirstSuggestion)
                 {
                     // Enter key as selection.
-                    SelectItemAndUpdateText(false); 
+                    SelectItemAndUpdateText(false);
                 }
 
                 _popup.IsOpen = false;
@@ -461,7 +490,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
 
             if (index != _listBox.SelectedIndex)
             {
-                string text = String.Empty;
+                var text = string.Empty;
 
                 if (index < 0 || index > _listBox.Items.Count - 1)
                 {
@@ -480,7 +509,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             }
         }
 
-        void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             if (_autoSelectFirstSuggestion)
             {
@@ -559,9 +588,9 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             {
                 _popup.IsOpen = false;
 
-                string text = String.Empty;
+                var text = string.Empty;
                 OnItemSelected(item.Content, out text);
-                UpdateText(text, true); 
+                UpdateText(text, true);
             }
         }
 
@@ -648,23 +677,6 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             }
         }
 
-        public IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            handled = false;
-
-            switch (msg)
-            {
-                case WM_WINDOWPOSCHANGED:
-                case WM_LBUTTONDOWN:
-                case WM_RBUTTONDOWN:
-                case WM_NCLBUTTONDOWN: // pass through
-                case WM_NCRBUTTONDOWN:
-                    PopupIsOpen = false;
-                    break;
-            }
-            return IntPtr.Zero;
-        }
-
         /*+---------------------------------------------------------------------+
           |                                                                     |
           |                    AcTb State And Behaviors                         |
@@ -674,7 +686,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
         private void PopulatePopupList(IEnumerable<object> items)
         {
             var text = _textBox.Text;
-            
+
             _listBox.ItemsSource = items;
             if (_listBox.Items.Count == 0)
             {
@@ -699,16 +711,16 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
                 ShowPopup();
 
                 //
-                if (AutoAppend && !_supressAutoAppend && 
-                     _textBox.SelectionLength == 0 && 
-                     _textBox.SelectionStart == _textBox.Text.Length)
+                if (AutoAppend && !_supressAutoAppend &&
+                    _textBox.SelectionLength == 0 &&
+                    _textBox.SelectionStart == _textBox.Text.Length)
                 {
                     _textChangedByCode = true;
                     try
                     {
                         string appendText;
-                        var appendProvider = _dataProvider as IAutoAppendDataProvider;
-                        if(appendProvider != null)
+                        var appendProvider = DataProvider as IAutoAppendDataProvider;
+                        if (appendProvider != null)
                         {
                             appendText = appendProvider.GetAppendText(text, firstSuggestion);
                         }
@@ -716,7 +728,7 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
                         {
                             appendText = firstSuggestion.Substring(_textBox.Text.Length);
                         }
-                        if(!string.IsNullOrEmpty(appendText))
+                        if (!string.IsNullOrEmpty(appendText))
                         {
                             _textBox.SelectedText = appendText;
                         }
@@ -725,33 +737,6 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
                     {
                         _textChangedByCode = false;
                     }
-                }
-            }
-        }
-
-        private bool PopupOnTop
-        {
-            get { return _popupOnTop; }
-            set
-            {
-                if (_popupOnTop == value)
-                {
-                    return;
-                }
-                _popupOnTop = value;
-                if (_popupOnTop)
-                {
-                    _resizeGrip.VerticalAlignment = VerticalAlignment.Top;
-                    _scrollBar.Margin = new Thickness(0, SystemParameters.HorizontalScrollBarHeight, 0, 0);
-                    _resizeGrip.LayoutTransform = new ScaleTransform(1, -1);
-                    _resizeGrip.Cursor = Cursors.SizeNESW;
-                }
-                else
-                {
-                    _resizeGrip.VerticalAlignment = VerticalAlignment.Bottom;
-                    _scrollBar.Margin = new Thickness(0, 0, 0, SystemParameters.HorizontalScrollBarHeight);
-                    _resizeGrip.LayoutTransform = Transform.Identity;
-                    _resizeGrip.Cursor = Cursors.SizeNWSE;
                 }
             }
         }
@@ -826,30 +811,48 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             _textChangedByCode = false;
         }
 
-        protected virtual void OnItemSelected(object selectedItem, out string text) 
+        protected virtual void OnItemSelected(object selectedItem, out string text)
         {
             text = selectedItem.ToString();
 
-            ItemSelectedEventArgs args = new ItemSelectedEventArgs() 
-            { 
-                SelectedItem = selectedItem, 
-                OutputText =  text
+            var args = new ItemSelectedEventArgs
+            {
+                SelectedItem = selectedItem,
+                OutputText = text
             };
 
             if (_itemSelectedEventHandler != null)
-            {                
+            {
                 _itemSelectedEventHandler(this, args);
                 text = args.OutputText;
             }
         }
 
+        #region EVENTS
+
+        public event ItemSelectedEventHandler ItemSelected
+        {
+            add
+            {
+                lock (this)
+                {
+                    _itemSelectedEventHandler += value;
+                }
+            }
+            remove
+            {
+                lock (this)
+                {
+                    _itemSelectedEventHandler -= value;
+                }
+            }
+        }
+
+        #endregion
+
         #region PROPERTIES
 
-        public IAutoCompleteDataProvider DataProvider
-        {
-            get { return _dataProvider; }
-            set { _dataProvider = value; }
-        }
+        public IAutoCompleteDataProvider DataProvider { get; set; }
 
         public bool Disabled
         {
@@ -869,27 +872,16 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
             get { return _popup.IsOpen; }
         }
 
-        public bool Asynchronous
-        {
-            get { return _asynchronous; }
-            set { _asynchronous = value; }
-        }
+        public bool Asynchronous { get; set; }
 
-        public bool AutoAppend
-        {
-            get { return _autoAppend; }
-            set { _autoAppend = value; }
-        }
+        public bool AutoAppend { get; set; }
 
         /// <summary>
-        /// Warning: Do NOT set this property in your window's constructor. Use Load event instead.
+        ///     Warning: Do NOT set this property in your window's constructor. Use Load event instead.
         /// </summary>
         public double PopupWidth
         {
-            get
-            {
-                return _popup.Width;
-            }
+            get { return _popup.Width; }
             set
             {
                 _popup.Width = value;
@@ -898,63 +890,28 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
         }
 
         /// <summary>
-        /// Warning: Do NOT set this property in your window's constructor. Use Load event instead.
+        ///     Warning: Do NOT set this property in your window's constructor. Use Load event instead.
         /// </summary>
         public double PopupMinWidth
         {
-            get
-            {
-                return _popup.MinWidth;
-            }
-            set
-            {
-                _popup.MinWidth = value;
-            }
+            get { return _popup.MinWidth; }
+            set { _popup.MinWidth = value; }
         }
 
         public int MaxResults
         {
-            get
-            {
-                return _maxResults;
-            }
+            get { return _maxResults; }
 
-            set
-            {
-                _maxResults = value;
-            }
+            set { _maxResults = value; }
         }
 
-        public DataTemplate ItemTemplate
-        {
-            get 
-            { 
-                return _listBoxItemTemplate; 
-            }
-            set
-            { 
-                _listBoxItemTemplate = value; 
-            }
-        }
+        public DataTemplate ItemTemplate { get; set; }
 
-        public DataTemplateSelector ItemTemplateSelector
-        {
-            get
-            {
-                return _listBoxItemTemplateSelector;
-            }
-            set
-            {
-                _listBoxItemTemplateSelector = value;
-            }
-        }
+        public DataTemplateSelector ItemTemplateSelector { get; set; }
 
         public bool PopupIsOpen
         {
-            get
-            {
-                return (_popup != null && _popup.IsOpen);
-            }
+            get { return (_popup != null && _popup.IsOpen); }
             set
             {
                 _popup.IsOpen = value;
@@ -967,39 +924,10 @@ namespace ITElite.Projects.WPF.Controls.AutoComplete.Core
 
         public bool AutoSelectFirstSuggestion
         {
-            get
-            {
-                return _autoSelectFirstSuggestion;
-            }
-            set
-            {
-                _autoSelectFirstSuggestion = value;
-            }
+            get { return _autoSelectFirstSuggestion; }
+            set { _autoSelectFirstSuggestion = value; }
         }
 
         #endregion
-
-        #region EVENTS
-
-        public event ItemSelectedEventHandler ItemSelected
-        {
-            add
-            {
-                lock(this) 
-                {
-                    _itemSelectedEventHandler += value;
-                }
-                
-            }            
-            remove
-            {
-                lock (this)
-                {
-                    _itemSelectedEventHandler -= value;
-                }
-            }
-        }
-
-        #endregion  
     }
 }

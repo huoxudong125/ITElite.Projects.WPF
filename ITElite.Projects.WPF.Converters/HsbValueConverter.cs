@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace ITElite.Projects.WPF.Converters
 {
-    [ValueConversion(typeof(string), typeof(string))]
+    [ValueConversion(typeof (string), typeof (string))]
     public class HsbValueConverter : IValueConverter
     {
         /* Note: This class is not used in the demo. It is included
@@ -18,9 +18,9 @@ namespace ITElite.Projects.WPF.Converters
         private struct HsbColor
         {
             public double A;
+            public double B;
             public double H;
             public double S;
-            public double B;
         }
 
         #endregion
@@ -28,7 +28,7 @@ namespace ITElite.Projects.WPF.Converters
         #region IValueConverter Members
 
         /// <summary>
-        /// Adjusts an RGB color by a specified percentage.
+        ///     Adjusts an RGB color by a specified percentage.
         /// </summary>
         /// <param name="value">The hex representation of the RGB color to adjust.</param>
         /// <param name="targetType">WPF Type.</param>
@@ -47,7 +47,7 @@ namespace ITElite.Projects.WPF.Converters
             var hsbColor = RgbToHsb(rgbColorIn);
 
             // Adjust color by factor passed in
-            var brightnessAdjustment = Double.Parse((parameter.ToString()));
+            var brightnessAdjustment = double.Parse((parameter.ToString()));
             hsbColor.B *= brightnessAdjustment;
 
             // Return result
@@ -58,7 +58,7 @@ namespace ITElite.Projects.WPF.Converters
         }
 
         /// <summary>
-        /// Not implemented in this converter; will throw an exception if called.
+        ///     Not implemented in this converter; will throw an exception if called.
         /// </summary>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -70,7 +70,7 @@ namespace ITElite.Projects.WPF.Converters
         #region RGB-HSB Conversion
 
         /// <summary>
-        /// Converts an RGB color to an HSB color.
+        ///     Converts an RGB color to an HSB color.
         /// </summary>
         /// <param name="rgbColor">The RGB color to convert.</param>
         /// <returns>The HSB color equivalent of the RGBA color passed in.</returns>
@@ -84,15 +84,15 @@ namespace ITElite.Projects.WPF.Converters
             var hsbColor = new HsbColor();
 
             // Get RGB color component values
-            var r = (int)rgbColor.R;
-            var g = (int)rgbColor.G;
-            var b = (int)rgbColor.B;
-            var a = (int)rgbColor.A;
+            var r = (int) rgbColor.R;
+            var g = (int) rgbColor.G;
+            var b = (int) rgbColor.B;
+            var a = (int) rgbColor.A;
 
             // Get min, max, and delta values
             double min = Math.Min(Math.Min(r, g), b);
             double max = Math.Max(Math.Max(r, g), b);
-            double delta = max - min;
+            var delta = max - min;
 
             /* Black (max = 0) is a special case. We 
              * simply set HSB values to zero and exit. */
@@ -110,26 +110,26 @@ namespace ITElite.Projects.WPF.Converters
             /* Now we process the normal case. */
 
             // Set HSB Alpha value
-            var alpha = (double)a;
-            hsbColor.A = alpha / 255;
+            var alpha = (double) a;
+            hsbColor.A = alpha/255;
 
             // Set HSB Hue value
-            if (r == max) hsbColor.H = (g - b) / delta;
-            else if (g == max) hsbColor.H = 2 + (b - r) / delta;
-            else if (b == max) hsbColor.H = 4 + (r - g) / delta;
+            if (r == max) hsbColor.H = (g - b)/delta;
+            else if (g == max) hsbColor.H = 2 + (b - r)/delta;
+            else if (b == max) hsbColor.H = 4 + (r - g)/delta;
             hsbColor.H *= 60;
             if (hsbColor.H < 0.0) hsbColor.H += 360;
 
             // Set other HSB values
-            hsbColor.S = delta / max;
-            hsbColor.B = max / 255;
+            hsbColor.S = delta/max;
+            hsbColor.B = max/255;
 
             // Set return value
             return hsbColor;
         }
 
         /// <summary>
-        /// Converts an HSB color to an RGB color.
+        ///     Converts an HSB color to an RGB color.
         /// </summary>
         /// <param name="hsbColor">The HSB color to convert.</param>
         /// <returns>The RGB color equivalent of the HSB color passed in.</returns>
@@ -145,22 +145,22 @@ namespace ITElite.Projects.WPF.Converters
             // Gray: Set RGB and return
             if (hsbColor.S == 0.0)
             {
-                rgbColor.A = (byte)(hsbColor.A * 255);
-                rgbColor.R = (byte)(hsbColor.B * 255);
-                rgbColor.G = (byte)(hsbColor.B * 255);
-                rgbColor.B = (byte)(hsbColor.B * 255);
+                rgbColor.A = (byte) (hsbColor.A*255);
+                rgbColor.R = (byte) (hsbColor.B*255);
+                rgbColor.G = (byte) (hsbColor.B*255);
+                rgbColor.B = (byte) (hsbColor.B*255);
                 return rgbColor;
             }
 
             /* Now we process the normal case. */
 
-            var h = (hsbColor.H == 360) ? 0 : hsbColor.H / 60;
-            var i = (int)(Math.Truncate(h));
+            var h = (hsbColor.H == 360) ? 0 : hsbColor.H/60;
+            var i = (int) (Math.Truncate(h));
             var f = h - i;
 
-            var p = hsbColor.B * (1.0 - hsbColor.S);
-            var q = hsbColor.B * (1.0 - (hsbColor.S * f));
-            var t = hsbColor.B * (1.0 - (hsbColor.S * (1.0 - f)));
+            var p = hsbColor.B*(1.0 - hsbColor.S);
+            var q = hsbColor.B*(1.0 - (hsbColor.S*f));
+            var t = hsbColor.B*(1.0 - (hsbColor.S*(1.0 - f)));
 
             double r, g, b;
             switch (i)
@@ -203,10 +203,10 @@ namespace ITElite.Projects.WPF.Converters
             }
 
             // Set WPF Color object
-            rgbColor.A = (byte)(hsbColor.A * 255);
-            rgbColor.R = (byte)(r * 255);
-            rgbColor.G = (byte)(g * 255);
-            rgbColor.B = (byte)(b * 255);
+            rgbColor.A = (byte) (hsbColor.A*255);
+            rgbColor.R = (byte) (r*255);
+            rgbColor.G = (byte) (g*255);
+            rgbColor.B = (byte) (b*255);
 
             // Set return value
             return rgbColor;
