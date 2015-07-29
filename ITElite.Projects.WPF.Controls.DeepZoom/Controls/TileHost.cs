@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 {
@@ -13,7 +14,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         // Create a collection of child visual objects.
 
         private static readonly AnimationTimeline _opacityAnimation =
-            new DoubleAnimation(1, TimeSpan.FromMilliseconds(500)) {EasingFunction = new ExponentialEase()};
+            new DoubleAnimation(1, TimeSpan.FromMilliseconds(500)) { EasingFunction = new ExponentialEase() };
 
         private DrawingVisual _visual;
 
@@ -37,7 +38,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         ///     Source Dependency Property
         /// </summary>
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof (ImageSource), typeof (TileHost),
+            DependencyProperty.Register("Source", typeof(ImageSource), typeof(TileHost),
                 new FrameworkPropertyMetadata(null,
                     RefreshTile));
 
@@ -47,7 +48,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         /// </summary>
         public ImageSource Source
         {
-            get { return (ImageSource) GetValue(SourceProperty); }
+            get { return (ImageSource)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
 
@@ -59,7 +60,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         ///     Scale Dependency Property
         /// </summary>
         public static readonly DependencyProperty ScaleProperty =
-            DependencyProperty.Register("Scale", typeof (double), typeof (TileHost),
+            DependencyProperty.Register("Scale", typeof(double), typeof(TileHost),
                 new FrameworkPropertyMetadata(1.0,
                     RefreshTile));
 
@@ -69,7 +70,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         /// </summary>
         public double Scale
         {
-            get { return (double) GetValue(ScaleProperty); }
+            get { return (double)GetValue(ScaleProperty); }
             set { SetValue(ScaleProperty, value); }
         }
 
@@ -92,13 +93,23 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         private void RenderTile()
         {
             _visual = new DrawingVisual();
-            Width = Source.Width*Scale;
-            Height = Source.Height*Scale;
+            var bitmapSource = Source as BitmapSource;
+            if (bitmapSource != null)
+            {
+                Width = bitmapSource.PixelWidth*Scale;
+                Height = bitmapSource.PixelHeight*Scale;
+            }
+            else
+            {
+                Width = Source.Width * Scale;
+                Height = Source.Height * Scale;
+            }
+
             DrawingContext dc = _visual.RenderOpen();
             dc.DrawImage(Source, new Rect(0, 0, Width, Height));
             dc.Close();
 
-            CacheMode = new BitmapCache(1/Scale);
+            CacheMode = new BitmapCache(1 / Scale);
 
             // Animate opacity
             Opacity = 0;
@@ -120,7 +131,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         {
             return _visual;
         }
-        
+
         #endregion FrameworkElement overrides
     }
 }

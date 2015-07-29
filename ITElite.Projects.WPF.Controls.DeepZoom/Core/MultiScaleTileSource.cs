@@ -353,11 +353,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Core
 
         #region Protected Properties
 
-        protected internal Size ImageSize { get; set; }
+        public  Size ImageSize { get;protected set; }
 
-        protected internal int TileSize { get; set; }
+        protected internal int TileSize { get;  set; }
 
-        protected internal int TileOverlap { get; set; }
+        protected internal int TileOverlap { get;set; }
 
         protected internal int ZoomStep { get; set; }
 

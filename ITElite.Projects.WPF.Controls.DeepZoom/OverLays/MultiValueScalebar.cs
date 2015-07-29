@@ -111,8 +111,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
                 if (metricDistance/_scaleMultipliers[i] > 1)
                 {
                     double scaleValue = metricDistance - metricDistance%_scaleMultipliers[i];
-                    _metricScaleValue.Text = string.Format("{0:F0} {1}", scaleValue, metricUnitName);
-                    _metricScaleBar.Width = scaleValue/metricResolution;
+                    if (_metricScaleValue != null)
+                    { _metricScaleValue.Text = string.Format("{0:F0} {1}", scaleValue, metricUnitName);}
+                    if (_metricScaleBar != null) 
+                    {_metricScaleBar.Width = scaleValue/metricResolution;}
                     break;
                 }
             }

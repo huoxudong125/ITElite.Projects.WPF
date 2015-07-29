@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -147,6 +148,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
 
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
         {
+        
             double relativeScale = Math.Pow(_spatialSource.ZoomStep, (double) e.Delta/Mouse.MouseWheelDeltaForOneLine);
                 //Math.Pow(2, (double) e.Delta/Mouse.MouseWheelDeltaForOneLine);
             Point position = e.GetPosition(_itemsControl);
