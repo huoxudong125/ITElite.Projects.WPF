@@ -51,12 +51,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             DependencyProperty.Register("MultiScaleImage", typeof(MultiScaleImage), typeof(OverViewer),
                 new UIPropertyMetadata(null));
 
-        public static readonly DependencyProperty HighlightFillProperty =
-            DependencyProperty.Register("HighlightFill",
-                typeof (Brush),
-                typeof (OverViewer),
-                new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(128, 255, 0, 0))));
-
         public MultiScaleImage MultiScaleImage
         {
             get { return (MultiScaleImage)GetValue(MultiScaleImageProperty); }
@@ -76,26 +70,19 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         #endregion IsShowOverViewer
 
+        public static readonly DependencyProperty HighlightFillProperty =
+            DependencyProperty.Register("HighlightFill",
+                typeof (Brush),
+                typeof (OverViewer),
+                new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(128, 255, 0, 0))));
+
         public Brush HighlightFill
         {
             get { return (Brush)GetValue(HighlightFillProperty); }
             set { SetValue(HighlightFillProperty, value); }
         }
 
-        #region IsShowOverViewer
-
-        public static readonly DependencyProperty IsShowOverViewerProperty =
-            DependencyProperty.Register("IsShowOverViewer", typeof (bool), typeof (OverViewer),
-                new PropertyMetadata(false));
-
-        public bool IsShowOverViewer
-        {
-            get { return (bool) GetValue(IsShowOverViewerProperty); }
-            set { SetValue(IsShowOverViewerProperty, value); }
-        }
-
-        #endregion IsShowOverViewer
-
+        
         #endregion public Property
 
         #region protected override

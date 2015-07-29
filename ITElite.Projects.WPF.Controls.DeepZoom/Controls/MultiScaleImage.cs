@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -22,7 +21,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
     {
         private const double MinScaleRelativeToMinSize = 0.8;
         private const double MaxScaleRelativeToMaxSize = 1.2;
-
         private const int ScaleAnimationRelativeDuration = 400;
         private const int ThrottleIntervalMilliseconds = 200;
         private readonly DispatcherTimer _levelChangeThrottle;
@@ -77,7 +75,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         {
             if (_overViewer != null)
             {
-                _overViewer.IsShowOverViewer = CheckShowOverViewer(_zoomableCanvas.Scale);
+                _overViewer.IsShowOverViewer = CheckShowOverViewer(ZoomableCanvas.Scale);
             }
         }
 
@@ -91,8 +89,24 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                     ViewChangeOnFrame(this, newScale);
                 }
                 if (_overViewer != null)
-                { _overViewer.IsShowOverViewer = CheckShowOverViewer(newScale); }
+                {
+                    _overViewer.IsShowOverViewer = CheckShowOverViewer(newScale);
+                }
             }
+        }
+
+        private bool CheckShowOverViewer(double scale)
+        {
+            //limit the zoom scale.
+            var tempOffset = ZoomableCanvas.Offset;
+            var tempImageWidth = Source.ImageSize.Width * scale;
+            var tempImageHeight = Source.ImageSize.Height * scale;
+
+            var result = (tempImageWidth > _itemsControl.ActualWidth || tempImageHeight > _itemsControl.ActualHeight);
+            result |= (tempImageWidth < _itemsControl.ActualWidth && (tempOffset.X > 0 || tempOffset.X < tempImageWidth - _itemsControl.ActualWidth));
+            result |= (tempImageHeight < _itemsControl.ActualHeight && (tempOffset.Y > 0 || tempOffset.Y < tempImageHeight - _itemsControl.ActualHeight));
+
+            return result;
         }
 
         private void AddAdorners()

@@ -42,7 +42,7 @@
                 <ComboBoxItem>D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\WPF_Poster.dzi</ComboBoxItem>
             </ComboBox>
 
-            <controls:MultiScaleImage x:Name="MultiScaleImage"
+                <controls:MultiScaleImage Grid.Row="1" x:Name="MultiImage"
                                       Resolution="8.683e-5" Background="DarkGray">
                 <controls:MultiScaleImage.Style>
                     <Style TargetType="{x:Type controls:MultiScaleImage}">
@@ -56,6 +56,8 @@
                     </Style>
                 </controls:MultiScaleImage.Style>
             </controls:MultiScaleImage>
+            </Grid>
+        
         </Border>
 
         <StatusBar Grid.Row="2">
