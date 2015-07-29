@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -20,7 +21,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
     public class MultiScaleImage : Control
     {
         private const double MinScaleRelativeToMinSize = 0.8;
-        private const double MaxScaleRelativeToMaxSize = 2.0; //1.2;
+        private const double MaxScaleRelativeToMaxSize = 1.2;
+
         private const int ScaleAnimationRelativeDuration = 400;
         private const int ThrottleIntervalMilliseconds = 200;
         private readonly DispatcherTimer _levelChangeThrottle;
@@ -68,6 +70,28 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 InitializeCanvas();
 
                 AddAdorners();
+            }
+        }
+
+        private void ZoomableCanvas_OffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (_overViewer != null)
+            {
+                _overViewer.IsShowOverViewer = CheckShowOverViewer(_zoomableCanvas.Scale);
+            }
+        }
+
+        private void ZoomableCanvas_ScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            double newScale = 1;
+            if (double.TryParse(e.NewValue.ToString(), out newScale))
+            {
+                if (ViewChangeOnFrame != null)
+                {
+                    ViewChangeOnFrame(this, newScale);
+                }
+                if (_overViewer != null)
+                { _overViewer.IsShowOverViewer = CheckShowOverViewer(newScale); }
             }
         }
 
@@ -163,6 +187,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                 )
             {
                 ZoomableCanvas.Offset -= new Vector(e.DeltaManipulation.Translation.X, 0);
+                _overViewer.IsShowOverViewer = CheckShowOverViewer(oldScale);
             }
 
             if ((tempImageHeight > _itemsControl.ActualHeight &&
@@ -180,6 +205,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                         )))
             {
                 ZoomableCanvas.Offset -= new Vector(0, e.DeltaManipulation.Translation.Y);
+                _overViewer.IsShowOverViewer = CheckShowOverViewer(oldScale);
             }
             e.Handled = true;
         }
@@ -303,9 +329,6 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
                     ZoomableCanvas.Scale = targetScale;
                     ZoomableCanvas.Offset = targetOffset;
                 }
-
-                if (ViewChangeOnFrame != null)
-                    ViewChangeOnFrame(this, targetScale);
             }
         }
 

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using ITElite.Projects.WPF.Controls.DeepZoom.Controls;
+using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using ITElite.Projects.WPF.Controls.DeepZoom.Controls;
 
 namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 {
@@ -14,13 +14,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         static OverViewer()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof (OverViewer)
-                , new FrameworkPropertyMetadata(typeof (OverViewer)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(OverViewer)
+                , new FrameworkPropertyMetadata(typeof(OverViewer)));
         }
 
         public OverViewer(UIElement deepZoom)
         {
-            MultiScaleImage = (MultiScaleImage) deepZoom;
+            MultiScaleImage = (MultiScaleImage)deepZoom;
             MultiScaleImage.ViewChangeOnFrame += MultiScaleImage_ViewChangeOnFrame;
 
             if (MultiScaleImage.AspectRatio >= 1)
@@ -48,7 +48,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         // Using a DependencyProperty as the backing store for ScrollViewer. This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MultiScaleImageProperty =
-            DependencyProperty.Register("MultiScaleImage", typeof (MultiScaleImage), typeof (OverViewer),
+            DependencyProperty.Register("MultiScaleImage", typeof(MultiScaleImage), typeof(OverViewer),
                 new UIPropertyMetadata(null));
 
         public static readonly DependencyProperty HighlightFillProperty =
@@ -59,13 +59,26 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
 
         public MultiScaleImage MultiScaleImage
         {
-            get { return (MultiScaleImage) GetValue(MultiScaleImageProperty); }
+            get { return (MultiScaleImage)GetValue(MultiScaleImageProperty); }
             set { SetValue(MultiScaleImageProperty, value); }
         }
 
+        #region IsShowOverViewer
+
+        public static readonly DependencyProperty IsShowOverViewerProperty =
+          DependencyProperty.Register("IsShowOverViewer", typeof(bool), typeof(OverViewer), new PropertyMetadata(false));
+
+        public bool IsShowOverViewer
+        {
+            get { return (bool)GetValue(IsShowOverViewerProperty); }
+            set { SetValue(IsShowOverViewerProperty, value); }
+        }
+
+        #endregion IsShowOverViewer
+
         public Brush HighlightFill
         {
-            get { return (Brush) GetValue(HighlightFillProperty); }
+            get { return (Brush)GetValue(HighlightFillProperty); }
             set { SetValue(HighlightFillProperty, value); }
         }
 

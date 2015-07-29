@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows;
 using ITElite.Projects.Common;
 using ITElite.Projects.WPF.Controls.DeepZoom.Core;
@@ -15,7 +16,13 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.UI.Test
         {
             InitializeComponent();
         }
-
+        
+         private void ImageSource_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (ImageSource.SelectedItem!=null)
+                MultiImage.Source = new DeepZoomImageTileSource(new Uri("file:///" + (ImageSource.SelectedValue.ToString())));
+        }
+        
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog();
