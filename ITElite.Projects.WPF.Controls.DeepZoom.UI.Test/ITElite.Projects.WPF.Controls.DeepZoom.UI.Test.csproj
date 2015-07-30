@@ -99,7 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ITElite.Projects.Common\ITElite.Projects.Common.csproj">
-      <Project>{8cc13072-83dd-4c5d-9b7e-2c73b32def0f}</Project>
+      <Project>{f2853ec0-eca0-464e-9b4c-f5a6f08d9666}</Project>
       <Name>ITElite.Projects.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\ITElite.Projects.WPF.Controls.DeepZoom\ITElite.Projects.WPF.Controls.DeepZoom.csproj">
