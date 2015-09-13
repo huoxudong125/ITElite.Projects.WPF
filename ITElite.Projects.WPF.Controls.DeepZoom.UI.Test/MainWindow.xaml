@@ -38,8 +38,8 @@
             <ComboBox x:Name="ImageSource" 
                       SelectionChanged="ImageSource_SelectionChanged"
                       SelectedValuePath="Content">
-                <ComboBoxItem>D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\photo.dzi</ComboBoxItem>
-                <ComboBoxItem>D:\TestProjects\ITelite.Projects\ITElite.Projects.WPF\DemoData\WPF_Poster.dzi</ComboBoxItem>
+                <ComboBoxItem>D:\TestProjects\ITElite.Projects.WPF\DemoData\photo.dzi</ComboBoxItem>
+                <ComboBoxItem>D:\TestProjects\ITElite.Projects.WPF\DemoData\WPF_Poster.dzi</ComboBoxItem>
             </ComboBox>
 
                 <controls:MultiScaleImage Grid.Row="1" x:Name="MultiImage"
