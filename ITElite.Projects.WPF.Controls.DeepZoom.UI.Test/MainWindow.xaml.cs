@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using ITElite.Projects.Common;
@@ -19,8 +20,8 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.UI.Test
         
          private void ImageSource_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (ImageSource.SelectedItem!=null)
-                MultiImage.Source = new DeepZoomImageTileSource(new Uri("file:///" + (ImageSource.SelectedValue.ToString())));
+            if (ImageSource.SelectedItem!=null&& File.Exists(ImageSource.SelectedValue.ToString()))
+                MultiImage.Source = new DeepZoomImageTileSource(new Uri("file:///" + (ImageSource.SelectedValue)));
         }
         
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
@@ -54,7 +55,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.UI.Test
 
         private void ChangeFileSize()
         {
-            FileSize.Content = string.Format("Pixle Size：{0}*{1} ,Physic Size:{2}*{3}",
+            FileSize.Content = string.Format("Pixle Size [{0}*{1}] ,Physic Size:[{2}*{3}]",
                 MultiImage.Source.ImageSize.Width,
                 MultiImage.Source.ImageSize.Height,
                 (MultiImage.Source.ImageSize.Width * MultiImage.Resolution).ToLengthSize(),
@@ -65,7 +66,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.UI.Test
         {
             try
             {
-                var resolution = int.Parse(ResolutionTextBox.Text)*1e-9;
+                var resolution = float.Parse(ResolutionTextBox.Text)*1e-9;
                 MultiImage.Resolution = resolution;
                 ChangeFileSize();
             }

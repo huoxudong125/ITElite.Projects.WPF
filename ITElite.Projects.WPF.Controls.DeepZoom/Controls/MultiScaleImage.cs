@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -55,7 +56,10 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             _itemsControl.ItemsPanel = new ItemsPanelTemplate(factoryPanel);
 
             if (_spatialSource != null)
+            {
                 _itemsControl.ItemsSource = _spatialSource;
+                
+            }
         }
 
         private void ZoomableCanvasLoaded(object sender, RoutedEventArgs e)
@@ -63,9 +67,12 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             ZoomableCanvas = sender as ZoomableCanvas;
             if (ZoomableCanvas != null)
             {
+                RegisterForNotification("Scale", ZoomableCanvas, ZoomableCanvas_ScaleChanged);
+                RegisterForNotification("Offset", ZoomableCanvas, ZoomableCanvas_OffsetChanged);
+
                 ZoomableCanvas.RealizationPriority = DispatcherPriority.Background;
                 ZoomableCanvas.RealizationRate = 10;
-                InitializeCanvas();
+               InitializeCanvas();
 
                 AddAdorners();
             }
@@ -95,19 +102,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
             }
         }
 
-        private bool CheckShowOverViewer(double scale)
-        {
-            //limit the zoom scale.
-            var tempOffset = ZoomableCanvas.Offset;
-            var tempImageWidth = Source.ImageSize.Width * scale;
-            var tempImageHeight = Source.ImageSize.Height * scale;
-
-            var result = (tempImageWidth > _itemsControl.ActualWidth || tempImageHeight > _itemsControl.ActualHeight);
-            result |= (tempImageWidth < _itemsControl.ActualWidth && (tempOffset.X > 0 || tempOffset.X < tempImageWidth - _itemsControl.ActualWidth));
-            result |= (tempImageHeight < _itemsControl.ActualHeight && (tempOffset.Y > 0 || tempOffset.Y < tempImageHeight - _itemsControl.ActualHeight));
-
-            return result;
-        }
+       
 
         private void AddAdorners()
         {
@@ -544,5 +539,34 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.Controls
         #endregion AspectRatio
 
         #endregion Dependency Properties
+
+
+        private bool CheckShowOverViewer(double scale)
+        {
+            //limit the zoom scale.
+            var tempOffset = ZoomableCanvas.Offset;
+            var tempImageWidth = Source.ImageSize.Width * scale;
+            var tempImageHeight = Source.ImageSize.Height * scale;
+
+            var result = (tempImageWidth > _itemsControl.ActualWidth || tempImageHeight > _itemsControl.ActualHeight);
+            result |= (tempImageWidth < _itemsControl.ActualWidth && (tempOffset.X > 0 || tempOffset.X < tempImageWidth - _itemsControl.ActualWidth));
+            result |= (tempImageHeight < _itemsControl.ActualHeight && (tempOffset.Y > 0 || tempOffset.Y < tempImageHeight - _itemsControl.ActualHeight));
+
+            return result;
+        }
+       
+        private void RegisterForNotification(string propertyName, object source, PropertyChangedCallback callback)
+        {
+            Binding b = new Binding(propertyName);
+            b.Source = source;
+
+            DependencyProperty prop = System.Windows.DependencyProperty.RegisterAttached(
+                "ListenAttached" + propertyName,
+                typeof(object),
+                this.GetType(),
+                new System.Windows.PropertyMetadata(callback));
+
+            BindingOperations.SetBinding(this, prop, b);
+        }
     }
 }

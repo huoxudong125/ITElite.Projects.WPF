@@ -46,8 +46,7 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
             deepZoom = multiScaleImage as MultiScaleImage;
             if (deepZoom != null)
             {
-                deepZoom.ViewChangeOnFrame +=
-                    (s, e) => UpdateScalebar(((MultiScaleImage) s).Resolution/((MultiScaleImage) s).Scale);
+                deepZoom.ViewChangeOnFrame +=DeepZoomOnViewChangeOnFrame;
                 var dpd =
                     DependencyPropertyDescriptor.FromProperty(MultiScaleImage.ResolutionProperty,
                         typeof (MultiScaleImage));
@@ -57,6 +56,11 @@ namespace ITElite.Projects.WPF.Controls.DeepZoom.OverLays
                     dpd.AddValueChanged(deepZoom, OnResolutionChanged);
                 }
             }
+        }
+
+        private void DeepZoomOnViewChangeOnFrame(object s,double e)
+        {
+            UpdateScalebar(((MultiScaleImage) s).Resolution/((MultiScaleImage) s).Scale);
         }
 
 
