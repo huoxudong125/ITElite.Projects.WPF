@@ -8,8 +8,8 @@
                   Margin="0 0 0 5"
                   FontFamily="Consolas"
                     SyntaxHighlighting="XML"
-                    FontSize="10pt">    
-            <i:Interaction.Behaviors>
+                    FontSize="10pt">        
+            <i:Interaction.Behaviors>       
                 <local:AvalonEditBehaviour 
 GiveMeTheText="{Binding XmlContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </i:Interaction.Behaviors>
