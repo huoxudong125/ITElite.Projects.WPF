@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interactivity;
 using ICSharpCode.AvalonEdit;
 
-namespace HQF.XSLT.NetHelper.Shell
+namespace ITElite.Projects.WPF.Controls.AvalonEditExtend
 {
     /// <summary>
     /// https://stackoverflow.com/a/18969007/1616023

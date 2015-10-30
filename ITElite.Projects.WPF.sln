@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Controls.DeepZoom", "ITElite.Projects.WPF.Controls.DeepZoom\ITElite.Projects.WPF.Controls.DeepZoom.csproj", "{C8E333A7-CC33-4389-938C-0DFACB91E6AE}"
 EndProject
@@ -37,6 +37,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Controls.AutoComplete", "ITElite.Projects.WPF.Controls.AutoComplete\ITElite.Projects.WPF.Controls.AutoComplete.csproj", "{682DB6EB-0263-4D78-83E5-4373DE524CDE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.Controls.AvalonEditExtend", "ITElite.Projects.WPF.Controls.AvalonEditExtend\ITElite.Projects.WPF.Controls.AvalonEditExtend.csproj", "{FADA9374-EEAC-4BDF-AF5C-F8CC929D68E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITElite.Projects.WPF.ImageBox", "ITElite.Projects.WPF.ImageBox\ITElite.Projects.WPF.ImageBox.csproj", "{3638F2EF-58A2-472D-AD94-EBD290520D21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +90,10 @@ Global
 		{FADA9374-EEAC-4BDF-AF5C-F8CC929D68E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FADA9374-EEAC-4BDF-AF5C-F8CC929D68E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FADA9374-EEAC-4BDF-AF5C-F8CC929D68E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3638F2EF-58A2-472D-AD94-EBD290520D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3638F2EF-58A2-472D-AD94-EBD290520D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3638F2EF-58A2-472D-AD94-EBD290520D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3638F2EF-58A2-472D-AD94-EBD290520D21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,5 +110,6 @@ Global
 		{7EBD0053-F19D-4CF2-9444-875436A670A4} = {55C87FAF-4A29-48E5-B213-826C7220077A}
 		{682DB6EB-0263-4D78-83E5-4373DE524CDE} = {63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}
 		{FADA9374-EEAC-4BDF-AF5C-F8CC929D68E8} = {63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}
+		{3638F2EF-58A2-472D-AD94-EBD290520D21} = {63D7F64B-E56C-46A3-8FBD-7E1AD94BC1CA}
 	EndGlobalSection
 EndGlobal
