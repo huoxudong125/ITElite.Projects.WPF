@@ -1,4 +1,4 @@
-﻿Question 1: can't  call the applyTemplate() function at the mult
+## Question 1: can't  call the applyTemplate() function at the mult
 
 https://stackoverflow.com/questions/2939787/onapplytemplate-not-called-in-custom-control
 
@@ -30,7 +30,7 @@ D. Ensure the following is in your assemblyinfo.cs
  )]
 
 
-Question 2.AdornerLayer  add Custom Grid Can't be found
+## Question 2.AdornerLayer  add Custom Grid Can't be found
 
 Solve the problem using a visual Collection and a ContentPresenter. More Detail Please reference to:
 WPF Tutorial - Using A Visual Collection  http://tech.pro/tutorial/856/wpf-tutorial-using-a-visual-collection
@@ -38,7 +38,7 @@ WPF Tutorial - Using A Visual Collection  http://tech.pro/tutorial/856/wpf-tutor
 
 
 
-Question 3.The Adorner is Shown at right and bottom
+## Question 3.The Adorner is Shown at right and bottom
 
 Answer:ReArrange the control size as follow:
 
@@ -52,7 +52,7 @@ Answer:ReArrange the control size as follow:
         }
 
 
-Question 4.The default value type does not match the type of the property
+## Question 4.The default value type does not match the type of the property
 Reference:https://stackoverflow.com/questions/20398751/the-default-value-type-does-not-match-the-type-of-the-property
 
 Give dependencyProperty default value as follow:
