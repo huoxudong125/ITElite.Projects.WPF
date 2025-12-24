@@ -1,4 +1,4 @@
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)]（https://deepwiki.com/huoxudong125/ITElite.Projects.WPF/1.1-solution-structure）
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/huoxudong125/ITElite.Projects.WPF/1.1-solution-structure)
 
 
 ITElite.Projects.WPF
